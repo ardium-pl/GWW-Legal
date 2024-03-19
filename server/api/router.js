@@ -4,8 +4,7 @@ import { askNSA } from './nsaMain.js';
 
 router.post("/api/nsa", async (req, res) => {
     try {
-        const { caseSignature } = req.body;
-        const { questions } = req.body;
+        const { caseSignature, questions } = req.body;
         if (!caseSignature) {
             return res.status(400).send({ error: 'Case signature is required.' });
         }
