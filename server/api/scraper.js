@@ -18,13 +18,13 @@ const getRandomUserAgent = () => {
     return userAgents[Math.floor(Math.random() * userAgents.length)];
   };
 
-export async function getCourtRuling(inputText) {
+export async function getCourtRuling(signature) {
     const browser = await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: [
         `--user-agent=${getRandomUserAgent()}`, // Set a random user agent for this browser instance
-        '--start-maximized', // This will open the browser maximized, but not necessarily in full-screen
-        '--disable-infobars', // This flag disables the "Chrome is being controlled by automated test software" infobar
+        // '--start-maximized', // This will open the browser maximized, but not necessarily in full-screen
+        // '--disable-infobars', // This flag disables the "Chrome is being controlled by automated test software" infobar
         ],
         defaultViewport: null,
     });
@@ -33,7 +33,7 @@ export async function getCourtRuling(inputText) {
 
     await page.goto('https://orzeczenia.nsa.gov.pl/cbo/query');
     await page.click('#sygnatura');
-    await page.type('#sygnatura', inputText);
+    await page.type('#sygnatura', signature);
     
     //Clicking the search button
     let navigationPromise = page.waitForNavigation({
@@ -62,7 +62,7 @@ export async function getCourtRuling(inputText) {
         return Array.from(elements).map(element => element.innerText.trim());
     });
     
-    await browser.close();
-    return extractedText;
+  await browser.close();
+  return extractedText;
    
 }
