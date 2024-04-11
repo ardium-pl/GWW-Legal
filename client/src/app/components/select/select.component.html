@@ -1,0 +1,19 @@
+<app-_form-field
+    class="custom-selector"
+    [label]="label()"
+    [htmlFor]="htmlId()"
+    [hasError]="hasError()"
+    [helperText]="helperText()"
+>
+    <select
+        #select
+        [name]="htmlId() ?? ''"
+        [id]="htmlId()"
+        [ngModel]="value()"
+        (ngModelChange)="onValueChange($event)"
+    >
+        @for (opt of options(); track $index) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+        }
+    </select>
+</app-_form-field>
