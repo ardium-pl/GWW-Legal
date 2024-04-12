@@ -1,12 +1,23 @@
 
+$gap: 12px;
 
-form {
+form, .card-group {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 640px;
+  align-items: flex-start;
+  gap: $gap;
+}
+form {
+  width: 720px;
   max-width: 90vw;
   margin: 0 auto;
+}
+.card-group {
+  width: 100%;
+
+  &:not(:last-child) {
+    padding-bottom: $gap * 2;
+  }
 }
 mat-card {
   padding: 0 16px;
@@ -18,6 +29,9 @@ mat-card-header {
 }
 mat-card-content {
   padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 mat-form-field {
   width: 288px;
@@ -28,6 +42,31 @@ mat-form-field {
   }
 }
 textarea {
-  min-height: 14em;
+  min-height: 12em;
   max-height: 22rem;
+}
+.found-text {
+  padding-top: 8px;
+}
+.reset-button-container {
+  position: relative;
+}
+.reset-button {
+  position: absolute;
+  right: 0;
+  bottom: $gap - 4px;
+  pointer-events: none;
+  opacity: 0;
+  appearance: none;
+  // transition: opacity 0.025s ease;
+
+  &.active {
+    pointer-events: all;
+    opacity: 1;
+    appearance: auto;
+  }
+}
+.card-button-container {
+  display: flex;
+  gap: 24px;
 }

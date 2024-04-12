@@ -18,12 +18,14 @@ router.post("/nsa/question", async (req, res) => {
     }
 });
 
-router.post("/nsa/querry", async (req, res) => {
+router.post("/nsa/query", async (req, res) => {
     try {
         const { caseSignature } = req.body;
         if (!caseSignature) {
             return res.status(400).send({ error: 'Case signature is required.' });
-        }
+      }
+      
+      console.log('got the request', caseSignature);
 
         const result = await getCourtRuling(caseSignature);
         res.json(result);
