@@ -9,10 +9,12 @@
     "watch": "cd client && npm run watch",
     "server": "cd server && nodemon",
     "both": "concurrently --kill-others \"npm run watch\" \"npm run server\"",
-    "front": "cd client && ng serve"
+    "front": "cd client && ng serve",
+    "prettier": "prettier --write ."
   },
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "prettier": "^3.2.5"
   }
 }
