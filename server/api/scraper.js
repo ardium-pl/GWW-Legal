@@ -15,54 +15,57 @@ const userAgents = [
 ];
 
 const getRandomUserAgent = () => {
-    return userAgents[Math.floor(Math.random() * userAgents.length)];
-  };
+  return userAgents[Math.floor(Math.random() * userAgents.length)];
+};
 
 export async function getCourtRuling(signature) {
-    const browser = await puppeteer.launch({
-        headless: true,
-        args: [
-        `--user-agent=${getRandomUserAgent()}`, // Set a random user agent for this browser instance
-        // '--start-maximized', // This will open the browser maximized, but not necessarily in full-screen
-        // '--disable-infobars', // This flag disables the "Chrome is being controlled by automated test software" infobar
-        ],
-        defaultViewport: null,
-    });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: [
+      `--user-agent=${getRandomUserAgent()}`, // Set a random user agent for this browser instance
+      // '--start-maximized', // This will open the browser maximized, but not necessarily in full-screen
+      // '--disable-infobars', // This flag disables the "Chrome is being controlled by automated test software" infobar
+    ],
+    defaultViewport: null,
+  });
 
-    const page = await browser.newPage();
+  const page = await browser.newPage();
 
-    await page.goto('https://orzeczenia.nsa.gov.pl/cbo/query');
-    await page.click('#sygnatura');
-    await page.type('#sygnatura', signature);
-    
-    //Clicking the search button
-    let navigationPromise = page.waitForNavigation({
-        waitUntil: 'load',
-        timeout: 120*1000 // Wait for 60 seconds
-      });
-    await page.click('input[type="submit"][name="submit"][value="Szukaj"]');
-    await navigationPromise 
-        
-    // Wait for all links on the page (<a> elements) to be loaded
-    await page.waitForSelector('a');
+  await page.goto("https://orzeczenia.nsa.gov.pl/cbo/query");
+  await page.click("#sygnatura");
+  await page.type("#sygnatura", signature);
 
-    //Clicking the link to the searched case (it's allways the 3rd link on the page)
-    const links = await page.$$('a'); 
-    if (links.length >= 3) {
-        await links[2].click();
-    } else {
-        console.log('Less than 6 <a> elements found on the page.'); 
-    }
+  //Clicking the search button
+  let navigationPromise = page.waitForNavigation({
+    waitUntil: "load",
+    timeout: 120 * 1000, // Wait for 60 seconds
+  });
+  await page.click('input[type="submit"][name="submit"][value="Szukaj"]');
+  await navigationPromise;
 
-    // Retrieve the court ruling text
-    await page.waitForSelector('td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie');
+  // Wait for all links on the page (<a> elements) to be loaded
+  await page.waitForSelector("a");
 
-    const extractedText = await page.evaluate(() => {
-        const elements = document.querySelectorAll('td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie');
-        return Array.from(elements).map(element => element.innerText.trim());
-    });
-    
+  //Clicking the link to the searched case (it's allways the 3rd link on the page)
+  const links = await page.$$("a");
+  if (links.length >= 3) {
+    await links[2].click();
+  } else {
+    console.log("Less than 6 <a> elements found on the page.");
+  }
+
+  // Retrieve the court ruling text
+  await page.waitForSelector(
+    "td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie",
+  );
+
+  const extractedText = await page.evaluate(() => {
+    const elements = document.querySelectorAll(
+      "td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie",
+    );
+    return Array.from(elements).map((element) => element.innerText.trim());
+  });
+
   await browser.close();
   return extractedText;
-   
 }

@@ -39,13 +39,10 @@ const DEFAULT_USER_MESSAGES = [
   styleUrl: './nsa.page.scss',
 })
 export class NsaPage {
-
   readonly nsaService = inject(NsaService);
 
   readonly nsaForm = new FormGroup({
-    caseSignature: new FormControl<string>('', [
-      Validators.required,
-    ]),
+    caseSignature: new FormControl<string>('', [Validators.required]),
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE),
     userMessage1: new FormControl<string>(DEFAULT_USER_MESSAGES[0]),
     userMessage2: new FormControl<string>(DEFAULT_USER_MESSAGES[1]),
@@ -68,7 +65,7 @@ export class NsaPage {
       return;
     }
     this.nsaService.fetchCourtRuling(
-      this.nsaForm.controls.caseSignature.value!
+      this.nsaForm.controls.caseSignature.value!,
     );
   }
 }

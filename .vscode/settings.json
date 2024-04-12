@@ -11,12 +11,9 @@
       "splitTerminals": [
         {
           "name": "ng serve",
-          "commands": [
-            "cd client",
-            "ng serve"
-          ]
+          "commands": ["cd client", "ng serve"]
         }
       ]
-    },
-  ],
+    }
+  ]
 }

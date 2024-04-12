@@ -5,12 +5,14 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   template: `<span>*</span>`,
-  styles: `span {
-    font-size: 110%;
-    margin-left: 3px;
-    color: rgb(217, 48, 37);
-    position: relative;
-    bottom: 3px;
-  }`,
+  styles: `
+    span {
+      font-size: 110%;
+      margin-left: 3px;
+      color: rgb(217, 48, 37);
+      position: relative;
+      bottom: 3px;
+    }
+  `,
 })
 export class RequiredStarComponent {}
