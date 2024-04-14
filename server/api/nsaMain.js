@@ -5,26 +5,7 @@ dotenv.config(); // delete at production
 
 const openai = new OpenAI();
 
-export async function askNSA(courtRuling, questions) {
-  //const courtRuling = await getCourtRuling(caseSignature);
-  let responses = [];
-
-  for (const question of questions) {
-    const gptResponse = await askGptAboutNSA(
-      question.systemMessage,
-      question.userMessage,
-      courtRuling,
-    );
-
-    responses.push({
-      question: question.userMessage,
-      response: retrieveGPTMessage(gptResponse),
-    });
-  }
-  return responses;
-}
-
-async function askGptAboutNSA(systemMessage, userMessage, courtRuling) {
+export async function askGptAboutNSA(systemMessage, userMessage, courtRuling) {
   const response = await openai.chat.completions.create({
     model: "gpt-4-0125-preview",
     messages: [
@@ -34,7 +15,10 @@ async function askGptAboutNSA(systemMessage, userMessage, courtRuling) {
     temperature: 0.5,
   });
 
-  return response;
+  return {
+    question: userMessage,
+    response: retrieveGPTMessage(response),
+  };
 }
 
 function retrieveGPTMessage(response) {
