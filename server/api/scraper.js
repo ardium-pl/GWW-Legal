@@ -63,7 +63,7 @@ export async function getCourtRuling(signature) {
     const elements = document.querySelectorAll(
       "td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie",
     );
-    return Array.from(elements).map((element) => element.innerText.trim());
+    return Array.from(elements).map((element) => element.innerHTML.trim());
   });
 
   await browser.close();
