@@ -1,4 +1,4 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -42,7 +42,7 @@ const DEFAULT_USER_MESSAGES = [
   templateUrl: './nsa.page.html',
   styleUrl: './nsa.page.scss',
 })
-export class NsaPage {
+export class NsaPage implements OnInit {
   readonly nsaService = inject(NsaService);
 
   readonly nsaFormPart1 = new FormGroup({
@@ -67,6 +67,10 @@ export class NsaPage {
       Validators.required,
     ]),
   });
+
+  ngOnInit(): void {
+    this.nsaFormPart2.markAsDirty();
+  }
 
   readonly additionalQuestions = [
     {
@@ -109,7 +113,11 @@ export class NsaPage {
     if (this.disabledNextPage()) return;
 
     const values = this.nsaFormPart2.value;
-    this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+    if (this.nsaFormPart2.dirty) {
+      this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+      this.nsaFormPart3.reset();
+    }
+    this.nsaFormPart2.markAsPristine();
     this.nextPage();
   }
 

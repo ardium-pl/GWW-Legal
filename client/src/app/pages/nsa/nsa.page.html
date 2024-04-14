@@ -23,7 +23,7 @@
         </mat-card-actions>
         @if (nsaService.rulingResponse()) {
         <mat-card-footer>
-          <strong>Znaleziono sprawę:</strong>
+          <strong>Znaleziono orzeczenie:</strong>
           <div>
             @for (paragraph of nsaService.rulingResponse(); track $index) {
             <div [innerHTML]="paragraph"></div>

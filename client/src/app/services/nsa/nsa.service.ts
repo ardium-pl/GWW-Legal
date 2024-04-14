@@ -54,6 +54,8 @@ export class NsaService {
   }
 
   public async fetchGptAnswers(formOutput: NsaFormPart2) {
+    this.resetAdditionalAnswer();
+
     this._gptAnswersProgress.set([false, false, false]);
     await Promise.all([
       new Promise<void>((res) =>
@@ -97,6 +99,11 @@ export class NsaService {
 
   private readonly _additionalAnswerResponse = signal<string | null>(null);
   public readonly additionalAnswerResponse = computed(() => this._additionalAnswerResponse());
+
+  private resetAdditionalAnswer(): void {
+    this._isAdditionalAnswerLoading.set(false);
+    this._additionalAnswerResponse.set(null);
+  }
 
   public fetchAdditionalAnswer(systemMessage: string, userMessage: string): void {
     this._isAdditionalAnswerLoading.set(true);
