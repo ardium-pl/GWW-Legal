@@ -11,10 +11,12 @@
           <mat-error>To pole jest wymagane</mat-error>
         </mat-form-field>
         <mat-card-actions>
-          <button mat-flat-button color="primary" type="submit"
-            [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.valid">
+          <div [matTooltip]="getCourtRulingButtonTooltip()">
+            <button mat-flat-button color="primary" type="submit"
+            [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty">
             Wyszukaj
           </button>
+        </div>
           @if (nsaService.isRulingLoading()) {
           <div class="spinner-container">
             <mat-spinner />
@@ -138,10 +140,12 @@
           <mat-radio-button [value]="additionalQuestions[1].value">{{ additionalQuestions[1].label }}</mat-radio-button>
         </mat-radio-group>
         <mat-card-actions>
-          <button mat-flat-button color="primary" type="submit"
-            [disabled]="nsaService.isAdditionalAnswerLoading() || !this.nsaFormPart3.valid">
-            Zapytaj
-          </button>
+          <div [matTooltip]="getAdditionalAnswerButtonTooltip()">
+            <button mat-flat-button color="primary" type="submit"
+              [disabled]="nsaService.isAdditionalAnswerLoading() || !this.nsaFormPart3.valid || !nsaFormPart3.dirty">
+              Zapytaj
+            </button>
+          </div>
           @if (nsaService.isAdditionalAnswerLoading()) {
           <div class="spinner-container">
             <mat-spinner />

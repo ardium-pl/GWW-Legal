@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { IconComponent, RequiredStarComponent } from 'app/components';
@@ -37,8 +38,12 @@ const DEFAULT_USER_MESSAGES = [
     ReactiveFormsModule,
     MatRadioModule,
     IconComponent,
+    MatTooltipModule,
   ],
-  providers: [NsaService],
+  providers: [
+    NsaService,
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
+  ],
   templateUrl: './nsa.page.html',
   styleUrl: './nsa.page.scss',
 })
@@ -107,6 +112,7 @@ export class NsaPage implements OnInit {
     this.nsaService.fetchCourtRuling(
       this.nsaFormPart1.controls.caseSignature.value!,
     );
+    this.nsaFormPart1.markAsPristine();
   }
 
   fetchGptAnswers(): void {
@@ -124,10 +130,26 @@ export class NsaPage implements OnInit {
   fetchAdditionalAnswer(): void {
     if (!this.nsaFormPart3.valid) return;
 
+    this.nsaFormPart3.markAsPristine();
+
     this.nsaService.fetchAdditionalAnswer(
       this.nsaFormPart2.controls.systemMessage.value!,
       this.nsaFormPart3.value.additionalQuestion!,
     );
+  }
+
+  //! button tooltips
+  getCourtRulingButtonTooltip(): string {
+    if (!this.nsaFormPart1.valid) return 'Najpierw podaj sygnaturę sprawy';
+    if (!this.nsaFormPart1.dirty)
+      return 'Zmień sygnaturę sprawy, aby wyszukać ponownie';
+    return '';
+  }
+  getAdditionalAnswerButtonTooltip(): string {
+    if (!this.nsaFormPart3.valid) return 'Najpierw wybierz rodzaj pytania';
+    if (!this.nsaFormPart3.dirty)
+      return 'Zmień rodzaj pytania, aby zapytać ponownie';
+    return '';
   }
 
   //! pager
