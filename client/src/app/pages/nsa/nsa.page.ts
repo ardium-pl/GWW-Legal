@@ -1,17 +1,19 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RequiredStarComponent } from 'app/components';
+import { IconComponent, RequiredStarComponent } from 'app/components';
 import { NsaService } from 'app/services';
+import { NsaFormPart2 } from 'app/services/nsa/nsa.types';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -33,6 +35,8 @@ const DEFAULT_USER_MESSAGES = [
     MatProgressSpinnerModule,
     RequiredStarComponent,
     ReactiveFormsModule,
+    MatRadioModule,
+    IconComponent,
   ],
   providers: [NsaService],
   templateUrl: './nsa.page.html',
@@ -45,11 +49,37 @@ export class NsaPage {
     caseSignature: new FormControl<string>('', [Validators.required]),
   });
   readonly nsaFormPart2 = new FormGroup({
-    systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE),
-    userMessage1: new FormControl<string>(DEFAULT_USER_MESSAGES[0]),
-    userMessage2: new FormControl<string>(DEFAULT_USER_MESSAGES[1]),
-    userMessage3: new FormControl<string>(DEFAULT_USER_MESSAGES[2]),
+    systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE, [
+      Validators.required,
+    ]),
+    userMessage1: new FormControl<string>(DEFAULT_USER_MESSAGES[0], [
+      Validators.required,
+    ]),
+    userMessage2: new FormControl<string>(DEFAULT_USER_MESSAGES[1], [
+      Validators.required,
+    ]),
+    userMessage3: new FormControl<string>(DEFAULT_USER_MESSAGES[2], [
+      Validators.required,
+    ]),
   });
+  readonly nsaFormPart3 = new FormGroup({
+    additionalQuestion: new FormControl<string | null>(null, [
+      Validators.required,
+    ]),
+  });
+
+  readonly additionalQuestions = [
+    {
+      value:
+        'Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jak NSA uargumentował swoją decyzję.\n\nOrzeczenie:',
+      label: 'swoją decyzję',
+    },
+    {
+      value:
+        'Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jak NSA uargumentował oddalenie sprawy do dalszego rozpatrzenia.\n\nOrzeczenie:',
+      label: 'oddalenie sprawy do dalszego rozpatrzenia',
+    },
+  ];
 
   get isResetButtonActiveSystem(): boolean {
     return (
@@ -73,5 +103,47 @@ export class NsaPage {
     this.nsaService.fetchCourtRuling(
       this.nsaFormPart1.controls.caseSignature.value!,
     );
+  }
+
+  fetchGptAnswers(): void {
+    if (this.disabledNextPage()) return;
+
+    const values = this.nsaFormPart2.value;
+    this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+    this.nextPage();
+  }
+
+  fetchAdditionalAnswer(): void {
+    if (!this.nsaFormPart3.valid) return;
+
+    this.nsaService.fetchAdditionalAnswer(
+      this.nsaFormPart2.controls.systemMessage.value!,
+      this.nsaFormPart3.value.additionalQuestion!,
+    );
+  }
+
+  //! pager
+  readonly currentPagerPage = signal<number>(0);
+
+  disabledNextPage() {
+    const page = this.currentPagerPage();
+    console.log(page, !this.nsaFormPart3.valid);
+    switch (page) {
+      case 0:
+        return this.nsaService.rulingResponse();
+      case 1:
+        return !this.nsaFormPart2.valid;
+      case 2:
+        return true;
+    }
+    console.warn('Encountered page that has no disabled condition defined.');
+    return false;
+  }
+
+  nextPage(): void {
+    this.currentPagerPage.update((v) => v + 1);
+  }
+  prevPage(): void {
+    this.currentPagerPage.update((v) => v - 1);
   }
 }

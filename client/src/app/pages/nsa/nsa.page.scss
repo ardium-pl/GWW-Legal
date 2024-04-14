@@ -1,15 +1,32 @@
+@import '../../../variables';
+
 $gap: 12px;
 
-form {
+.pager-container, form {
+  min-width: min(720px, 90vw);
+  width: 720px;
+  max-width: 90vw;
   display: flex;
+}
+.pager-container {
+  margin: 0 auto;
+  height: calc(100vh - 2 * #{$bodyPaddingVertical});
+  height: calc(100dvh - 2 * #{$bodyPaddingVertical});
+  max-height: calc(100vh - 2 * #{$bodyPaddingVertical});
+  max-height: calc(100dvh - 2 * #{$bodyPaddingVertical});
+  overflow: hidden;
+}
+form {
   flex-direction: column;
   align-items: flex-start;
   gap: $gap;
-  width: 720px;
-  max-width: 90vw;
-  margin: 0 auto;
+  position: relative;
+  padding: 0 4px;
+  left: calc(-100% * var(--_pager-page));
+  transition: left 0.35s ease;
+  overflow: auto;
 
-  &:not(:last-of-type) {
+  &:not(:last-child) {
     padding-bottom: $gap * 3;
   }
 }
@@ -39,9 +56,6 @@ textarea {
   min-height: 12em;
   max-height: 22rem;
 }
-.found-text {
-  padding-top: 8px;
-}
 .reset-button-container {
   position: relative;
 }
@@ -60,7 +74,31 @@ textarea {
     appearance: auto;
   }
 }
-.card-button-container {
+mat-card-actions {
   display: flex;
   gap: 24px;
+}
+.buttons-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+}
+.loading-icon {
+  height: 24px;
+  color: var(--green);
+
+  mat-spinner {
+    width: 24px !important;
+    height: 24px !important;
+  }
 }

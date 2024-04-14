@@ -1,3 +1,5 @@
+@import './variables';
+
 html,
 body {
   height: 100%;
@@ -81,7 +83,7 @@ html {
 body {
   background-color: var(--bg);
   counter-reset: section-counter 0;
-  padding: 1.5rem 4rem;
+  padding: $bodyPaddingVertical 4rem;
   min-width: 100%;
   max-width: 100%;
 }
@@ -114,7 +116,7 @@ h2 {
 }
 
 strong {
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .additional {
@@ -154,4 +156,8 @@ a[routerLink],
 mat-spinner {
   height: 36px !important;
   width: 36px !important;
+}
+mat-radio-group {
+  display: flex;
+  flex-direction: column;
 }
