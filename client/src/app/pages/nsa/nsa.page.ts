@@ -41,8 +41,10 @@ const DEFAULT_USER_MESSAGES = [
 export class NsaPage {
   readonly nsaService = inject(NsaService);
 
-  readonly nsaForm = new FormGroup({
+  readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
+  });
+  readonly nsaFormPart2 = new FormGroup({
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE),
     userMessage1: new FormControl<string>(DEFAULT_USER_MESSAGES[0]),
     userMessage2: new FormControl<string>(DEFAULT_USER_MESSAGES[1]),
@@ -50,22 +52,26 @@ export class NsaPage {
   });
 
   get isResetButtonActiveSystem(): boolean {
-    return this.nsaForm.controls.systemMessage.value !== DEFAULT_SYSTEM_MESSAGE;
+    return (
+      this.nsaFormPart2.controls.systemMessage.value !== DEFAULT_SYSTEM_MESSAGE
+    );
   }
   get isResetButtonActiveUser(): boolean {
     return (
-      this.nsaForm.controls.userMessage1.value !== DEFAULT_USER_MESSAGES[0] ||
-      this.nsaForm.controls.userMessage2.value !== DEFAULT_USER_MESSAGES[1] ||
-      this.nsaForm.controls.userMessage3.value !== DEFAULT_USER_MESSAGES[2]
+      this.nsaFormPart2.controls.userMessage1.value !==
+        DEFAULT_USER_MESSAGES[0] ||
+      this.nsaFormPart2.controls.userMessage2.value !==
+        DEFAULT_USER_MESSAGES[1] ||
+      this.nsaFormPart2.controls.userMessage3.value !== DEFAULT_USER_MESSAGES[2]
     );
   }
 
   getCourtRuling(): void {
-    if (!this.nsaForm.controls.caseSignature.valid) {
+    if (!this.nsaFormPart1.controls.caseSignature.valid) {
       return;
     }
     this.nsaService.fetchCourtRuling(
-      this.nsaForm.controls.caseSignature.value!,
+      this.nsaFormPart1.controls.caseSignature.value!,
     );
   }
 }

@@ -1,22 +1,16 @@
 $gap: 12px;
 
-form,
-.card-group {
+form {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: $gap;
-}
-form {
   width: 720px;
   max-width: 90vw;
   margin: 0 auto;
-}
-.card-group {
-  width: 100%;
 
-  &:not(:last-child) {
-    padding-bottom: $gap * 2;
+  &:not(:last-of-type) {
+    padding-bottom: $gap * 3;
   }
 }
 mat-card {

@@ -1,104 +1,75 @@
-<form [formGroup]="nsaForm">
-  <div class="card-group">
-    <mat-card>
-      <mat-card-header>
-        Sygnatura sprawy NSA
-        <app-required-star />
-      </mat-card-header>
-      <mat-card-content>
-        <mat-form-field>
-          <input
-            matInput
-            placeholder="np. III FSK 4005/21"
-            formControlName="caseSignature"
-          />
-          <mat-error>To pole jest wymagane</mat-error>
-        </mat-form-field>
-        <div class="card-button-container">
-          <button
-            mat-flat-button
-            color="primary"
-            [disabled]="nsaService.isRulingLoading() || !this.nsaForm.controls.caseSignature.valid"
-            (click)="getCourtRuling()"
-          >
-            Wyszukaj
-          </button>
-          @if (nsaService.isRulingLoading()) {
-          <div class="spinner-container">
-            <mat-spinner />
-          </div>
-          }
+<form [formGroup]="nsaFormPart1" (ngSubmit)="getCourtRuling()">
+  <mat-card>
+    <mat-card-header>
+      Sygnatura sprawy NSA
+      <app-required-star />
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field>
+        <input matInput placeholder="np. III FSK 4005/21" formControlName="caseSignature" />
+        <mat-error>To pole jest wymagane</mat-error>
+      </mat-form-field>
+      <div class="card-button-container">
+        <button mat-flat-button color="primary" type="submit"
+          [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.controls.caseSignature.valid">
+          Wyszukaj
+        </button>
+        @if (nsaService.isRulingLoading()) {
+        <div class="spinner-container">
+          <mat-spinner />
         </div>
-        <div class="found-text">test</div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-  <div class="card-group">
-    <mat-card>
-      <mat-card-header>
-        System message
-        <app-required-star />
-      </mat-card-header>
-      <mat-card-content>
-        <div class="reset-button-container">
-          <button
-            mat-button
-            class="reset-button"
-            [class.active]="isResetButtonActiveSystem"
-            [tabIndex]="isResetButtonActiveSystem"
-            color="primary"
-          >
-            Przywróć domyślną
-          </button>
-        </div>
-        <mat-form-field class="full-size">
-          <textarea
-            matInput
-            placeholder="Podstawowa wiadomość przekazywana do serwisu AI"
-            formControlName="systemMessage"
-          ></textarea>
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-    <mat-card>
-      <mat-card-header>
-        Pytania użytkownika
-        <app-required-star />
-      </mat-card-header>
-      <mat-card-content>
-        <div class="reset-button-container">
-          <button
-            mat-button
-            class="reset-button"
-            [class.active]="isResetButtonActiveUser"
-            [tabIndex]="isResetButtonActiveUser"
-            color="primary"
-          >
-            Przywróć domyślne
-          </button>
-        </div>
-        <mat-form-field class="full-size">
-          <textarea
-            matInput
-            placeholder="Pytanie pierwsze"
-            formControlName="userMessage1"
-          ></textarea>
-        </mat-form-field>
-        <mat-form-field class="full-size">
-          <textarea
-            matInput
-            placeholder="Pytanie drugie"
-            formControlName="userMessage2"
-          ></textarea>
-        </mat-form-field>
-        <mat-form-field class="full-size">
-          <textarea
-            matInput
-            placeholder="Pytanie trzecie"
-            formControlName="userMessage3"
-          ></textarea>
-        </mat-form-field>
-      </mat-card-content>
-    </mat-card>
-  </div>
+        }
+      </div>
+      @if (nsaService.rulingResponse()) {
+      <div class="found-text">
+        @for (paragraph of nsaService.rulingResponse(); track $index) {
+        <div [innerHTML]="paragraph"></div>
+        }
+      </div>
+      }
+    </mat-card-content>
+  </mat-card>
+</form>
+<form [formGroup]="nsaFormPart2">
+  <mat-card>
+    <mat-card-header>
+      System message
+      <app-required-star />
+    </mat-card-header>
+    <mat-card-content>
+      <div class="reset-button-container">
+        <button mat-button class="reset-button" [class.active]="isResetButtonActiveSystem"
+          [tabIndex]="isResetButtonActiveSystem" color="primary">
+          Przywróć domyślną
+        </button>
+      </div>
+      <mat-form-field class="full-size">
+        <textarea matInput placeholder="Podstawowa wiadomość przekazywana do serwisu AI"
+          formControlName="systemMessage"></textarea>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
+  <mat-card>
+    <mat-card-header>
+      Pytania użytkownika
+      <app-required-star />
+    </mat-card-header>
+    <mat-card-content>
+      <div class="reset-button-container">
+        <button mat-button class="reset-button" [class.active]="isResetButtonActiveUser"
+          [tabIndex]="isResetButtonActiveUser" color="primary">
+          Przywróć domyślne
+        </button>
+      </div>
+      <mat-form-field class="full-size">
+        <textarea matInput placeholder="Pytanie pierwsze" formControlName="userMessage1"></textarea>
+      </mat-form-field>
+      <mat-form-field class="full-size">
+        <textarea matInput placeholder="Pytanie drugie" formControlName="userMessage2"></textarea>
+      </mat-form-field>
+      <mat-form-field class="full-size">
+        <textarea matInput placeholder="Pytanie trzecie" formControlName="userMessage3"></textarea>
+      </mat-form-field>
+    </mat-card-content>
+  </mat-card>
 </form>
