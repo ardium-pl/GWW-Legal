@@ -15,10 +15,7 @@ export async function askGptAboutNSA(systemMessage, userMessage, courtRuling) {
     temperature: 0.5,
   });
 
-  return {
-    question: userMessage,
-    response: retrieveGPTMessage(response),
-  };
+  return retrieveGPTMessage(response);
 }
 
 function retrieveGPTMessage(response) {

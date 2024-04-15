@@ -17,13 +17,10 @@ export class NsaService {
 
   public fetchCourtRuling(caseSignature: string): void {
     this._isRulingLoading.set(true);
-    this.http.post('/nsa/query', { caseSignature }).subscribe((res) => {
+    this.http.post('/api/nsa/query', { caseSignature }).subscribe((res) => {
       this._rulingResponse.set(res as string[]);
       this._isRulingLoading.set(false);
     });
-    setTimeout(() => {
-      this._isRulingLoading.set(false);
-    }, 20000);
   }
 
   //! gpt answers to user messages
@@ -35,9 +32,7 @@ export class NsaService {
     this._gptAnswersProgress().every((v) => v === true),
   );
 
-  private readonly _gptAnswersResponse = signal<
-    { question: string; response: string | null }[] | null
-  >(null);
+  private readonly _gptAnswersResponse = signal<string[] | null>(null);
   public readonly gptAnswersResponse = computed(() =>
     this._gptAnswersResponse(),
   );
@@ -52,63 +47,68 @@ export class NsaService {
     this.resetAdditionalAnswer();
 
     this._gptAnswersProgress.set([false, false, false]);
-    await Promise.all([
-      new Promise<void>((res) =>
-        setTimeout(
-          () => {
-            this._gptAnswersProgress.update((v) => [true, v[1], v[2]]);
-            res();
-          },
-          Math.random() * 2000 + 1000,
-        ),
-      ),
-      new Promise<void>((res) =>
-        setTimeout(
-          () => {
-            this._gptAnswersProgress.update((v) => [v[0], true, v[2]]);
-            res();
-          },
-          Math.random() * 2000 + 1500,
-        ),
-      ),
-      new Promise<void>((res) =>
-        setTimeout(
-          () => {
-            this._gptAnswersProgress.update((v) => [v[0], v[1], true]);
-            res();
-          },
-          Math.random() * 3000 + 500,
-        ),
-      ),
-    ]);
-    this._gptAnswersResponse.set([
-      { question: 'foo', response: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.' },
-      { question: 'bar', response: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.' },
-      { question: 'baz', response: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.' },
-    ]);
+    this._gptAnswersResponse.set([]);
+
+    const courtRuling = this.getCleanCourtRuling();
+
+    const streams = [
+      formOutput.userMessage1,
+      formOutput.userMessage2,
+      formOutput.userMessage3,
+    ].map((userMessage) =>
+      this.http.post('/api/nsa/question', {
+        courtRuling,
+        systemMessage: formOutput.systemMessage,
+        userMessage,
+      }),
+    );
+
+    streams.forEach((stream, i) => {
+      stream.subscribe((response) => {
+        this._gptAnswersProgress.update((v) => {
+          const newProgress = [...v];
+          newProgress[i] = true;
+          return newProgress;
+        });
+        this._gptAnswersResponse.update((v) => {
+          const newArr = v ? [...v] : [];
+          newArr[i] = response as string;
+          return newArr;
+        });
+      });
+    });
   }
 
   //! additional answer
   private readonly _isAdditionalAnswerLoading = signal(false);
-  public readonly isAdditionalAnswerLoading = computed(() => this._isAdditionalAnswerLoading());
+  public readonly isAdditionalAnswerLoading = computed(() =>
+    this._isAdditionalAnswerLoading(),
+  );
 
   private readonly _additionalAnswerResponse = signal<string | null>(null);
-  public readonly additionalAnswerResponse = computed(() => this._additionalAnswerResponse());
+  public readonly additionalAnswerResponse = computed(() =>
+    this._additionalAnswerResponse(),
+  );
 
   private resetAdditionalAnswer(): void {
     this._isAdditionalAnswerLoading.set(false);
     this._additionalAnswerResponse.set(null);
   }
 
-  public fetchAdditionalAnswer(systemMessage: string, userMessage: string): void {
+  public fetchAdditionalAnswer(
+    systemMessage: string,
+    userMessage: string,
+  ): void {
     this._isAdditionalAnswerLoading.set(true);
-    this.http.post('/nsa/additional_question', { systemMessage, userMessage }).subscribe((res) => {
-      this._additionalAnswerResponse.set(res as string);
-      this._isAdditionalAnswerLoading.set(false);
-    });
-    setTimeout(() => {
-      this._isAdditionalAnswerLoading.set(false);
-      //this._additionalAnswerResponse.set('Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolore placeat repellat, dolor maiores nostrum incidunt deserunt provident, cum quidem cupiditate nisi beatae exercitationem, commodi numquam illo nam excepturi doloremque tempora.');
-    }, 20000);
+    this.http
+      .post('/api/nsa/question', {
+        courtRuling: this.getCleanCourtRuling(),
+        systemMessage,
+        userMessage,
+      })
+      .subscribe((res) => {
+        this._additionalAnswerResponse.set(res as string);
+        this._isAdditionalAnswerLoading.set(false);
+      });
   }
 }

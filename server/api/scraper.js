@@ -52,6 +52,8 @@ export async function getCourtRuling(signature) {
     await links[2].click();
   } else {
     console.log("Less than 6 <a> elements found on the page.");
+    await browser.close();
+    return 'SCRAPER_ERR';
   }
 
   // Retrieve the court ruling text

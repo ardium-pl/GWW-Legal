@@ -13,10 +13,10 @@
         <mat-card-actions>
           <div [matTooltip]="getCourtRulingButtonTooltip()">
             <button mat-flat-button color="primary" type="submit"
-            [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty">
-            Wyszukaj
-          </button>
-        </div>
+              [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty">
+              Wyszukaj
+            </button>
+          </div>
           @if (nsaService.isRulingLoading()) {
           <div class="spinner-container">
             <mat-spinner />
@@ -124,7 +124,9 @@
         Odpowiedź na pytanie {{ $index + 1 }}
       </mat-card-header>
       <mat-card-content>
-        {{ response.response }}
+        <markdown>
+          {{ response }}
+        </markdown>
       </mat-card-content>
     </mat-card>
     }
@@ -155,9 +157,9 @@
         @if (nsaService.additionalAnswerResponse() && !nsaService.isAdditionalAnswerLoading()) {
         <mat-card-footer>
           <strong>Odpowiedź od AI:</strong>
-          <div>
+          <markdown>
             {{ nsaService.additionalAnswerResponse() }}
-          </div>
+          </markdown>
         </mat-card-footer>
         }
       </mat-card-content>
