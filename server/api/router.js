@@ -1,7 +1,8 @@
 import express from "express";
 const router = express.Router();
-import { askGptAboutNSA, askNSA } from "./nsaMain.js";
+import { askGptAboutNSA } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
+
 
 router.post("/nsa/questions", async (req, res) => {
   try {

@@ -157,7 +157,6 @@ export class NsaPage implements OnInit {
 
   disabledNextPage() {
     const page = this.currentPagerPage();
-    console.log(page, !this.nsaFormPart3.valid);
     switch (page) {
       case 0:
         return this.nsaService.rulingResponse();
