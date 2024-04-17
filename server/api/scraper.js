@@ -21,60 +21,44 @@ const getRandomUserAgent = () => {
 export async function getCourtRuling(signature) {
   const browser = await puppeteer.launch({
     headless: true,
-    args: [
-      `--user-agent=${getRandomUserAgent()}`, // Set a random user agent for this browser instance
-      // '--start-maximized', // This will open the browser maximized, but not necessarily in full-screen
-      // '--disable-infobars', // This flag disables the "Chrome is being controlled by automated test software" infobar
-    ],
+    args: [`--user-agent=${getRandomUserAgent()}`],
     defaultViewport: null,
   });
 
   const page = await browser.newPage();
-
-  try{
+  try {
     await page.goto("https://orzeczenia.nsa.gov.pl/cbo/query");
     await page.click("#sygnatura");
-    await page.type("#sygnatura", signature);  
+    await page.type("#sygnatura", signature);
+    await page.click('input[type="submit"][name="submit"][value="Szukaj"]');
+    await page.waitForNavigation({
+      waitUntil: "load",
+      timeout: 120 * 1000,
+    });
 
-      //Clicking the search button
-  let navigationPromise = page.waitForNavigation({
-    waitUntil: "load",
-    timeout: 120 * 1000, // Wait for 60 seconds
-  });
-  await page.click('input[type="submit"][name="submit"][value="Szukaj"]');
-  await navigationPromise;
+    await page.waitForSelector("a");
+    const links = await page.$$("a");
+    if (links.length < 3) {
+      throw new Error("No ruling found for the provided signature.");
+    }
 
-  // Wait for all links on the page (<a> elements) to be loaded
-  await page.waitForSelector("a");
-
-  //Clicking the link to the searched case (it's allways the 3rd link on the page)
-  const links = await page.$$("a");
-  if (links.length >= 3) {
     await links[2].click();
-  } else {
-    console.log("Less than 6 <a> elements found on the page.");
+    await page.waitForSelector("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
+
+    const extractedText = await page.evaluate(() => {
+      const elements = document.querySelectorAll("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
+      return Array.from(elements).map(element => element.innerHTML.trim());
+    });
+
     await browser.close();
-    throw new Error("Bad number of links")
+    if(extractedText.length > 0){
+      return extractedText;
+    }
+    else throw new Error("No text found for the ruling.");
+
+  } catch (error) {
+    console.error("An error occurred in the scraper: " + error.message);
+    await browser.close();
+    throw error; // Rethrow to handle it in the router
   }
-
-  // Retrieve the court ruling text
-  await page.waitForSelector(
-    "td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie",
-  );
-
-  const extractedText = await page.evaluate(() => {
-    const elements = document.querySelectorAll(
-      "td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie",
-    );
-    return Array.from(elements).map((element) => element.innerHTML.trim());
-  });
-
-  await browser.close();
-  return extractedText;
-
-  }catch(error){
-    console.log("An error occured: " + error);
-    throw new Error("Something went wrong in scraper");
-  }
-
 }

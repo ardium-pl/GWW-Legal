@@ -15,7 +15,16 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    if (error.message.includes("No ruling found")) {
+      return res.status(404).send({ error: error.message });
+    }
+    else if (error.message.includes("Bad number of links")) {
+      res.status(404).send({ error: "No case found with the given signature." });
+    }
+    else{
+      res.status(500).send({ error: error.message || "Internal Server Error" });
+    }
+
   }
 });
 
