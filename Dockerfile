@@ -43,8 +43,8 @@ COPY package*.json ./
 EXPOSE 3000
 
 #Adding a non root user
-RUN useradd -m myuser
-USER myuser
+RUN useradd -m  pptruser
+USER pptruser
 
 # Command to run the server
 CMD ["npm", "start"]
