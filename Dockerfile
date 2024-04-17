@@ -42,8 +42,9 @@ COPY package*.json ./
 # Expose port (adjust if your server uses a different port)
 EXPOSE 3000
 
-# Run everything after as non-privileged user.
-USER pptruser
+#Adding a non root user
+RUN useradd -m myuser
+USER myuser
 
 # Command to run the server
 CMD ["npm", "start"]
