@@ -43,8 +43,9 @@ COPY package*.json ./
 EXPOSE 3000
 
 #Adding a non root user
-RUN useradd -m  pptruser
-USER pptruser
+RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
+    && mkdir -p /home/pptruser/Downloads \
+    && chown -R pptruser:pptruser /home/pptruserUSER pptruser
 
 # Command to run the server
 CMD ["npm", "start"]
