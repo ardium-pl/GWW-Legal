@@ -39,11 +39,10 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-WORKDIR /usr/src/app/server
-
 # Expose port (adjust if your server uses a different port)
 EXPOSE 3000
 
-
 # Command to run the server
 CMD ["npm", "start"]
+
+WORKDIR /usr/src/app/server
