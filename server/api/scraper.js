@@ -31,11 +31,12 @@ export async function getCourtRuling(signature) {
 
   const page = await browser.newPage();
 
-  await page.goto("https://orzeczenia.nsa.gov.pl/cbo/query");
-  await page.click("#sygnatura");
-  await page.type("#sygnatura", signature);
+  try{
+    await page.goto("https://orzeczenia.nsa.gov.pl/cbo/query");
+    await page.click("#sygnatura");
+    await page.type("#sygnatura", signature);  
 
-  //Clicking the search button
+      //Clicking the search button
   let navigationPromise = page.waitForNavigation({
     waitUntil: "load",
     timeout: 120 * 1000, // Wait for 60 seconds
@@ -53,7 +54,7 @@ export async function getCourtRuling(signature) {
   } else {
     console.log("Less than 6 <a> elements found on the page.");
     await browser.close();
-    return 'SCRAPER_ERR';
+    throw new Error("Bad number of links")
   }
 
   // Retrieve the court ruling text
@@ -70,4 +71,10 @@ export async function getCourtRuling(signature) {
 
   await browser.close();
   return extractedText;
+
+  }catch(error){
+    console.log("An error occured: " + error);
+    throw new Error("Something went wrong in scraper");
+  }
+
 }
