@@ -39,6 +39,9 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
+# Expose port (adjust if your server uses a different port)
+EXPOSE 3000
+
 # Run everything after as non-privileged user.
 USER pptruser
 
