@@ -50,9 +50,10 @@ RUN npm run build
 WORKDIR /usr/src/app/server
 
 COPY package*.json ./
+
 RUN npm install
 
-#COPY . .
+COPY . .
 
 # Expose port (adjust if your server uses a different port)
 EXPOSE 3000
