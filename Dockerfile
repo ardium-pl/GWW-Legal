@@ -47,14 +47,9 @@ RUN npm install
 RUN npm run build
 
 # Switch back to server directory
-WORKDIR /usr/src/app/server
+WORKDIR /usr/src/app
 
 COPY package*.json ./
-
-RUN npm install
-
-COPY . .
-
 # Expose port (adjust if your server uses a different port)
 EXPOSE 3000
 
