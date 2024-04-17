@@ -40,7 +40,7 @@ COPY server/ .
 WORKDIR /usr/src/app/client
 
 # Copy client's package.json and install client dependencies
-COPY client/package*.json ./
+COPY client/ ./
 RUN npm install
 
 # Build the client
