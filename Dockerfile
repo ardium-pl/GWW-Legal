@@ -11,10 +11,7 @@ FROM node:20
 # Install global dependencies
 RUN npm install -g nodemon concurrently
 
-# RUN apt-get update \
-# && apt-get install -y libnss3\
-# && apt-get install -y libdbus-1-3:i386
-
+# Download needed server libraries
 RUN apt-get update \
     && apt-get install -y wget gnupg \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
