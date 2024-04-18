@@ -1,10 +1,12 @@
-# Use an official Node.js runtime as a parent image
-#FROM node:18-slim
-
+#Installing puppeteer official image
 FROM ghcr.io/puppeteer/puppeteer:22.0.0
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
+
+
+# Use an official Node.js runtime as a parent image
+FROM node:20
 
 # Install global dependencies
 RUN npm install -g nodemon concurrently
