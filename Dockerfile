@@ -1,5 +1,5 @@
 #Installing puppeteer official image
-FROM ghcr.io/puppeteer/puppeteer:22.0.0
+FROM ghcr.io/puppeteer/puppeteer:latest
 
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
