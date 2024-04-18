@@ -11,6 +11,8 @@ FROM node:20
 # Install global dependencies
 RUN npm install -g nodemon concurrently
 
+RUN apt-get update \
+&& apt-get install -y libnss3
 
 # Setup the working directory for the server
 WORKDIR /usr/src/app/server
