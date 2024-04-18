@@ -13,7 +13,7 @@ RUN npm install -g nodemon concurrently
 
 RUN apt-get update \
 && apt-get install -y libnss3\
-&& apt-get install libdbus-1-3:i386
+&& apt-get install -y libdbus-1-3:i386
 
 # Setup the working directory for the server
 WORKDIR /usr/src/app/server
