@@ -15,7 +15,9 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error(error);
-    if (error.message.includes("No ruling found")) {
+
+    if (error.message.includes("Waiting for selector `td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie` failed: Waiting failed: 30000ms exceeded"))
+     {
       return res.status(404).send({ error: error.message });
     }
     else if (error.message.includes("Bad number of links")) {
