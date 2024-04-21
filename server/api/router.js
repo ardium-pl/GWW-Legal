@@ -16,13 +16,11 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
   } catch (error) {
     console.error(error);
 
-    if (error.message.includes("Waiting for selector `td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie` failed: Waiting failed: 30000ms exceeded"))
-     {
-      return res.status(404).send({ error: error.message });
-    }
-    else if (error.message.includes("Bad number of links")) {
-      res.status(404).send({ error: "No case found with the given signature." });
-    }
+    const customErrorsCodes = ["451", "452", "453"];
+    
+    if (customErrorsCodes.includes(error.code)) {
+      res.status(404).send({ error: error.message });
+    }    
     else{
       res.status(500).send({ error: error.message || "Internal Server Error" });
     }
