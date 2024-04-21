@@ -51,4 +51,4 @@ COPY package*.json ./
 EXPOSE 3000
 
 # Command to run the server
-CMD ["npm", "start"]
+CMD ["google-chrome-stable","npm", "start"]
