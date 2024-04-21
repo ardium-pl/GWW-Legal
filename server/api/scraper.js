@@ -1,3 +1,4 @@
+import { BadRequestError } from "openai/index.mjs";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 puppeteer.use(StealthPlugin());
@@ -20,7 +21,7 @@ const getRandomUserAgent = () => {
 
 export async function getCourtRuling(signature) {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
     args: [`--user-agent=${getRandomUserAgent()}`,"--no-sandbox","--single-process"],
     defaultViewport: null,
@@ -32,15 +33,15 @@ export async function getCourtRuling(signature) {
     await page.click("#sygnatura");
     await page.type("#sygnatura", signature);
     await page.click('input[type="submit"][name="submit"][value="Szukaj"]');
-    await page.waitForNavigation({
-      waitUntil: "load",
-      timeout: 120 * 1000,
-    });
 
     await page.waitForSelector("a");
     const links = await page.$$("a");
     if (links.length < 3) {
-      throw new Error("No ruling found for the provided signature.");
+      throw new BadRequestError("No ruling found for the provided signature").code("451");
+    }
+
+    if(links.length >5){
+      throw new BadRequestError("The provided signature has to be specific").code("452");
     }
 
     await links[2].click();
@@ -55,11 +56,30 @@ export async function getCourtRuling(signature) {
     if(extractedText.length > 0){
       return extractedText;
     }
-    else throw new Error("No text found for the ruling.");
+    else throw new Error("No text found for the ruling.").code("453");
 
   } catch (error) {
     console.error("An error occurred in the scraper: " + error.message);
-    await browser.close();
     throw error; // Rethrow to handle it in the router
   }
+  finally{
+    await browser.close();
+  }
 }
+
+async function main(){
+
+  try{
+    const reasult = await getCourtRuling("II");
+    console.log("Sucess");
+    console.log(reasult)
+
+  }catch(err){
+    console.log(err.message);
+    if(err.name){
+      console.log(err.name);
+    }
+  }
+}
+
+main()
