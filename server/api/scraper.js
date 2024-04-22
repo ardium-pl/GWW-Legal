@@ -23,7 +23,7 @@ export async function getCourtRuling(signature) {
   const browser = await puppeteer.launch({
     headless: false,
     executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-    args: [`--user-agent=${getRandomUserAgent()}`,"--no-sandbox","--single-process"],
+    args: [`--user-agent=${getRandomUserAgent()}`, "--no-sandbox", "--single-process"],
     defaultViewport: null,
   });
 
@@ -37,11 +37,11 @@ export async function getCourtRuling(signature) {
     await page.waitForSelector("a");
     const links = await page.$$("a");
     if (links.length < 3) {
-      throw new BadRequestError("No ruling found for the provided signature").code("451");
+      throw { message: "No ruling found for the provided signature", code: "451" };
     }
 
-    if(links.length >5){
-      throw new BadRequestError("The provided signature has to be specific").code("452");
+    if (links.length > 5) {
+      throw { message: "The provided signature has to be specific", code: "452" };
     }
 
     await links[2].click();
@@ -53,16 +53,16 @@ export async function getCourtRuling(signature) {
     });
 
     await browser.close();
-    if(extractedText.length > 0){
+    if (extractedText.length > 0) {
       return extractedText;
     }
-    else throw new Error("No text found for the ruling.").code("453");
+    else throw { message: "No text found for the ruling.", code: "453" };
 
   } catch (error) {
     console.error("An error occurred in the scraper: " + error.message);
-    throw error; // Rethrow to handle it in the router
+    throw { error: error, code: "500" }; // Rethrow to handle it in the router
   }
-  finally{
+  finally {
     await browser.close();
   }
 }
