@@ -66,20 +66,3 @@ export async function getCourtRuling(signature) {
     await browser.close();
   }
 }
-
-async function main(){
-
-  try{
-    const reasult = await getCourtRuling("II");
-    console.log("Sucess");
-    console.log(reasult)
-
-  }catch(err){
-    console.log(err.message);
-    if(err.name){
-      console.log(err.name);
-    }
-  }
-}
-
-main()
