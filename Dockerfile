@@ -11,14 +11,6 @@ FROM node:20
 # Install global dependencies
 RUN npm install -g nodemon concurrently
 
-# Download needed server libraries
-RUN apt-get update && apt-get install curl gnupg -y \
-  && curl --location --silent https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-  && apt-get update \
-  && apt-get install google-chrome-stable -y --no-install-recommends \
-  && rm -rf /var/lib/apt/lists/*
-
 # Setup the working directory for the server
 WORKDIR /usr/src/app/server
 
@@ -39,6 +31,14 @@ RUN npm install
 WORKDIR /usr/src/app
 
 COPY package*.json ./
+
+# Download needed server libraries
+RUN apt-get update && apt-get install curl gnupg -y \
+  && curl --location --silent https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+  && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+  && apt-get update \
+  && apt-get install google-chrome-stable -y --no-install-recommends \
+  && rm -rf /var/lib/apt/lists/*
 
 # Build the client
 RUN npm run build
