@@ -21,8 +21,8 @@ const getRandomUserAgent = () => {
 
 export async function getCourtRuling(signature) {
   const browser = await puppeteer.connect({
-    browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT
-    // headless: "new",
+    browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
+    headless: "new",
     // //executablePath: '/usr/bin/google-chrome',
     // args: [`--user-agent=${getRandomUserAgent()}`, "--no-sandbox", "--single-process"],
     // defaultViewport: null,
