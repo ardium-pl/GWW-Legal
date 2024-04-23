@@ -23,6 +23,7 @@ export async function getCourtRuling(signature) {
   const browser = await puppeteer.connect({
     browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
     headless: false,
+    args: [`--user-agent=${getRandomUserAgent()}`]
   });
 
   const page = await browser.newPage();
