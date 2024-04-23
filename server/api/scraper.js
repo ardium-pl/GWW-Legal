@@ -20,28 +20,27 @@ const getRandomUserAgent = () => {
 };
 
 export async function getCourtRuling(signature) {
-  const browser = await puppeteer.launch({
-    headless: "new",
-    //executablePath: '/usr/bin/google-chrome',
-    args: [`--user-agent=${getRandomUserAgent()}`, "--no-sandbox", "--single-process"],
-    defaultViewport: null,
+  const browser = await puppeteer.connect({
+    browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
+    headless: false,
+    args: [`--user-agent=${getRandomUserAgent()}`]
   });
 
   const page = await browser.newPage();
+
   try {
     await page.goto("https://orzeczenia.nsa.gov.pl/cbo/query");
+
     await page.click("#sygnatura");
     await page.type("#sygnatura", signature);
+
     await page.click('input[type="submit"][name="submit"][value="Szukaj"]');
 
     await page.waitForSelector("a");
     const links = await page.$$("a");
+
     if (links.length < 3) {
       throw { message: "No ruling found for the provided signature", code: "451" };
-    }
-
-    if (links.length > 5) {
-      throw { message: "The provided signature has to be specific", code: "452" };
     }
 
     await links[2].click();
@@ -52,17 +51,16 @@ export async function getCourtRuling(signature) {
       return Array.from(elements).map(element => element.innerHTML.trim());
     });
 
-    await browser.close();
     if (extractedText.length > 0) {
       return extractedText;
+    } else {
+      throw { message: "No text found for the ruling.", code: "453" };
     }
-    else throw { message: "No text found for the ruling.", code: "453" };
 
   } catch (error) {
     console.error("An error occurred in the scraper: " + error.message);
     throw { error: error, code: "500" }; // Rethrow to handle it in the router
-  }
-  finally {
+  } finally {
     await browser.close();
   }
 }
