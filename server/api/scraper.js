@@ -70,9 +70,7 @@ export async function getCourtRuling(signature) {
     console.log("Ruling text extracted");
 
     if (extractedText.length > 0) {
-      console.log("Extracted text is valid, closing browser...");
-      await browser.close();
-      console.log("Browser closed");
+      console.log("Extracted text is valid");
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "453" };
@@ -82,7 +80,7 @@ export async function getCourtRuling(signature) {
     console.error("An error occurred in the scraper: " + error.message);
     throw { error: error, code: "500" }; // Rethrow to handle it in the router
   } finally {
-    console.log("Ensuring the browser is closed...");
+    console.log("Closing browser...");
     await browser.close();
     console.log("Browser closed from finally block");
   }
