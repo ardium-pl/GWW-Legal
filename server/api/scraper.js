@@ -41,9 +41,9 @@ export async function getCourtRuling(signature) {
       throw { message: "No ruling found for the provided signature", code: "451" };
     }
 
-    if (links.length > 5) {
-      throw { message: "The provided signature has to be specific", code: "452" };
-    }
+    // if (links.length > 5) {
+    //   throw { message: "The provided signature has to be specific", code: "452" };
+    // }
 
     await links[2].click();
     await page.waitForSelector("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
