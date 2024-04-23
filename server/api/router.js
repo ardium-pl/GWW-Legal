@@ -14,14 +14,13 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
     const result = await getCourtRuling(caseSignature);
     res.json(result);
   } catch (error) {
-    console.error(error);
-
-    const customErrorCodesRegExp = /^(451|452|453)$/
+    const customErrorCodesRegExp = /^(NOT_FOUND_ERR|NO_TEXT_ERR)$/
 
     if (customErrorCodesRegExp.test(error.code)) {
       res.status(404).send({ error: error.message, code: error.code });
     }
     else {
+      console.error(error);
       res.status(500).send({ error: error.message || "Internal Server Error" });
     }
   }

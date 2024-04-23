@@ -9,13 +9,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
-import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { IconComponent, RequiredStarComponent } from 'app/components';
 import { NsaService } from 'app/services';
-import { NsaFormPart2 } from 'app/services/nsa/nsa.types';
-import { MarkdownModule, MarkdownService, provideMarkdown } from 'ngx-markdown';
+import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
+import { RequestState } from 'app/services/types';
+import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -55,6 +56,7 @@ export class NsaPage implements OnInit {
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
+    rulingText: new FormControl<string>(''),
   });
   readonly nsaFormPart2 = new FormGroup({
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE, [
@@ -144,7 +146,10 @@ export class NsaPage implements OnInit {
   constructor() {
     effect(() => {
       // case signature
-      if (this.nsaService.isRulingLoading()) {
+      if (
+        this.nsaService.isRulingLoading() ||
+        this.nsaService.rulingRequestState() === RequestState.Error
+      ) {
         this.nsaFormPart1.controls.caseSignature.disable();
       } else {
         this.nsaFormPart1.controls.caseSignature.enable();
@@ -160,10 +165,11 @@ export class NsaPage implements OnInit {
 
   //! button tooltips
   getCourtRulingButtonTooltip(): string {
+    if (this.nsaService.isRulingLoading()) return 'Wyszukiwanie...';
     if (!this.nsaFormPart1.valid) return 'Najpierw podaj sygnaturę sprawy';
     if (!this.nsaFormPart1.dirty)
       return 'Zmień sygnaturę sprawy, aby wyszukać ponownie';
-    return '';
+      return '';
   }
   getAdditionalAnswerButtonTooltip(): string {
     if (!this.nsaFormPart3.valid) return 'Najpierw wybierz rodzaj pytania';
@@ -179,7 +185,7 @@ export class NsaPage implements OnInit {
     const page = this.currentPagerPage();
     switch (page) {
       case 0:
-        return this.nsaService.rulingResponse();
+        return this.nsaService.rulingRequestState() !== RequestState.Success && !this.nsaFormPart1.controls.rulingText.value;
       case 1:
         return !this.nsaFormPart2.valid;
       case 2:
@@ -187,6 +193,13 @@ export class NsaPage implements OnInit {
     }
     console.warn('Encountered page that has no disabled condition defined.');
     return false;
+  }
+
+  part1NextPage(): void {
+    if (this.nsaService.rulingRequestState() === 'error') {
+      this.nsaService.setManualCourtRuling(this.nsaFormPart1.controls.rulingText.value!);
+    }
+    this.nextPage();
   }
 
   nextPage(): void {

@@ -10,6 +10,20 @@
           <input matInput placeholder="np. III FSK 4005/21" formControlName="caseSignature" />
           <mat-error>To pole jest wymagane</mat-error>
         </mat-form-field>
+        @if (nsaService.rulingRequestState() === 'error') {
+        <strong>Wystąpił błąd!</strong>
+        <div>
+          @for (paragraph of nsaService.rulingError(); track $index) {
+          <div [innerHTML]="paragraph"></div>
+          }
+          <div class="ruling-text">
+            <mat-form-field class="full-size">
+              <textarea matInput placeholder="Treść orzeczenia" formControlName="rulingText"></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+        }
+        @if (nsaService.rulingRequestState() !== 'error') {
         <mat-card-actions>
           <div [matTooltip]="getCourtRulingButtonTooltip()">
             <button mat-flat-button color="primary" type="submit"
@@ -23,7 +37,8 @@
           </div>
           }
         </mat-card-actions>
-        @if (nsaService.rulingResponse()) {
+        }
+        @if (nsaService.rulingRequestState() === 'success') {
         <mat-card-footer>
           <strong>Znaleziono orzeczenie:</strong>
           <div>
@@ -38,8 +53,8 @@
     <div class="buttons-container">
       <div></div>
       <div>
-        <button mat-raised-button type="button" color="primary" [disabled]="!disabledNextPage()"
-          (click)="nextPage()">Dalej</button>
+        <button mat-raised-button type="button" color="primary" [disabled]="disabledNextPage()"
+          (click)="part1NextPage()">Dalej</button>
       </div>
     </div>
   </form>
@@ -104,20 +119,25 @@
         <div class="progress-container">
           @for (progress of nsaService.gptAnswersProgress(); track $index) {
           <div class="progress-indicator">
-            <div class="loading-icon" [class.is-loaded]="progress">
-              @if (progress) {
+            <div class="loading-icon" [class]="'is-loaded-'+progress">
+              @if (progress === true) {
               <app-icon icon="check_circle" />
+              } @else if (progress === 'ERROR') {
+              <app-icon icon="cancel" />
               } @else {
               <mat-spinner />
               }
             </div>
             Pytanie {{ $index + 1 }}
           </div>
+          @if (nsaService.areGptAnswersError()) {
+          Wystąpił niespodziewany błąd.
+          }
           }
         </div>
       </mat-card-content>
     </mat-card>
-    @if (nsaService.areGptAnswersReady()) {
+    @if (nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) {
     @for (response of nsaService.gptAnswersResponse(); track response) {
     <mat-card>
       <mat-card-header>

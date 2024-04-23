@@ -39,8 +39,8 @@ export async function getCourtRuling(signature) {
     await page.waitForSelector("a");
     const links = await page.$$("a");
 
-    if (links.length < 3) {
-      throw { message: "No ruling found for the provided signature", code: "451" };
+    if (links.length < 3 || links.length === 33) {
+      throw { message: "No ruling found for the provided signature", code: "NOT_FOUND_ERR" };
     }
 
     await links[2].click();
@@ -54,12 +54,15 @@ export async function getCourtRuling(signature) {
     if (extractedText.length > 0) {
       return extractedText;
     } else {
-      throw { message: "No text found for the ruling.", code: "453" };
+      throw { message: "No text found for the ruling.", code: "NO_TEXT_ERR" };
     }
 
   } catch (error) {
+    if (error.code === "NOT_FOUND_ERR" || error.code === "NO_TEXT_ERR") {
+      throw error;
+    }
     console.error("An error occurred in the scraper: " + error.message);
-    throw { error: error, code: "500" }; // Rethrow to handle it in the router
+    throw { error: error }; // Rethrow to handle it in the router
   } finally {
     await browser.close();
   }

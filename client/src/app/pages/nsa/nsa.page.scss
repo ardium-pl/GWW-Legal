@@ -56,6 +56,9 @@ textarea {
   min-height: 12em;
   max-height: 22rem;
 }
+.ruling-text {
+  padding-top: 12px;
+}
 .reset-button-container {
   position: relative;
 }
@@ -95,7 +98,13 @@ mat-card-actions {
 }
 .loading-icon {
   height: 24px;
-  color: var(--green);
+
+  &.is-loaded-true {
+    color: var(--green);
+  }
+  &.is-loaded-ERROR {
+    color: rgb(var(--danger-700));
+  }
 
   mat-spinner {
     width: 24px !important;
