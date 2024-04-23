@@ -20,57 +20,37 @@ const getRandomUserAgent = () => {
 };
 
 export async function getCourtRuling(signature) {
-  console.log("Connecting to browser...");
   const browser = await puppeteer.connect({
     browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
     headless: false,
-    //executablePath: '/usr/bin/google-chrome',
-    // args: [`--user-agent=${getRandomUserAgent()}`, "--no-sandbox", "--single-process"],
-    // defaultViewport: null,
   });
-  console.log("Browser connected");
 
   const page = await browser.newPage();
-  console.log("New page opened");
 
   try {
-    console.log("Navigating to the court ruling search page...");
     await page.goto("https://orzeczenia.nsa.gov.pl/cbo/query");
-    console.log("Court ruling search page loaded");
 
-    console.log(`Filling in signature: ${signature}`);
     await page.click("#sygnatura");
     await page.type("#sygnatura", signature);
-    console.log("Signature filled");
 
-    console.log("Submitting the search...");
     await page.click('input[type="submit"][name="submit"][value="Szukaj"]');
-    console.log("Search submitted");
 
-    console.log("Waiting for search results...");
     await page.waitForSelector("a");
     const links = await page.$$("a");
-    console.log(`Number of links found: ${links.length}`);
 
     if (links.length < 3) {
       throw { message: "No ruling found for the provided signature", code: "451" };
     }
 
-    console.log("Clicking on the third link...");
     await links[2].click();
-    console.log("Third link clicked");
-
-    console.log("Waiting for the ruling text...");
     await page.waitForSelector("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
 
     const extractedText = await page.evaluate(() => {
       const elements = document.querySelectorAll("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
       return Array.from(elements).map(element => element.innerHTML.trim());
     });
-    console.log("Ruling text extracted");
 
     if (extractedText.length > 0) {
-      console.log("Extracted text is valid");
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "453" };
@@ -80,8 +60,6 @@ export async function getCourtRuling(signature) {
     console.error("An error occurred in the scraper: " + error.message);
     throw { error: error, code: "500" }; // Rethrow to handle it in the router
   } finally {
-    console.log("Closing browser...");
     await browser.close();
-    console.log("Browser closed from finally block");
   }
 }
