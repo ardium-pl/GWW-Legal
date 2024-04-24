@@ -1,0 +1,3 @@
+SELECT *
+FROM user_messages
+WHERE content = "wiadomość"; -- TUTAJ ZMIENIĆ

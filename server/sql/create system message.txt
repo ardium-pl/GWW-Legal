@@ -1,0 +1,6 @@
+SET @message = '...'; -- TUTAJ ZMIENIĆ
+INSERT INTO system_messages (content)
+SELECT @message
+WHERE NOT EXISTS (
+    SELECT 1 FROM system_messages WHERE content = @message
+);
