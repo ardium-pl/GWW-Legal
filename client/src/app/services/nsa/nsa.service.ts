@@ -49,7 +49,7 @@ export class NsaService {
       });
   }
   public setManualCourtRuling(rulingText: string): void {
-    // this._rulingResponse.set([rulingText]);
+    this._rulingResponse.set([rulingText]);
   }
 
   //! gpt answers to user messages
