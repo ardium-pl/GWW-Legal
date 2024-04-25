@@ -46,17 +46,14 @@ export async function getCourtRuling(signature) {
     await links[2].click();
     await page.waitForSelector("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
 
+    await delay(3000); //Pptr needs more time for the content to load
+
     const extractedText = await page.evaluate(() => {
       const elements = document.querySelectorAll("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
       return Array.from(elements).map(element => element.innerHTML.trim());
     });
 
-    if (extractedText.length > 0) {
-      
-      //test
-      logRulingForTest(extractedText);
-      //test
-      
+    if (extractedText.length > 0) {      
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "NO_TEXT_ERR" };
@@ -73,9 +70,8 @@ export async function getCourtRuling(signature) {
   }
 }
 
-//test
-function logRulingForTest(testArray){
-  console.log("Test array")
-  console.log(testArray[1]);
+function delay(time) {
+  return new Promise(function(resolve) { 
+      setTimeout(resolve, time)
+  });
 }
-//test

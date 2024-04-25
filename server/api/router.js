@@ -10,13 +10,8 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
     if (!caseSignature) {
       return res.status(400).send({ error: "Case signature is required." });
     }
-
+    
     const result = await getCourtRuling(caseSignature);
-
-    //test only
-    console.log(result[1]);
-    //test only
-
     res.json(result);
   } catch (error) {
     const customErrorCodesRegExp = /^(NOT_FOUND_ERR|NO_TEXT_ERR)$/
