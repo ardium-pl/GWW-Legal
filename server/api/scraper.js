@@ -46,6 +46,8 @@ export async function getCourtRuling(signature) {
     await links[2].click();
     await page.waitForSelector("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
 
+    await page.waitForTimeout(3000);
+
     const extractedText = await page.evaluate(() => {
       const elements = document.querySelectorAll("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
       return Array.from(elements).map(element => element.innerHTML.trim());
