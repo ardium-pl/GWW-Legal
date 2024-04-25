@@ -10,9 +10,8 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
     if (!caseSignature) {
       return res.status(400).send({ error: "Case signature is required." });
     }
-
+    
     const result = await getCourtRuling(caseSignature);
-
     res.json(result);
   } catch (error) {
     const customErrorCodesRegExp = /^(NOT_FOUND_ERR|NO_TEXT_ERR)$/
@@ -35,7 +34,6 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
     }
 
     const response = await askGptAboutNSA(systemMessage, userMessage, courtRuling);
-    // const response = await new Promise(resolve => setTimeout(() => resolve(Math.random().toString()), Math.random() * 4000 + 3000))
     res.status(200).json(response);
   } catch (error) {
     console.error(error);
