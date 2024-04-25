@@ -53,12 +53,7 @@ export async function getCourtRuling(signature) {
       return Array.from(elements).map(element => element.innerHTML.trim());
     });
 
-    if (extractedText.length > 0) {
-      
-      //test
-      logRulingForTest(extractedText);
-      //test
-      
+    if (extractedText.length > 0) {      
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "NO_TEXT_ERR" };
@@ -80,10 +75,3 @@ function delay(time) {
       setTimeout(resolve, time)
   });
 }
-
-//test
-function logRulingForTest(testArray){
-  console.log("Test array")
-  console.log(testArray[1]);
-}
-//test
