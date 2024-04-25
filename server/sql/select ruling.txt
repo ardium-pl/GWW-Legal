@@ -1,0 +1,3 @@
+SELECT *
+FROM rulings
+WHERE signature = "III FSK 4005/21"; -- TUTAJ ZMIENIĆ
