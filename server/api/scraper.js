@@ -52,6 +52,11 @@ export async function getCourtRuling(signature) {
     });
 
     if (extractedText.length > 0) {
+      
+      //test
+      logRulingForTest(extractedText);
+      //test
+      
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "NO_TEXT_ERR" };
@@ -67,3 +72,10 @@ export async function getCourtRuling(signature) {
     await browser.close();
   }
 }
+
+//test
+function logRulingForTest(testArray){
+  console.log("Test array")
+  console.log(testArray[1]);
+}
+//test
