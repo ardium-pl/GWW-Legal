@@ -63,6 +63,9 @@ export class NsaService {
   public readonly areGptAnswersError = computed(() =>
     this._gptAnswersProgress().every((v) => v === 'ERROR'),
   );
+  public readonly isAtLeastOneGptAnswerReady = computed(() =>
+    this._gptAnswersProgress().some((v) => v !== false) || this._gptAnswersProgress().length === 0,
+  );
 
   private readonly _gptAnswersResponse = signal<string[] | null>(null);
   public readonly gptAnswersResponse = computed(() =>
@@ -78,9 +81,6 @@ export class NsaService {
   public async fetchGptAnswers(formOutput: NsaFormPart2) {
     this.resetAdditionalAnswer();
 
-    this._gptAnswersProgress.set([false, false, false]);
-    this._gptAnswersResponse.set([]);
-
     const courtRuling = this.getCleanCourtRuling();
 
     const streams = [
@@ -95,6 +95,9 @@ export class NsaService {
       }),
     );
 
+    this._gptAnswersProgress.set(new Array(streams.length).fill(false));
+    this._gptAnswersResponse.set(new Array(streams.length).fill(''));
+
     streams.forEach((stream, i) => {
       const sub = stream
         .pipe(
@@ -106,7 +109,10 @@ export class NsaService {
             });
             this._gptAnswersResponse.update((v) => {
               const newArr = v ? [...v] : [];
-              newArr[i] = typeof err.error === 'string' ? err.error : 'Error: ' + JSON.stringify(err.error);
+              newArr[i] =
+                typeof err.error === 'string'
+                  ? err.error
+                  : 'Error: ' + err.status + ' ' + err.statusText;
               return newArr;
             });
             sub.unsubscribe();

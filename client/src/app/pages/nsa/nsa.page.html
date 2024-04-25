@@ -115,7 +115,7 @@
       <mat-card-header>
         Postęp odpowiedzi od AI
       </mat-card-header>
-      <mat-card-content>
+      <mat-card-content class="divided-card">
         <div class="progress-container">
           @for (progress of nsaService.gptAnswersProgress(); track $index) {
           <div class="progress-indicator">
@@ -135,21 +135,32 @@
           }
           }
         </div>
+        <div class="checkbox-container">
+          <mat-checkbox (change)="onShowImmediatelyChange($event.checked)"
+            [disabled]="wasShowGptResultsImmediatelyChangedDuringPending()"
+            [checked]="showGptResultsImmediately()">Wyświetl od razu</mat-checkbox>
+        </div>
       </mat-card-content>
     </mat-card>
-    @if (nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) {
+    @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) || (showGptResultsImmediately() &&
+    nsaService.isAtLeastOneGptAnswerReady())) {
     @for (response of nsaService.gptAnswersResponse(); track response) {
     <mat-card>
       <mat-card-header>
         Odpowiedź na pytanie {{ $index + 1 }}
       </mat-card-header>
       <mat-card-content>
+        @if (nsaService.gptAnswersProgress()[$index]) {
         <markdown>
           {{ response }}
         </markdown>
+        } @else {
+        <mat-spinner />
+        }
       </mat-card-content>
     </mat-card>
     }
+    @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError() ) {
     <mat-card>
       <mat-card-header>
         Zadaj AI dodatkowe pytanie
@@ -189,6 +200,7 @@
         <button mat-button type="button" (click)="prevPage()">Wróć</button>
       </div>
     </div>
+    }
     }
   </form>
 </div>

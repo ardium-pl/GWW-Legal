@@ -2,6 +2,7 @@ import { Component, OnInit, effect, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -9,9 +10,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
-import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
+import {
+  MAT_TOOLTIP_DEFAULT_OPTIONS,
+  MatTooltipModule,
+} from '@angular/material/tooltip';
 import { IconComponent, RequiredStarComponent } from 'app/components';
 import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
@@ -37,11 +45,13 @@ const DEFAULT_USER_MESSAGES = [
     MatButtonModule,
     MatProgressSpinnerModule,
     RequiredStarComponent,
+    FormsModule,
     ReactiveFormsModule,
     MatRadioModule,
     IconComponent,
     MatTooltipModule,
     MarkdownModule,
+    MatCheckboxModule,
   ],
   providers: [
     NsaService,
@@ -80,6 +90,9 @@ export class NsaPage implements OnInit {
 
   ngOnInit(): void {
     this.nsaFormPart2.markAsDirty();
+    this.showGptResultsImmediately.set(
+      localStorage.getItem('showGptResultsImmediately') === 'true',
+    );
   }
 
   readonly additionalQuestions = [
@@ -154,6 +167,8 @@ export class NsaPage implements OnInit {
       } else {
         this.nsaFormPart1.controls.caseSignature.enable();
       }
+    });
+    effect(() => {
       // additional question
       if (this.nsaService.isAdditionalAnswerLoading()) {
         this.nsaFormPart3.controls.additionalQuestion.disable();
@@ -161,6 +176,58 @@ export class NsaPage implements OnInit {
         this.nsaFormPart3.controls.additionalQuestion.enable();
       }
     });
+    effect(() => {
+      // show immediately
+      localStorage.setItem(
+        'showGptResultsImmediately',
+        this.showGptResultsImmediately().toString(),
+      );
+    });
+    effect(
+      () => {
+        if (
+          this.wasShowGptResultsImmediatelyChangedDuringPending() &&
+          this.nsaService.areGptAnswersReady()
+        ) {
+          this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
+        }
+      },
+      { allowSignalWrites: true },
+    );
+    effect(
+      () => {
+        if (
+          this.showGptResultsImmediately() &&
+          this.nsaService.isAtLeastOneGptAnswerReady()
+        ) {
+          this.wasShowGptResultsImmediatelyChangedDuringPending.set(true);
+        }
+      },
+      { allowSignalWrites: true },
+    );
+    effect(() => {
+      console.table({
+        showGptResultsImmediately: this.showGptResultsImmediately(),
+        isAtLeastOneGptAnswerReady:
+          this.nsaService.isAtLeastOneGptAnswerReady(),
+      });
+    });
+  }
+
+  //! show immediately checkbox
+  readonly showGptResultsImmediately = signal<boolean>(false);
+  readonly wasShowGptResultsImmediatelyChangedDuringPending =
+    signal<boolean>(false);
+
+  onShowImmediatelyChange(value: boolean): void {
+    if (value || this.nsaService.isAtLeastOneGptAnswerReady()) {
+      this.showGptResultsImmediately.set(value);
+    }
+    if (value) {
+      this.wasShowGptResultsImmediatelyChangedDuringPending.set(
+        this.nsaService.isAtLeastOneGptAnswerReady(),
+      );
+    }
   }
 
   //! button tooltips
@@ -169,7 +236,7 @@ export class NsaPage implements OnInit {
     if (!this.nsaFormPart1.valid) return 'Najpierw podaj sygnaturę sprawy';
     if (!this.nsaFormPart1.dirty)
       return 'Zmień sygnaturę sprawy, aby wyszukać ponownie';
-      return '';
+    return '';
   }
   getAdditionalAnswerButtonTooltip(): string {
     if (!this.nsaFormPart3.valid) return 'Najpierw wybierz rodzaj pytania';
@@ -185,7 +252,10 @@ export class NsaPage implements OnInit {
     const page = this.currentPagerPage();
     switch (page) {
       case 0:
-        return this.nsaService.rulingRequestState() !== RequestState.Success && !this.nsaFormPart1.controls.rulingText.value;
+        return (
+          this.nsaService.rulingRequestState() !== RequestState.Success &&
+          !this.nsaFormPart1.controls.rulingText.value
+        );
       case 1:
         return !this.nsaFormPart2.valid;
       case 2:
@@ -197,7 +267,9 @@ export class NsaPage implements OnInit {
 
   part1NextPage(): void {
     if (this.nsaService.rulingRequestState() === 'error') {
-      this.nsaService.setManualCourtRuling(this.nsaFormPart1.controls.rulingText.value!);
+      this.nsaService.setManualCourtRuling(
+        this.nsaFormPart1.controls.rulingText.value!,
+      );
     }
     this.nextPage();
   }

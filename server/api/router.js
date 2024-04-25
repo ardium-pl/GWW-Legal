@@ -13,10 +13,6 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
 
     const result = await getCourtRuling(caseSignature);
 
-    //test only
-    console.log(result[1]);
-    //test only
-
     res.json(result);
   } catch (error) {
     const customErrorCodesRegExp = /^(NOT_FOUND_ERR|NO_TEXT_ERR)$/

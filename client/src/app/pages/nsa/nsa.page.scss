@@ -111,3 +111,14 @@ mat-card-actions {
     height: 24px !important;
   }
 }
+.divided-card {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.checkbox-container {
+  align-self: flex-end;
+}
+mat-checkbox {
+  user-select: none;
+}
