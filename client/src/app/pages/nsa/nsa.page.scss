@@ -8,6 +8,22 @@ $gap: 12px;
   max-width: 90vw;
   display: flex;
 }
+.image-header-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  img {
+    height: calc($logoHeight / 4);
+    width: calc($logoWidth / 4);
+  }
+
+  .image-header {
+    font-size: 1.77rem;
+    margin-left: auto;
+  }
+}
 .pager-container {
   margin: 0 auto;
   height: calc(100vh - 2 * #{$bodyPaddingVertical});
@@ -69,7 +85,6 @@ textarea {
   pointer-events: none;
   opacity: 0;
   appearance: none;
-  // transition: opacity 0.025s ease;
 
   &.active {
     pointer-events: all;
