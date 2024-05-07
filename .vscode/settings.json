@@ -22,6 +22,14 @@
       "splitTerminals": [
         {
           "name": "server",
+          "commands": ["cd server"]
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "nodemon",
           "commands": ["npm run server"]
         }
       ]
