@@ -43,7 +43,7 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
     }
 
     if (/localhost/.test(req.get('origin'))) {
-      const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim());
+      const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim(), courtRuling);
       if (mockResponse) {
         res.json(mockResponse);
         return;
