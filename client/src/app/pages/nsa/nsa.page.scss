@@ -8,7 +8,18 @@ $gap: 12px;
   max-width: 90vw;
   display: flex;
 }
+.header-stripe {
+  background-color: #3F51B5; 
+  height: 8px;
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  margin-bottom: 0;
+}
+.header-container{
+  padding: 0%;
+}
 .image-header-container {
+  margin-left: 10px;
   width: 100%;
   display: flex;
   align-items: center;
@@ -21,7 +32,7 @@ $gap: 12px;
 
   .image-header {
     font-size: 1.77rem;
-    margin-left: auto;
+    margin-left: 30px;
   }
 }
 .pager-container {
@@ -35,7 +46,6 @@ $gap: 12px;
 form {
   flex-direction: column;
   align-items: flex-start;
-  gap: $gap;
   position: relative;
   padding: 0 4px;
   left: calc(-100% * var(--_pager-page));
@@ -49,6 +59,7 @@ form {
 mat-card {
   padding: 0 16px;
   width: 100%;
+  margin-bottom: 12px;
 }
 mat-card-header {
   font-size: 18px;

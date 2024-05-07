@@ -1,9 +1,12 @@
 <div class="pager-container" [style]="'--_pager-page:' + currentPagerPage()">
   <form [formGroup]="nsaFormPart1" (ngSubmit)="getCourtRuling()">
-    <div class="image-header-container">
-      <img src="https://i.postimg.cc/7LRnpsRm/gww-removebg-preview.png" alt="Logo">
-      <span class="image-header">Aplikacja do testowania orzeczeń sądowych</span>
-    </div>
+    <div class="header-stripe"></div>
+    <mat-card class="first-mat-card">
+      <div class="image-header-container">
+        <img src="assets\images\GWW-logo.png">
+        <span class="image-header">Aplikacja do orzeczeń sądowych</span>
+      </div>
+    </mat-card>
     <mat-card>
       <mat-card-header>
         Sygnatura sprawy NSA
