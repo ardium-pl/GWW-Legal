@@ -2,6 +2,7 @@ import express from "express";
 export const nsaRouter = express.Router();
 import { askGptAboutNSA } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
+import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
 
 
 nsaRouter.post("/api/nsa/query", async (req, res) => {
@@ -10,7 +11,15 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
     if (!caseSignature) {
       return res.status(400).send({ error: "Case signature is required." });
     }
-    
+
+    if (/localhost/.test(req.get('origin'))) {
+      const mockRuling = tryReturningMockRuling(caseSignature);
+      if (mockRuling) {
+        res.json(mockRuling);
+        return;
+      }
+    }
+
     const result = await getCourtRuling(caseSignature);
     res.json(result);
   } catch (error) {
@@ -31,6 +40,14 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
     const { courtRuling, systemMessage, userMessage } = req.body;
     if (!courtRuling) {
       return res.status(400).send({ error: "Court ruling is required." });
+    }
+
+    if (/localhost/.test(req.get('origin'))) {
+      const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim());
+      if (mockResponse) {
+        res.json(mockResponse);
+        return;
+      }
     }
 
     const response = await askGptAboutNSA(systemMessage, userMessage, courtRuling);
