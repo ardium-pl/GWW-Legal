@@ -3,7 +3,10 @@
     {
       "splitTerminals": [
         {
-          "name": "ng"
+          "name": "ng",
+          "commands": [
+            "cd client"
+          ]
         }
       ]
     },
@@ -12,6 +15,14 @@
         {
           "name": "ng serve",
           "commands": ["cd client", "ng serve"]
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "server",
+          "commands": ["npm run server"]
         }
       ]
     }
