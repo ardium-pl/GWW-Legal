@@ -205,13 +205,6 @@ export class NsaPage implements OnInit {
       },
       { allowSignalWrites: true },
     );
-    effect(() => {
-      console.table({
-        showGptResultsImmediately: this.showGptResultsImmediately(),
-        isAtLeastOneGptAnswerReady:
-          this.nsaService.isAtLeastOneGptAnswerReady(),
-      });
-    });
   }
 
   //! show immediately checkbox

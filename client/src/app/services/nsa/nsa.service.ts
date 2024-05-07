@@ -3,6 +3,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
 import { RequestState } from '../types';
 import { catchError } from 'rxjs';
+import { apiUrl } from '../apiUrl';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +31,7 @@ export class NsaService {
   public fetchCourtRuling(caseSignature: string): void {
     this._rulingRequestState.set(RequestState.Pending);
     const sub = this.http
-      .post('/api/nsa/query', { caseSignature })
+      .post(apiUrl('/nsa/query'), { caseSignature })
       .pipe(
         catchError((err, caught) => {
           this._rulingRequestState.set(RequestState.Error);
@@ -88,7 +89,7 @@ export class NsaService {
       formOutput.userMessage2,
       formOutput.userMessage3,
     ].map((userMessage) =>
-      this.http.post('/api/nsa/question', {
+      this.http.post(apiUrl('/nsa/question'), {
         courtRuling,
         systemMessage: formOutput.systemMessage,
         userMessage,
@@ -156,7 +157,7 @@ export class NsaService {
   ): void {
     this._isAdditionalAnswerLoading.set(true);
     this.http
-      .post('/api/nsa/question', {
+      .post(apiUrl('/nsa/question'), {
         courtRuling: this.getCleanCourtRuling(),
         systemMessage,
         userMessage,

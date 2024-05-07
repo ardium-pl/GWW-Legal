@@ -10,7 +10,8 @@
     "server": "cd server && nodemon",
     "both": "concurrently --kill-others \"npm run watch\" \"npm run server\"",
     "front": "cd client && ng serve",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install"
   },
   "license": "MIT",
   "devDependencies": {
