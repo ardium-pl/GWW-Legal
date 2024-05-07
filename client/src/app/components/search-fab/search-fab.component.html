@@ -1,0 +1,25 @@
+<div class="search-fab-container">
+  <div class="search-fab-panel" [class.active]="active()">
+    <div class="search-fab-panel-inner">
+      <div class="input-container">
+        <input type="text" [ngModel]="searchValue()" (ngModelChange)="searchValue.set($event)">
+        <app-icon icon="search" />
+      </div>
+        <div class="search-results">5 z 15</div>
+        <div class="buttons-container">
+          <button class="search-icon-btn">
+            <app-icon icon="north" />
+          </button>
+          <button class="search-icon-btn">
+            <app-icon icon="south" />
+          </button>
+          <button class="search-icon-btn" (click)="active.set(false)">
+            <app-icon icon="close" />
+          </button>
+      </div>
+    </div>
+  </div>
+  <button class="search-fab" mat-fab [color]="undefined" aria-label="Wyszukaj w orzeczeniu" (click)="active.set(true)">
+    <app-icon icon="search" />
+  </button>
+</div>

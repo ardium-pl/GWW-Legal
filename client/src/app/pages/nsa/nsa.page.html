@@ -1,7 +1,5 @@
 <div class="fab-container">
-  <button class="search-fab right-fab" mat-fab [color]="undefined" aria-label="Wyszukaj w orzeczeniu">
-    <app-icon icon="search"></app-icon>
-  </button>
+  <app-search-fab />
 </div>
 <div class="pager-container" [style]="'--_pager-page:' + currentPagerPage()">
   <form [formGroup]="nsaFormPart1" (ngSubmit)="getCourtRuling()">
@@ -16,7 +14,10 @@
           <mat-error>To pole jest wymagane</mat-error>
         </mat-form-field>
         @if (nsaService.rulingRequestState() === 'error') {
-        <strong>Wystąpił błąd!</strong>
+        <span>
+          <strong>Wystąpił błąd!</strong>
+          Spróbuj wpisać treść orzeczenia poniżej:
+        </span>
         <div>
           @for (paragraph of nsaService.rulingError(); track $index) {
           <div [innerHTML]="paragraph"></div>

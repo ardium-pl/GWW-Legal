@@ -25,6 +25,7 @@ import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
+import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -52,6 +53,7 @@ const DEFAULT_USER_MESSAGES = [
     MatTooltipModule,
     MarkdownModule,
     MatCheckboxModule,
+    SearchFabComponent,
   ],
   providers: [
     NsaService,
