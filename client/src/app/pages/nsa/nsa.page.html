@@ -1,3 +1,8 @@
+<div class="fab-container">
+  <button class="search-fab right-fab" mat-fab [color]="undefined" aria-label="Wyszukaj w orzeczeniu">
+    <app-icon icon="search"></app-icon>
+  </button>
+</div>
 <div class="pager-container" [style]="'--_pager-page:' + currentPagerPage()">
   <form [formGroup]="nsaFormPart1" (ngSubmit)="getCourtRuling()">
     <mat-card>
