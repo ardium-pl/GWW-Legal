@@ -8,6 +8,39 @@ $gap: 12px;
   max-width: 90vw;
   display: flex;
 }
+.indigo-stripe {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 8px;
+  width: 100%;
+  margin-bottom: 0;
+  background-color: var(--indigo600);
+  border-radius: 4px 4px 0 0;
+}
+.gray-stripe {
+  background-color: #E0E0E0; 
+  width: 100%;
+  height: 1px;
+}
+.image-container {
+  margin-left: 7px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  .logo {
+    height: calc($logoHeight / 4);
+    width: calc($logoWidth / 4);
+    margin-top: 8px;
+  }
+}
+.image-text {
+  font-size: 13px;
+  margin-left: 5px;
+  padding: $gap;
+}
 .pager-container {
   margin: 0 auto;
   height: calc(100vh - 2 * #{$bodyPaddingVertical});
@@ -19,7 +52,6 @@ $gap: 12px;
 form {
   flex-direction: column;
   align-items: flex-start;
-  gap: $gap;
   position: relative;
   padding: 0 4px;
   left: calc(-100% * var(--_pager-page));
@@ -33,6 +65,7 @@ form {
 mat-card {
   padding: 0 16px;
   width: 100%;
+  margin-bottom: $gap;
 }
 mat-card-header {
   font-size: 18px;
@@ -69,7 +102,6 @@ textarea {
   pointer-events: none;
   opacity: 0;
   appearance: none;
-  // transition: opacity 0.025s ease;
 
   &.active {
     pointer-events: all;
