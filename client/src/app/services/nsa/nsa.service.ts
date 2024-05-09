@@ -22,7 +22,7 @@ export class NsaService {
     () => this._rulingRequestState() === RequestState.Pending,
   );
 
-  private readonly _rulingResponse = signal<string[] | null>(null);
+  private readonly _rulingResponse = signal<string | null>(null);
   public readonly rulingResponse = computed(() => this._rulingResponse());
 
   private readonly _rulingError = signal<string[] | null>(null);
@@ -45,12 +45,12 @@ export class NsaService {
         }),
       )
       .subscribe((res) => {
-        this._rulingResponse.set(res as string[]);
+        this._rulingResponse.set((res as string[]).join('\n'));
         this._rulingRequestState.set(RequestState.Success);
       });
   }
   public setManualCourtRuling(rulingText: string): void {
-    this._rulingResponse.set([rulingText]); 
+    this._rulingResponse.set(rulingText);
   }
 
   //! gpt answers to user messages
@@ -64,8 +64,10 @@ export class NsaService {
   public readonly areGptAnswersError = computed(() =>
     this._gptAnswersProgress().every((v) => v === 'ERROR'),
   );
-  public readonly isAtLeastOneGptAnswerReady = computed(() =>
-    this._gptAnswersProgress().some((v) => v !== false) || this._gptAnswersProgress().length === 0,
+  public readonly isAtLeastOneGptAnswerReady = computed(
+    () =>
+      this._gptAnswersProgress().some((v) => v !== false) ||
+      this._gptAnswersProgress().length === 0,
   );
 
   private readonly _gptAnswersResponse = signal<string[] | null>(null);
@@ -74,9 +76,7 @@ export class NsaService {
   );
 
   private getCleanCourtRuling(): string | undefined {
-    return this.rulingResponse()
-      ?.map((v) => v.replace(/<\/?p>/g, ''))
-      .join('\n');
+    return this.rulingResponse()?.replace(/<\/?p>/g, '');
   }
 
   public async fetchGptAnswers(formOutput: NsaFormPart2) {

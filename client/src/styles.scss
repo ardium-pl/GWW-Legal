@@ -176,3 +176,12 @@ markdown {
     margin-bottom: 3px;
   }
 }
+
+mark {
+  background-color: #fdd835;
+
+  &.current {
+    background-color: #f57c00;
+    color: white;
+  }
+}

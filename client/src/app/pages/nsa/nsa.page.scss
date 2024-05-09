@@ -1,8 +1,9 @@
-@import '../../../variables';
+@import "../../../variables";
 
 $gap: 12px;
 
-.pager-container, form {
+.pager-container,
+form {
   min-width: min(720px, 90vw);
   width: 720px;
   max-width: 90vw;
