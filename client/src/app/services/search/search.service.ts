@@ -1,10 +1,13 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { SearchResult } from './search-result';
+import { KeyboardShortcut, KeyboardShortcutService } from '@ardium-ui/devkit';
+import { Observable, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SearchService {
+export class SearchService implements OnDestroy {
+  readonly searchActive = signal<boolean>(false);
   readonly searchPhrase = signal<string>('');
   readonly searchText = signal<string>('');
 
@@ -17,8 +20,7 @@ export class SearchService {
   );
 
   /** 1-indexed number of the currently highlighted phrase. */
-  private readonly _current = signal<number | null>(null);
-  public readonly current = computed(() => this._current());
+  readonly current = signal<number | null>(null);
   public readonly total = computed(() => {
     if (!this.searchPhrase()) return null;
     const newTotal = this.searchText().split(this.searchPhrase()).length - 1;
@@ -26,14 +28,14 @@ export class SearchService {
   });
 
   next() {
-    this._current.update((v) => {
+    this.current.update((v) => {
       const total = this.total();
       if (!total || !v || v === total) return 1;
       return v + 1;
     });
   }
   prev() {
-    this._current.update((v) => {
+    this.current.update((v) => {
       const total = this.total();
       if (!total || !v) return 1;
       if (v === 1) return total;
@@ -60,5 +62,32 @@ export class SearchService {
       }, []);
 
     return retArr.join('');
+  }
+
+  //! CTRL+F functionality
+  private readonly keyboardShortcutService = inject(KeyboardShortcutService);
+
+  private readonly _ctrlFSubscription = signal<Subscription | null>(null);
+  private readonly _ctrlFObservable =
+    signal<Observable<KeyboardShortcut> | null>(null);
+  public readonly ctrlFObservable = computed(() => this._ctrlFObservable());
+
+  constructor() {
+    const obs = this.keyboardShortcutService.listenToShortcut(['Ctrl', 'F']);
+    const sub = obs.subscribe((v) => {
+      v.event.preventDefault();
+      const selection = window.getSelection();
+      const text = selection?.toString();
+      if (!text) return;
+
+      this.searchPhrase.set(text);
+      this.searchActive.set(true);
+    });
+    this._ctrlFSubscription.set(sub);
+    this._ctrlFObservable.set(obs);
+  }
+
+  ngOnDestroy(): void {
+    this._ctrlFSubscription()?.unsubscribe();
   }
 }

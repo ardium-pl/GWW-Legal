@@ -4,8 +4,8 @@
       <label for="search-bar">Wyszukaj w orzeczeniu</label>
       <div class="input-container">
         <div [matTooltip]="inputTooltip()">
-          <input type="text" id="search-bar" [disabled]="isInputDisabled()" [tabIndex]="isInputDisabled() ? -1 : 0"
-            (input)="setSearch($event.target)" />
+          <input type="text" id="search-bar" [disabled]="isInputDisabled()" [ngModel]="searchPhrase()" [tabIndex]="isInputDisabled() ? -1 : 0"
+            (input)="setSearch($event.target)" autocomplete="off" />
           <app-icon icon="search" />
         </div>
       </div>

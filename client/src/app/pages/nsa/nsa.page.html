@@ -1,12 +1,14 @@
 <div class="fab-container">
   <app-search-fab
+    [(active)]="searchService.searchActive"
     [current]="searchService.current()"
     [total]="searchService.total()"
     [isNoRuling]="!nsaService.rulingResponse()"
     [isRulingManual]="!!nsaService.rulingError()"
+    [searchPhrase]="searchService.searchPhrase()"
+    (searchPhraseChange)="onSearchChange($event)"
     (clickNext)="searchService.next()"
     (clickPrev)="searchService.prev()"
-    (searchChange)="onSearchChange($event)"
   />
 </div>
 <div class="pager-container" [style]="'--_pager-page:' + currentPagerPage()">

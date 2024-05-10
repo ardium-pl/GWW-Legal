@@ -1,6 +1,7 @@
 import {
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   effect,
   inject,
@@ -32,6 +33,7 @@ import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
+import { isNull } from 'simple-bool';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -70,7 +72,7 @@ const DEFAULT_USER_MESSAGES = [
   templateUrl: './nsa.page.html',
   styleUrl: './nsa.page.scss',
 })
-export class NsaPage implements OnInit {
+export class NsaPage implements OnInit, OnDestroy {
   readonly nsaService = inject(NsaService);
   readonly searchService = inject(SearchService);
 
@@ -237,6 +239,19 @@ export class NsaPage implements OnInit {
         this._scrollToCurrentMark();
       }, 0);
     });
+    //subscribe to ctrl+f
+    effect((onCleanup) => {
+      const sub = this.searchService.ctrlFObservable()?.subscribe(() => {
+        this.currentPagerPage.set(0);
+        this._scrollToCurrentMark();
+        if (isNull(this.searchService.current())) {
+          this.searchService.current.set(1);
+        }
+      });
+      onCleanup(() => {
+        sub?.unsubscribe();
+      });
+    });
   }
 
   private _scrollToCurrentMark(): void {
@@ -250,15 +265,18 @@ export class NsaPage implements OnInit {
 
   onSearchChange(phrase: string): void {
     this.searchService.searchPhrase.set(phrase);
+    this.searchService.current.set(1);
 
     setTimeout(() => {
       if (this.searchService.total() && this.currentPagerPage() !== 0) {
-        this.searchService.next();
+        this.searchService.current.set(1);
         this.currentPagerPage.set(0);
         this._scrollToCurrentMark();
       }
     }, 0);
   }
+
+  ngOnDestroy(): void {}
 
   //! show immediately checkbox
   readonly showGptResultsImmediately = signal<boolean>(false);
