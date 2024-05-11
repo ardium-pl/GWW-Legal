@@ -3,6 +3,8 @@ export const nsaRouter = express.Router();
 import { askGptAboutNSA } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
+import { getCourtRoulingFromDB } from "../sql/courtRulingQuerry.js";
+import { getGptAnswFromDB, getCaseSignatureFromDbByText } from "../sql/gptAnswQuerry.js";
 
 
 nsaRouter.post("/api/nsa/query", async (req, res) => {
@@ -19,9 +21,10 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
         return;
       }
     }
-
-    const result = await getCourtRuling(caseSignature);
+    const dbCourtRuling = await getCourtRoulingFromDB(caseSignature);
+    const result = dbCourtRuling || await getCourtRuling(caseSignature);
     res.json(result);
+
   } catch (error) {
     const customErrorCodesRegExp = /^(NOT_FOUND_ERR|NO_TEXT_ERR)$/
 
@@ -49,8 +52,11 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
         return;
       }
     }
-
-    const response = await askGptAboutNSA(systemMessage, userMessage, courtRuling);
+    const caseSignature = await getCaseSignatureFromDbByText(courtRuling);
+    const response = caseSignature 
+      ? await getGptAnswFromDB(caseSignature, userMessage, systemMessage) || await askGptAboutNSA(systemMessage, userMessage, courtRuling)
+      : await askGptAboutNSA(systemMessage, userMessage, courtRuling);
+    
     res.status(200).json(response);
   } catch (error) {
     console.error(error);

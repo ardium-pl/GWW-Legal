@@ -1,9 +1,0 @@
-SELECT
-	q.id AS id,
-	q.answer AS answer,
-    um.content AS user_message,
-    sm.content AS system_message
-FROM gpt_queries q
-JOIN user_messages um ON q.user_message_id = um.id
-JOIN system_messages sm ON q.system_message_id = sm.id
-WHERE q.ruling_id = 1; -- TUTAJ ZMIENIĆ

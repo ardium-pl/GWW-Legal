@@ -1,6 +1,6 @@
-import { BadRequestError } from "openai/index.mjs";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { setCourtRuling } from "../sql/courtRulingQuerry.js";
 puppeteer.use(StealthPlugin());
 
 const userAgents = [
@@ -53,7 +53,10 @@ export async function getCourtRuling(signature) {
       return Array.from(elements).map(element => element.innerHTML.trim());
     });
 
-    if (extractedText.length > 0) {      
+    if (extractedText.length > 0) {    
+      //Sending the court ruling to our DB
+      setCourtRuling(signature,extractedText);  
+
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "NO_TEXT_ERR" };
