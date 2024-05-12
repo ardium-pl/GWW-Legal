@@ -2,5 +2,5 @@ import { Environment } from "./types";
 
 export const environment: Environment = {
   production: true,
-  apiUrl: 'gww.ardium.pl/api/',
+  apiUrl: 'https://gww.ardium.pl/api/',
 };
