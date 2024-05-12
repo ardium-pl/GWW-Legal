@@ -1,0 +1,9 @@
+SELECT
+	q.answer AS answer
+FROM gpt_queries q
+JOIN rulings r ON q.ruling_id = r.id
+JOIN user_messages um ON q.user_message_id = um.id
+JOIN system_messages sm ON q.system_message_id = sm.id
+WHERE r.signature = 'III FSK 4005/21'      -- TUTAJ ZMIENIĆ
+AND um.content = 'Example user message'    -- TUTAJ ZMIENIĆ
+AND sm.content = 'Example system message'; -- TUTAJ ZMIENIĆ
