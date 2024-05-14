@@ -77,7 +77,7 @@ export class SearchService implements OnDestroy {
     const sub = obs.subscribe((v) => {
       v.event.preventDefault();
       const selection = window.getSelection();
-      const text = selection?.toString();
+      const text = selection?.toString().trim();
       if (!text) return;
 
       this.searchPhrase.set(text);
