@@ -2,151 +2,164 @@
 
 $gap: 12px;
 
-.page-container {
-  flex-direction: column;
-  justify-content: stretch;
-  max-height: 100%;
-  width: max-content;
-  align-items: center;
-  margin: 0 auto;
+app-nsa {
+  .page-container {
+    flex-direction: column;
+    justify-content: stretch;
+    max-height: 100%;
+    width: max-content;
+    align-items: center;
+    margin: 0 auto;
 
-  >div {
-    flex-grow: 1;
-  }
-}
-.page-container,
-.pager-container,
-form {
-  min-width: min(720px, 90vw);
-  width: 720px;
-  max-width: 90vw;
-  display: flex;
-}
-.pager-container {
-  height: calc(100vh - 2 * #{$bodyPaddingVertical});
-  height: calc(100dvh - 2 * #{$bodyPaddingVertical});
-  max-height: calc(100vh - 2 * #{$bodyPaddingVertical});
-  max-height: calc(100dvh - 2 * #{$bodyPaddingVertical});
-  overflow: hidden;
-}
-form {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: $gap;
-  position: relative;
-  padding: 0 4px 4px 4px;
-  left: calc(-100% * var(--_pager-page));
-  transition: left 0.35s ease;
-  overflow: auto;
-}
-.buttons-container {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 12px 4px 0 4px;
-
-  button {
-    transition: opacity 0.2s ease, transform 0.2s ease;
-
-    &.invisible {
-      opacity: 0;
-      transform: scale(0);
+    >div {
+      flex-grow: 1;
     }
   }
-}
-mat-card {
-  padding: 0 16px;
-  width: 100%;
-}
-mat-card-header {
-  font-size: 18px;
-  font-weight: 500;
-}
-mat-card-content {
-  padding-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-mat-form-field {
-  width: 288px;
-  max-width: 100%;
-
-  &.full-size {
+  .page-container,
+  .pager-container,
+  form {
+    min-width: min(720px, 90vw);
+    width: 720px;
+    max-width: 90vw;
+    display: flex;
+  }
+  .pager-container {
+    height: calc(100vh - 2 * #{$bodyPaddingVertical});
+    height: calc(100dvh - 2 * #{$bodyPaddingVertical});
+    max-height: calc(100vh - 2 * #{$bodyPaddingVertical});
+    max-height: calc(100dvh - 2 * #{$bodyPaddingVertical});
+    overflow: hidden;
+  }
+  form {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $gap;
+    position: relative;
+    padding: 0 4px 4px 4px;
+    left: calc(-100% * var(--_pager-page));
+    transition: left 0.35s ease;
+    overflow: auto;
+  }
+  .buttons-container {
     width: 100%;
-  }
-}
-textarea {
-  min-height: 12em;
-  max-height: 22rem;
-}
-.ruling-text {
-  padding-top: 12px;
-}
-.reset-button-container {
-  position: relative;
-}
-.reset-button {
-  position: absolute;
-  right: 0;
-  bottom: $gap - 4px;
-  pointer-events: none;
-  opacity: 0;
-  appearance: none;
-  // transition: opacity 0.025s ease;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 4px 0 4px;
 
-  &.active {
-    pointer-events: all;
-    opacity: 1;
-    appearance: auto;
-  }
-}
-mat-card-actions {
-  display: flex;
-  gap: 24px;
-}
-.progress-container {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.progress-indicator {
-  display: flex;
-  align-items: center;
-  gap: 1ch;
-}
-.loading-icon {
-  height: 24px;
+    button {
+      transition: opacity 0.2s ease, transform 0.2s ease;
 
-  &.is-loaded-true {
-    color: var(--green);
+      &.invisible {
+        opacity: 0;
+        transform: scale(0);
+      }
+    }
   }
-  &.is-loaded-ERROR {
-    color: rgb(var(--danger-700));
+  mat-card {
+    padding: 0 16px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
+  mat-card-header {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  mat-card-content {
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  mat-form-field {
+    width: 288px;
+    max-width: 100%;
 
-  mat-spinner {
-    width: 24px !important;
-    height: 24px !important;
+    &.full-size {
+      width: 100%;
+    }
   }
-}
-.divided-card {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-}
-.checkbox-container {
-  align-self: flex-end;
-}
-mat-checkbox {
-  user-select: none;
-}
-.fab-container {
-  position: absolute;
-  right: 0;
-  top: 0;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  textarea {
+    min-height: 12em;
+    max-height: 22rem;
+  }
+  .ruling-text {
+    padding-top: 12px;
+  }
+  .reset-button-container {
+    position: relative;
+  }
+  .reset-button {
+    position: absolute;
+    right: 0;
+    bottom: $gap - 4px;
+    pointer-events: none;
+    opacity: 0;
+    appearance: none;
+    // transition: opacity 0.025s ease;
+
+    &.active {
+      pointer-events: all;
+      opacity: 1;
+      appearance: auto;
+    }
+  }
+  mat-card-actions {
+    display: flex;
+    gap: 24px;
+  }
+  .progress-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .progress-indicator {
+    display: flex;
+    align-items: center;
+    gap: 1ch;
+  }
+  .loading-icon {
+    height: 24px;
+
+    &.is-loaded-true {
+      color: var(--green);
+    }
+    &.is-loaded-ERROR {
+      color: rgb(var(--danger-700));
+    }
+
+    mat-spinner {
+      width: 24px !important;
+      height: 24px !important;
+    }
+  }
+  .divided-card {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+  .checkbox-container {
+    align-self: flex-end;
+    position: relative;
+    left: 12px;
+    top: 10px;
+
+    .mdc-checkbox {
+      position: relative;
+      left: 4px;
+    }
+  }
+  mat-checkbox {
+    user-select: none;
+  }
+  .fab-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 }

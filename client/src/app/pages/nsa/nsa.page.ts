@@ -3,6 +3,7 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
+  ViewEncapsulation,
   computed,
   effect,
   inject,
@@ -72,6 +73,7 @@ const DEFAULT_USER_MESSAGES = [
   ],
   templateUrl: './nsa.page.html',
   styleUrl: './nsa.page.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class NsaPage implements OnInit, OnDestroy {
   readonly nsaService = inject(NsaService);
