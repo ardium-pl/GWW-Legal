@@ -2,6 +2,19 @@
 
 $gap: 12px;
 
+.page-container {
+  flex-direction: column;
+  justify-content: stretch;
+  max-height: 100%;
+  width: max-content;
+  align-items: center;
+  margin: 0 auto;
+
+  >div {
+    flex-grow: 1;
+  }
+}
+.page-container,
 .pager-container,
 form {
   min-width: min(720px, 90vw);
@@ -10,7 +23,6 @@ form {
   display: flex;
 }
 .pager-container {
-  margin: 0 auto;
   height: calc(100vh - 2 * #{$bodyPaddingVertical});
   height: calc(100dvh - 2 * #{$bodyPaddingVertical});
   max-height: calc(100vh - 2 * #{$bodyPaddingVertical});
@@ -22,13 +34,24 @@ form {
   align-items: flex-start;
   gap: $gap;
   position: relative;
-  padding: 0 4px;
+  padding: 0 4px 4px 4px;
   left: calc(-100% * var(--_pager-page));
   transition: left 0.35s ease;
   overflow: auto;
+}
+.buttons-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 4px 0 4px;
 
-  &:not(:last-child) {
-    padding-bottom: $gap * 3;
+  button {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+
+    &.invisible {
+      opacity: 0;
+      transform: scale(0);
+    }
   }
 }
 mat-card {
@@ -81,11 +104,6 @@ textarea {
 mat-card-actions {
   display: flex;
   gap: 24px;
-}
-.buttons-container {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
 }
 .progress-container {
   display: flex;

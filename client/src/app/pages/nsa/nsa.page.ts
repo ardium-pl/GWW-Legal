@@ -3,6 +3,7 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
+  computed,
   effect,
   inject,
   signal,
@@ -154,7 +155,6 @@ export class NsaPage implements OnInit, OnDestroy {
       this.nsaFormPart3.reset();
     }
     this.nsaFormPart2.markAsPristine();
-    this.nextPage();
   }
 
   fetchAdditionalAnswer(): void {
@@ -312,6 +312,9 @@ export class NsaPage implements OnInit, OnDestroy {
   //! pager
   readonly currentPagerPage = signal<number>(0);
 
+  readonly visiblePrevPage = computed(() => this.currentPagerPage() > 0);
+  readonly visibleNextPage = computed(() => this.currentPagerPage() !== 2);
+
   disabledNextPage() {
     const page = this.currentPagerPage();
     switch (page) {
@@ -329,17 +332,18 @@ export class NsaPage implements OnInit, OnDestroy {
     return false;
   }
 
-  part1NextPage(): void {
-    if (this.nsaService.rulingRequestState() === 'error') {
-      this.nsaService.setManualCourtRuling(
-        this.nsaFormPart1.controls.rulingText.value!,
-      );
-    }
-    this.nextPage();
-  }
-
   nextPage(): void {
     this.currentPagerPage.update((v) => v + 1);
+
+    if (this.currentPagerPage() === 0) {
+      if (this.nsaService.rulingRequestState() === 'error') {
+        this.nsaService.setManualCourtRuling(
+          this.nsaFormPart1.controls.rulingText.value!,
+        );
+      }
+    } else if (this.currentPagerPage() === 1) {
+      this.fetchGptAnswers();
+    }
   }
   prevPage(): void {
     this.currentPagerPage.update((v) => v - 1);
