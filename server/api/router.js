@@ -3,8 +3,9 @@ export const nsaRouter = express.Router();
 import { askGptAboutNSA } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
-import { getCourtRoulingFromDB } from "../sql/courtRulingQuerry.js";
-import { getGptAnswFromDB, getCaseSignatureFromDbByText } from "../sql/gptAnswQuerry.js";
+import { getOrSetCourtRuling } from "../sql/courtRulingQuerry.js";
+import { getOrSetGptResponse } from "../sql/gptAnswQuerry.js";
+import { getOrSetSystemMessage, getOrSetUserMessage } from "../sql/messagesQuerry.js";
 
 
 nsaRouter.post("/api/nsa/query", async (req, res) => {
@@ -21,7 +22,7 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
         return;
       }
     }
-    const dbCourtRuling = await getCourtRoulingFromDB(caseSignature);
+    const dbCourtRuling = await getOrSetCourtRuling(caseSignature);
     const result = dbCourtRuling || await getCourtRuling(caseSignature);
     res.json(result);
 
@@ -52,11 +53,16 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
         return;
       }
     }
-    const caseSignature = await getCaseSignatureFromDbByText(courtRuling);
-    const response = caseSignature 
-      ? await getGptAnswFromDB(caseSignature, userMessage, systemMessage) || await askGptAboutNSA(systemMessage, userMessage, courtRuling)
-      : await askGptAboutNSA(systemMessage, userMessage, courtRuling);
-    
+
+    //For simplicity get caseSig first 
+    const caseSignature = await getOrSetCourtRuling(null, courtRuling);
+    //Get or set all the IDs from DB
+    const courtRulingID = await getOrSetCourtRuling(caseSignature, courtRuling)
+    const systemMessageID = await getOrSetSystemMessage(systemMessage);
+    const userMessageID = await getOrSetUserMessage(userMessage);
+
+    const response = await getOrSetGptResponse(courtRulingID, systemMessageID, userMessageID) || await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature);
+
     res.status(200).json(response);
   } catch (error) {
     console.error(error);

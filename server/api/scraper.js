@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { setCourtRuling } from "../sql/courtRulingQuerry.js";
+import { getOrSetCourtRuling } from "../sql/courtRulingQuerry.js"
 puppeteer.use(StealthPlugin());
 
 const userAgents = [
@@ -55,7 +55,7 @@ export async function getCourtRuling(signature) {
 
     if (extractedText.length > 0) {    
       //Sending the court ruling to our DB
-      setCourtRuling(signature,extractedText);  
+      getOrSetCourtRuling(signature,extractedText);  
 
       return extractedText;
     } else {

@@ -1,12 +1,13 @@
 import OpenAI from "openai";
 import * as dotenv from "dotenv";
-import { saveGptResponseToDB, getCaseSignatureFromDbByText } from "../sql/gptAnswQuerry.js";
+import { getOrSetGptResponse } from "../sql/gptAnswQuerry.js";
+import { getOrSetUserMessage, getOrSetSystemMessage} from "../sql/messagesQuerry.js";
 
 dotenv.config(); // delete at production
 
 const openai = new OpenAI();
 
-export async function askGptAboutNSA(systemMessage, userMessage, courtRuling) {
+export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature) {
   const rawResponse = await openai.chat.completions.create({
     model: "gpt-4-turbo-2024-04-09",
     messages: [
@@ -17,14 +18,8 @@ export async function askGptAboutNSA(systemMessage, userMessage, courtRuling) {
   });
   const response = retrieveGPTMessage(rawResponse);
 
-  //Case sig can't be provided you have to figure it out somehow 
-  const caseSignature = await getCaseSignatureFromDbByText(courtRuling);
-  
-  if(caseSignature){
-    await saveGptResponseToDB(systemMessage,userMessage,caseSignature,response);
-  }else{
-    console.error("Error occured while saving the response to DB");
-  }
+  const [courtRulingID, systemMessageID, userMessageID] = await fetchIDs(caseSignature, userMessage, systemMessage);
+    await getOrSetGptResponse(courtRulingID, systemMessageID, userMessageID,response);
 
   return response;
 }
@@ -35,4 +30,12 @@ function retrieveGPTMessage(response) {
   }
   console.log("Error retrieving GPT message");
   return null;
+}
+
+async function fetchIDs(caseSignature, userMessage, systemMessage) {
+  const rulingID = await getCaseSignatureFromDbByText(caseSignature);
+  const userMessageID = await getOrSetUserMessage(userMessage);
+  const systemMessageID = await getOrSetSystemMessage(systemMessage);
+
+  return [rulingID, userMessageID, systemMessageID];
 }
