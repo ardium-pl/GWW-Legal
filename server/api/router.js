@@ -23,9 +23,12 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
       }
     }
     const dbCourtRuling = await getOrSetCourtRuling(caseSignature);
-    const result = dbCourtRuling || await getCourtRuling(caseSignature);
+    if (dbCourtRuling) {
+      res.json([dbCourtRuling]);
+      return;
+    }
+    const result = await getCourtRuling(caseSignature);
     res.json(result);
-
   } catch (error) {
     const customErrorCodesRegExp = /^(NOT_FOUND_ERR|NO_TEXT_ERR)$/
 
