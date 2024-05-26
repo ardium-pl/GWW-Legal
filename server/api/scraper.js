@@ -55,7 +55,7 @@ export async function getCourtRuling(signature) {
 
     if (extractedText.length > 0) {    
       //Sending the court ruling to our DB
-      getOrSetCourtRuling(signature,extractedText);  
+      getOrSetCourtRuling(signature,extractedText[0]);  
 
       return extractedText;
     } else {
