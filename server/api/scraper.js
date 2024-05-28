@@ -53,10 +53,10 @@ export async function getCourtRuling(signature) {
       return Array.from(elements).map(element => element.innerHTML.trim());
     });
 
-    if (extractedText.length > 0) {    
-      //Sending the court ruling to our DB
-      getOrSetCourtRuling(signature,extractedText[0]);  
+    const combinedText = extractedText.join('\n');
 
+    if (combinedText.length > 0) {    
+      getOrSetCourtRuling(signature,combinedText);  
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "NO_TEXT_ERR" };

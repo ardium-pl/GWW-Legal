@@ -29,7 +29,7 @@ export async function getOrSetSystemMessage(systemMessage) {
     try {
         const [results] = await connection.query(`SELECT id FROM system_messages WHERE content = ?`, [systemMessage]);
 
-        if (results.length === 0) {
+        if (!results.length) { 
             const [insertResult] = await connection.query(
                 `INSERT INTO system_messages (content) VALUES (?)`,
                 [systemMessage]

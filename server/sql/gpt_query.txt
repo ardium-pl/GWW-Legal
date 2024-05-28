@@ -1,6 +1,0 @@
-SELECT
-	answer
-FROM gpt_answers
-WHERE r.signature = 'III FSK 4005/21'      -- TUTAJ ZMIENIĆ
-AND um.content = 'Example user message'    -- TUTAJ ZMIENIĆ
-AND sm.content = 'Example system message'; -- TUTAJ ZMIENIĆ

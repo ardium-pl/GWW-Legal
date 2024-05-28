@@ -4,7 +4,7 @@ export async function getOrSetGptResponse(courtRulingID, systemMessageID, userMe
     const connection = await createTCPConnection();
 
     try {
-        if (response === null) {
+        if (!response) {
             // Fetch the GPT answer from the database
             const query = `SELECT answer
                 FROM gpt_queries
@@ -18,8 +18,7 @@ export async function getOrSetGptResponse(courtRulingID, systemMessageID, userMe
             // Save the GPT response to the database
             const query = `
                 INSERT INTO gpt_queries (ruling_id, system_message_id, user_message_id, answer)
-                VALUES (?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE answer = VALUES(answer)`;
+                VALUES (?, ?, ?, ?)`;
 
             const [result] = await connection.execute(query, [courtRulingID, systemMessageID, userMessageID, response]);
 

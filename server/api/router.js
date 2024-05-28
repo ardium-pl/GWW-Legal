@@ -3,7 +3,7 @@ export const nsaRouter = express.Router();
 import { askGptAboutNSA } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
-import { getOrSetCourtRuling } from "../sql/courtRulingQuerry.js";
+import { getOrSetCourtRuling, getCourtRulingID } from "../sql/courtRulingQuerry.js";
 import { getOrSetGptResponse } from "../sql/gptAnswQuerry.js";
 import { getOrSetSystemMessage, getOrSetUserMessage } from "../sql/messagesQuerry.js";
 
@@ -57,10 +57,8 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
       }
     }
 
-    //For simplicity get caseSig first 
     const caseSignature = await getOrSetCourtRuling(null, courtRuling);
-    //Get or set all the IDs from DB
-    const courtRulingID = await getOrSetCourtRuling(caseSignature, courtRuling)
+    const courtRulingID = await getCourtRulingID(caseSignature);
     const systemMessageID = await getOrSetSystemMessage(systemMessage);
     const userMessageID = await getOrSetUserMessage(userMessage);
 
