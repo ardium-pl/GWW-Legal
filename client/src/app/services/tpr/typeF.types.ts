@@ -12,7 +12,6 @@ export type TransakcjaKategoriaF<
     },
     number
   ];
-  SupportVarCorrection: K;
   Kompensata: Kompensata;
   KodZW1: 'ZW01';
   PodstZW: '11n1';
@@ -27,14 +26,11 @@ export type TransakcjaKategoriaF<
       number
     ];
   };
-} & SupportVarCorrectionMap<K>;
+} &
+(K extends 'KC01' ? KC01 : {}) &
+(K extends 'KC02' ? KC02 : {});
 
-// SupportVar mappings for KorektaCenTransferowych
-type SupportVarCorrectionMap<K extends KorektaCenTransferowych> =
-  K extends 'KC01' ? KC01 :
-  K extends 'KC02' ? KC02 : {};
 
-// KorektaCenTransferowych types
 type KC01 = {
   KorektaCT6: 'KC01';
   WartKorektyCT6: [

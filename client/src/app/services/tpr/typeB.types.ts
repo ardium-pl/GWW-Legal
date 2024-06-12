@@ -26,14 +26,11 @@ export type TransakcjaKategoriaB<
       number
     ];
   };
-} & SupportVarCorrectionMap<K>;
+} &
+(K extends 'KC01' ? KC01 : {}) &
+(K extends 'KC02' ? KC02 : {});
 
-// SupportVar mappings for KorektaCenTransferowych
-type SupportVarCorrectionMap<K extends KorektaCenTransferowych> =
-  K extends 'KC01' ? KC01 :
-  K extends 'KC02' ? KC02 : {};
 
-// KorektaCenTransferowych types
 type KC01 = {
   KorektaCT4: 'KC01';
   WartKorektyCT4: [
