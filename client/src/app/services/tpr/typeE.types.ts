@@ -4,7 +4,7 @@ export type TransakcjaKategoriaE<
   MW extends MetodyBadania = MetodyBadania,
   KP extends Korekta = Korekta
 > = {
-  KategoriaE: string;
+  KategoriaE: '1401'|'2401';
   PrzedmiotE: string;
   WartoscE: [
     {
@@ -42,7 +42,7 @@ type KC02 = {
 
 type ZW01 = {
   KodZW1: 'ZW01';
-  PodstZW: '11n1'; // u klienta pojawia się tylko ta wartość
+  PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuE1: {
     Kraj: string;
     WartoscEKraj1: [
@@ -149,3 +149,5 @@ type SposobKalkulacjiOplaty =
   | 'SK04'
   | 'SK05'
   | 'SK06';
+type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+

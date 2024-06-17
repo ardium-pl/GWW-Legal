@@ -44,7 +44,7 @@ type KC02 = {
 
 type ZW01 = {
   KodZW1: 'ZW01';
-  PodstZW: '11n1'; // only this value appears at the client
+  PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuA1: {
     Kraj: string;
     WartoscAKraj1: [
@@ -349,3 +349,4 @@ type ZrodloDanychZgodnosci =
   | 'AZ07'
   | 'AZ08'
   | 'AZ09';
+type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';

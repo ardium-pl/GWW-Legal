@@ -2,7 +2,7 @@
 export type TransakcjaKategoriaF<
   K extends KorektaCenTransferowych = KorektaCenTransferowych
 > = {
-  KategoriaF: string;
+  KategoriaF: '1501'|'2501';
   PrzedmiotF: string;
   WartoscF: [
     {
@@ -14,7 +14,7 @@ export type TransakcjaKategoriaF<
   ];
   Kompensata: Kompensata;
   KodZW1: 'ZW01';
-  PodstZW: '11n1';
+  PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuF1: {
     Kraj: string;
     WartoscFKraj1: [
@@ -50,3 +50,5 @@ type KC02 = {
 // Common types
 type KorektaCenTransferowych = 'KC01' | 'KC02';
 type Kompensata = 'KS01' | 'KS02' | 'KS03';
+type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+

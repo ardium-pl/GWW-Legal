@@ -3,7 +3,7 @@ export type TransakcjaKategoriaC<
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania
 > = {
-  KategoriaC: string;
+  KategoriaC: '1201' | '1202' | '1203' | '1204' | '2201' | '2202' | '2203' | '2204';
   PrzedmiotC: string;
   WartoscC: [
     {
@@ -73,7 +73,7 @@ type KC02 = {
 
 type ZW01 = {
   KodZW1: 'ZW01';
-  PodstZW: '11n1'; // only this value appears at the client
+  PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuC1: {
     Kraj: string;
     WartoscCKraj1: [
@@ -128,6 +128,7 @@ type MW01toMW06<
 } &
   (KP extends 'KP01' ? KP01 : {}) &
   (KP extends 'KP02' ? KP02 : {}) &
+  (OP extends 'OP01' ? OP01 : {}) &
   (OP extends 'OP02' ? OP02 : {}) &
   (OP extends 'OP03' ? OP03 : {}) &
   (OP extends 'OP04' | 'OP05' ? OP04_OP05 : {}) &
@@ -144,11 +145,10 @@ type KP02 = {
   KorektyPorWynProg: number;
 };
 
-//I'm currently talking about this with the client
-// type OP01 = {
-//   KalkOproc1:'OP01';
-//   Marza:
-// }
+type OP01 = {
+  KalkOproc1: 'OP01';
+  Marza: number; // show in %
+};
 
 type OP02 = {
   KalkOproc2: 'OP02';
@@ -199,3 +199,5 @@ type ZrodloDanychFinansowych = 'ZD01' | 'ZD02' | 'ZD03' | 'ZD04' | 'ZD05';
 type Korekta = 'KP01' | 'KP02';
 type RodzajOprocentowania = 'OP01' | 'OP02' | 'OP03' | 'OP04' | 'OP05';
 type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
+type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+

@@ -1,9 +1,9 @@
 export type TransakcjaKategoriaB<
   K extends KorektaCenTransferowych = KorektaCenTransferowych
 > = {
-  KategoriaB: string;
+  KategoriaB: '1101'|'2101';
   PrzedmiotB: string;
-  WartoscB:[
+  WartoscB: [
     {
       _attr: {
         kodWaluty: string;
@@ -11,10 +11,9 @@ export type TransakcjaKategoriaB<
     },
     number
   ];
-  SupportVarCorrection: K;
   Kompensata: Kompensata;
   KodZW1: 'ZW01';
-  PodstZW: '11n1';
+  PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuB1: {
     Kraj: string;
     WartoscBKraj1: [
@@ -27,8 +26,8 @@ export type TransakcjaKategoriaB<
     ];
   };
 } &
-(K extends 'KC01' ? KC01 : {}) &
-(K extends 'KC02' ? KC02 : {});
+  (K extends 'KC01' ? KC01 : {}) &
+  (K extends 'KC02' ? KC02 : {});
 
 
 type KC01 = {
@@ -50,3 +49,5 @@ type KC02 = {
 // Common types
 type KorektaCenTransferowych = 'KC01' | 'KC02';
 type Kompensata = 'KS01' | 'KS02' | 'KS03';
+type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+
