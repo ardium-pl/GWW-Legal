@@ -3,7 +3,7 @@
     <mat-card>
       <div class="indigo-stripe"></div>
       <div class="image-container">
-        <img src="assets\images\GWW-logo.png" class="logo">
+        <img src="assets\images\GWW-logo.png" class="logo" />
       </div>
       <div class="gray-stripe"></div>
       <span class="image-text">Aplikacja do orzeczeń sądowych</span>
@@ -15,7 +15,11 @@
       </mat-card-header>
       <mat-card-content>
         <mat-form-field>
-          <input matInput placeholder="np. III FSK 4005/21" formControlName="caseSignature" />
+          <input
+            matInput
+            placeholder="np. III FSK 4005/21"
+            formControlName="caseSignature"
+          />
           <mat-error>To pole jest wymagane</mat-error>
         </mat-form-field>
         @if (nsaService.rulingRequestState() === 'error') {
@@ -26,16 +30,23 @@
           }
           <div class="ruling-text">
             <mat-form-field class="full-size">
-              <textarea matInput placeholder="Treść orzeczenia" formControlName="rulingText"></textarea>
+              <textarea
+                matInput
+                placeholder="Treść orzeczenia"
+                formControlName="rulingText"
+              ></textarea>
             </mat-form-field>
           </div>
         </div>
-        }
-        @if (nsaService.rulingRequestState() !== 'error') {
+        } @if (nsaService.rulingRequestState() !== 'error') {
         <mat-card-actions>
           <div [matTooltip]="getCourtRulingButtonTooltip()">
-            <button mat-flat-button color="primary" type="submit"
-              [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty">
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty"
+            >
               Wyszukaj
             </button>
           </div>
@@ -45,8 +56,7 @@
           </div>
           }
         </mat-card-actions>
-        }
-        @if (nsaService.rulingRequestState() === 'success') {
+        } @if (nsaService.rulingRequestState() === 'success') {
         <mat-card-footer>
           <strong>Znaleziono orzeczenie:</strong>
           <div>
@@ -61,8 +71,15 @@
     <div class="buttons-container">
       <div></div>
       <div>
-        <button mat-raised-button type="button" color="primary" [disabled]="disabledNextPage()"
-          (click)="part1NextPage()">Dalej</button>
+        <button
+          mat-raised-button
+          type="button"
+          color="primary"
+          [disabled]="disabledNextPage()"
+          (click)="part1NextPage()"
+        >
+          Dalej
+        </button>
       </div>
     </div>
   </form>
@@ -74,14 +91,23 @@
       </mat-card-header>
       <mat-card-content>
         <div class="reset-button-container">
-          <button mat-button type="button" class="reset-button" [class.active]="isResetButtonActiveSystem"
-            [tabIndex]="isResetButtonActiveSystem" color="primary">
+          <button
+            mat-button
+            type="button"
+            class="reset-button"
+            [class.active]="isResetButtonActiveSystem"
+            [tabIndex]="isResetButtonActiveSystem"
+            color="primary"
+          >
             Przywróć domyślną
           </button>
         </div>
         <mat-form-field class="full-size">
-          <textarea matInput placeholder="Podstawowa wiadomość przekazywana do serwisu AI"
-            formControlName="systemMessage"></textarea>
+          <textarea
+            matInput
+            placeholder="Podstawowa wiadomość przekazywana do serwisu AI"
+            formControlName="systemMessage"
+          ></textarea>
         </mat-form-field>
       </mat-card-content>
     </mat-card>
@@ -92,19 +118,37 @@
       </mat-card-header>
       <mat-card-content>
         <div class="reset-button-container">
-          <button mat-button type="button" class="reset-button" [class.active]="isResetButtonActiveUser"
-            [tabIndex]="isResetButtonActiveUser" color="primary">
+          <button
+            mat-button
+            type="button"
+            class="reset-button"
+            [class.active]="isResetButtonActiveUser"
+            [tabIndex]="isResetButtonActiveUser"
+            color="primary"
+          >
             Przywróć domyślne
           </button>
         </div>
         <mat-form-field class="full-size">
-          <textarea matInput placeholder="Pytanie 1" formControlName="userMessage1"></textarea>
+          <textarea
+            matInput
+            placeholder="Pytanie 1"
+            formControlName="userMessage1"
+          ></textarea>
         </mat-form-field>
         <mat-form-field class="full-size">
-          <textarea matInput placeholder="Pytanie 2" formControlName="userMessage2"></textarea>
+          <textarea
+            matInput
+            placeholder="Pytanie 2"
+            formControlName="userMessage2"
+          ></textarea>
         </mat-form-field>
         <mat-form-field class="full-size">
-          <textarea matInput placeholder="Pytanie 3" formControlName="userMessage3"></textarea>
+          <textarea
+            matInput
+            placeholder="Pytanie 3"
+            formControlName="userMessage3"
+          ></textarea>
         </mat-form-field>
       </mat-card-content>
     </mat-card>
@@ -113,16 +157,21 @@
         <button mat-button type="button" (click)="prevPage()">Wróć</button>
       </div>
       <div>
-        <button mat-raised-button type="button" color="primary" [disabled]="disabledNextPage()"
-          (click)="fetchGptAnswers()">Dalej</button>
+        <button
+          mat-raised-button
+          type="button"
+          color="primary"
+          [disabled]="disabledNextPage()"
+          (click)="fetchGptAnswers()"
+        >
+          Dalej
+        </button>
       </div>
     </div>
   </form>
   <form [formGroup]="nsaFormPart3" (ngSubmit)="fetchAdditionalAnswer()">
     <mat-card>
-      <mat-card-header>
-        Postęp odpowiedzi od AI
-      </mat-card-header>
+      <mat-card-header> Postęp odpowiedzi od AI </mat-card-header>
       <mat-card-content class="divided-card">
         <div class="progress-container">
           @for (progress of nsaService.gptAnswersProgress(); track $index) {
@@ -138,52 +187,61 @@
             </div>
             Pytanie {{ $index + 1 }}
           </div>
-          @if (nsaService.areGptAnswersError()) {
-          Wystąpił niespodziewany błąd.
-          }
-          }
+          @if (nsaService.areGptAnswersError()) { Wystąpił niespodziewany błąd.
+          } }
         </div>
         <div class="checkbox-container">
-          <mat-checkbox (change)="onShowImmediatelyChange($event.checked)"
+          <mat-checkbox
+            (change)="onShowImmediatelyChange($event.checked)"
             [disabled]="wasShowGptResultsImmediatelyChangedDuringPending()"
-            [checked]="showGptResultsImmediately()">Wyświetl od razu</mat-checkbox>
+            [checked]="showGptResultsImmediately()"
+            >Wyświetl od razu</mat-checkbox
+          >
         </div>
       </mat-card-content>
     </mat-card>
-    @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) || (showGptResultsImmediately() &&
-    nsaService.isAtLeastOneGptAnswerReady())) {
-    @for (response of nsaService.gptAnswersResponse(); track response) {
+    @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError())
+    || (showGptResultsImmediately() && nsaService.isAtLeastOneGptAnswerReady()))
+    { @for (response of nsaService.gptAnswersResponse(); track response) {
     <mat-card>
-      <mat-card-header>
-        Odpowiedź na pytanie {{ $index + 1 }}
-      </mat-card-header>
+      <mat-card-header> Odpowiedź na pytanie {{ $index + 1 }} </mat-card-header>
       <mat-card-content>
         @if (nsaService.gptAnswersProgress()[$index]) {
-        <markdown>
-          {{ response }}
-        </markdown>
+        <markdown> {{ response }} </markdown>
         } @else {
         <mat-spinner />
         }
       </mat-card-content>
     </mat-card>
-    }
-    @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError() ) {
+    } @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError() )
+    {
     <mat-card>
       <mat-card-header>
         Zadaj AI dodatkowe pytanie
         <app-required-star />
       </mat-card-header>
       <mat-card-content>
-        Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jak NSA uargumentował:
-        <mat-radio-group aria-label="Wybierz opcję" formControlName="additionalQuestion">
-          <mat-radio-button [value]="additionalQuestions[0].value">{{ additionalQuestions[0].label }}</mat-radio-button>
-          <mat-radio-button [value]="additionalQuestions[1].value">{{ additionalQuestions[1].label }}</mat-radio-button>
+        Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego
+        napisz proszę jak NSA uargumentował:
+        <mat-radio-group
+          aria-label="Wybierz opcję"
+          formControlName="additionalQuestion"
+        >
+          <mat-radio-button [value]="additionalQuestions[0].value"
+            >{{ additionalQuestions[0].label }}</mat-radio-button
+          >
+          <mat-radio-button [value]="additionalQuestions[1].value"
+            >{{ additionalQuestions[1].label }}</mat-radio-button
+          >
         </mat-radio-group>
         <mat-card-actions>
           <div [matTooltip]="getAdditionalAnswerButtonTooltip()">
-            <button mat-flat-button color="primary" type="submit"
-              [disabled]="nsaService.isAdditionalAnswerLoading() || !this.nsaFormPart3.valid || !nsaFormPart3.dirty">
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="nsaService.isAdditionalAnswerLoading() || !this.nsaFormPart3.valid || !nsaFormPart3.dirty"
+            >
               Zapytaj
             </button>
           </div>
@@ -193,12 +251,11 @@
           </div>
           }
         </mat-card-actions>
-        @if (nsaService.additionalAnswerResponse() && !nsaService.isAdditionalAnswerLoading()) {
+        @if (nsaService.additionalAnswerResponse() &&
+        !nsaService.isAdditionalAnswerLoading()) {
         <mat-card-footer>
           <strong>Odpowiedź od AI:</strong>
-          <markdown>
-            {{ nsaService.additionalAnswerResponse() }}
-          </markdown>
+          <markdown> {{ nsaService.additionalAnswerResponse() }} </markdown>
         </mat-card-footer>
         }
       </mat-card-content>
@@ -208,7 +265,6 @@
         <button mat-button type="button" (click)="prevPage()">Wróć</button>
       </div>
     </div>
-    }
-    }
+    } }
   </form>
 </div>

@@ -1,7 +1,7 @@
 export type TransakcjaKategoriaA<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
-  MW extends MetodyBadania = MetodyBadania
+  MW extends MetodyBadania = MetodyBadania,
 > = {
   KategoriaA: string;
   PrzedmiotA: string;
@@ -11,30 +11,29 @@ export type TransakcjaKategoriaA<
         kodWaluty: string;
       };
     },
-    number
+    number,
   ];
-  SupportVarCorrection:K;
+  SupportVarCorrection: K;
   Kompensata: Kompensata;
   SupportVarKodZW: ZW;
   SupportVarMetoda: MW;
 };
 
 type KC01 = {
-  KorektaCT1:'KC01';
-  WartKorektyCT1:[
+  KorektaCT1: 'KC01';
+  WartKorektyCT1: [
     {
       _attr: {
         kodWaluty: string;
       };
     },
-    number
+    number,
   ];
-}
+};
 
 type KC02 = {
-  BrakKorektyCT1:'KC02';
-}
-
+  BrakKorektyCT1: 'KC02';
+};
 
 // ZwolnienieArt11n types
 type ZW01 = {
@@ -48,7 +47,7 @@ type ZW01 = {
           kodWaluty: string;
         };
       },
-      number
+      number,
     ];
   };
 };
@@ -68,7 +67,7 @@ type TK01 = {
           kodWaluty: string;
         };
       },
-      number
+      number,
     ];
   };
 };
