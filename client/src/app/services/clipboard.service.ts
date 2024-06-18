@@ -11,7 +11,7 @@ export class ClipboardService {
   public async readClipboard() {
     try {
       const copiedData = await navigator.clipboard.readText();
-      return copiedData;
+      this.getJsonFromClipboard(copiedData);
     } catch (error) {
       this.dialogService.openDialog(
         'Zablokowano dostęp do tekstu i obrazów skopiowanych do schowka.',
@@ -20,9 +20,8 @@ export class ClipboardService {
     return null;
   }
 
-  public async getJsonFromClipboard() {
+  public async getJsonFromClipboard(clipboardValue: string) {
     try {
-      const clipboardValue = await this.readClipboard();
       if (!clipboardValue) throw new Error();
       const object = JSON.parse(clipboardValue);
       const keysToCheck: (keyof TPR_input)[] = [
@@ -44,11 +43,11 @@ export class ClipboardService {
       });
       if (isObjectIncomplete)
         this.dialogService.openDialog(
-          'W schowku znajdują się dane nieprawidłowego typu',
+          'W schowku znajdują się dane nieprawidłowego typu.',
         );
     } catch (err) {
       this.dialogService.openDialog(
-        'W schowku znajdują się nieprawidłowe dane',
+        'W schowku znajdują się nieprawidłowe dane.',
       );
     }
   }

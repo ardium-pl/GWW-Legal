@@ -156,7 +156,7 @@ export class NsaPage implements OnInit {
   }
 
   constructor(private readonly clipboardService: ClipboardService) {
-    this.clipboardService.getJsonFromClipboard();
+    this.clipboardService.readClipboard();
 
     effect(() => {
       // case signature
