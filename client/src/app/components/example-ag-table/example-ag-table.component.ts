@@ -3,25 +3,40 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-
+import { DropdownCellComponent } from '../ag-dropdown/dropdown-cell.component';
 
 @Component({
-  selector: 'app-my-table',
+  selector: 'app-root',
   standalone: true,
+  imports: [AgGridAngular, DropdownCellComponent],
   templateUrl: './example-ag-table.component.html',
   styleUrls: ['./example-ag-table.component.scss'],
-  imports: [AgGridAngular]
 })
-export class MyTableComponent {
-  columnDefs: ColDef[] = [
-    { headerName: 'Make', field: 'make' , editable: true},
-    { headerName: 'Model', field: 'model' , editable: true },
-    { headerName: 'Price', field: 'price' , editable: true}
-  ];
+export class AppComponent {
+  title = 'ag-grid-no-server';
 
   rowData = [
-    { make: 'Toyota', model: 'Celica', price: 35000 },
-    { make: 'Ford', model: 'Mondeo', price: 32000 },
-    { make: 'Porsche', model: 'Boxster', price: 72000 }
+    { make: 'Honda', model: 'Civic', price: 'cheap' },
+    { make: 'Chevrolet', model: 'Bolt', price: 'cheap' },
+    { make: 'BMW', model: 'i3', price: 'cheap' },
+    { make: 'Nissan', model: 'Leaf', price: 'cheap' },
+    { make: 'Hyundai', model: 'Elantra', price: 'cheap' },
+  ];
+
+  colDefs: ColDef[] = [
+    { field: 'make', editable: true },
+    { field: 'model', editable: true },
+    {
+      headerName: 'Price',
+      field: 'price',
+      cellRenderer: DropdownCellComponent,
+      cellRendererParams: {
+        options: [
+          { label: 'Cheap', code: 'cheap' },
+          { label: 'Moderate', code: 'moderate' },
+          { label: 'Expensive', code: 'expensive' },
+        ],
+      },
+    },
   ];
 }
