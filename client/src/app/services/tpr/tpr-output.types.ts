@@ -20,7 +20,7 @@ export type TPR = {
           wersjaSchemy: string;
         };
       },
-      string
+      string,
     ];
     WariantFormularza: number;
     CelZlozenia: number;
@@ -49,12 +49,10 @@ export type TPR = {
       | TransakcjaKategoriaB
       | TransakcjaKategoriaC
       | TransakcjaKategoriaE
-      |TransakcjaKategoriaF
-      >;
+      | TransakcjaKategoriaF
+    >;
   };
 };
 
 type PozycjeSzczegolowe = 'ZK01' | 'ZK02';
-type TPR_Universal_Header = {
-  
-}
+type TPR_Universal_Header = {};
