@@ -61,6 +61,7 @@ const DEFAULT_USER_MESSAGES = [
 })
 export class NsaPage implements OnInit {
   readonly nsaService = inject(NsaService);
+  readonly clipboardService = inject(ClipboardService);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -155,7 +156,7 @@ export class NsaPage implements OnInit {
     );
   }
 
-  constructor(private readonly clipboardService: ClipboardService) {
+  constructor() {
     this.clipboardService.readClipboard();
 
     effect(() => {

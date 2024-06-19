@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ClipboardBlockDialogComponent } from 'app/components/clipboard-block-dialog/clipboard-block-dialog.component';
 
@@ -6,7 +6,7 @@ import { ClipboardBlockDialogComponent } from 'app/components/clipboard-block-di
   providedIn: 'root',
 })
 export class DialogService {
-  public constructor(private readonly dialog: MatDialog) {}
+  readonly dialog = inject(MatDialog);
 
   public openDialog(
     warningMessage: string,

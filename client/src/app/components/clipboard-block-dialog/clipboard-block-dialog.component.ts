@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -10,13 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [MatIconModule],
 })
 export class ClipboardBlockDialogComponent {
-  constructor(
-    private readonly dialogRef: MatDialogRef<string>,
-    @Inject(MAT_DIALOG_DATA)
-    public data: string,
-  ) {}
-
-  public onDialogClose = (): void => {
-    this.dialogRef.close();
-  };
+  constructor() {}
+  readonly dialogRef = inject(MatDialogRef<string>);
+  readonly data = inject(MAT_DIALOG_DATA);
 }
