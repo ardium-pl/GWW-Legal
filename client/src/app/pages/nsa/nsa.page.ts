@@ -8,9 +8,9 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import {
@@ -22,7 +22,6 @@ import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
-import { ClipboardService } from 'app/services/clipboard.service';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -61,7 +60,6 @@ const DEFAULT_USER_MESSAGES = [
 })
 export class NsaPage implements OnInit {
   readonly nsaService = inject(NsaService);
-  readonly clipboardService = inject(ClipboardService);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -157,8 +155,6 @@ export class NsaPage implements OnInit {
   }
 
   constructor() {
-    this.clipboardService.readClipboard();
-
     effect(() => {
       // case signature
       if (
