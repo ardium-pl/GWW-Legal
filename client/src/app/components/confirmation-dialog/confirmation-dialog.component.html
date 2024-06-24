@@ -1,0 +1,23 @@
+<h2 mat-dialog-title>Czy na pewno chcesz {{ data.title }}</h2>
+@if (data.description) {
+  <mat-dialog-content>
+    <p>{{ data.description }}</p>
+  </mat-dialog-content>
+}
+<mat-dialog-actions [align]="'end'">
+  @if (data.swapButtonColors) {
+    <button mat-raised-button color="primary" (click)="onNoClick()">
+      {{ data.noButtonText ?? "Nie" }}
+    </button>
+    <button mat-button (click)="onYesClick()">
+      {{ data.yesButtonText ?? "Tak" }}
+    </button>
+  } @else {
+    <button mat-button (click)="onNoClick()">
+      {{ data.noButtonText ?? "Nie" }}
+    </button>
+    <button mat-raised-button color="primary" (click)="onYesClick()">
+      {{ data.yesButtonText ?? "Tak" }}
+    </button>
+  }
+</mat-dialog-actions>
