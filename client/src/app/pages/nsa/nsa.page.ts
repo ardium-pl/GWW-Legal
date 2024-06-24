@@ -1,4 +1,12 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -84,6 +92,9 @@ export class NsaPage implements OnInit {
       Validators.required,
     ]),
   });
+
+  readonly caseSigntaureInput =
+    viewChild<ElementRef<HTMLInputElement>>('caseSigntaureInput');
 
   ngOnInit() {
     this.nsaFormPart2.markAsDirty();
@@ -270,5 +281,37 @@ export class NsaPage implements OnInit {
   }
   prevPage(): void {
     this.currentPagerPage.update((v) => v - 1);
+  }
+
+  //! resetting
+  onClickResetButton() {
+    this._resetForm();
+  }
+
+  showResetConfirmDialog() {}
+
+  private _resetForm() {
+    this.nsaService.resetData();
+
+    this.nsaFormPart1.controls.rulingText.reset();
+    this.nsaFormPart2.reset({
+      systemMessage: DEFAULT_SYSTEM_MESSAGE,
+      userMessage1: DEFAULT_USER_MESSAGES[0],
+      userMessage2: DEFAULT_USER_MESSAGES[1],
+      userMessage3: DEFAULT_USER_MESSAGES[2],
+    });
+    this.nsaFormPart3.reset();
+
+    this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
+    this.currentPagerPage.set(0);
+
+    // execute after all other code has finished executing
+    setTimeout(() => {
+      this.nsaFormPart1.controls.caseSignature.setErrors(null);
+
+      const inputEl = this.caseSigntaureInput()!.nativeElement;
+      inputEl.focus();
+      inputEl.setSelectionRange(0, inputEl.value.length);
+    }, 0);
   }
 }
