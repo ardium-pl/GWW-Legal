@@ -9,7 +9,7 @@ export class DialogService {
   readonly dialog = inject(MatDialog);
 
   public openDialog(
-    warningMessage: string = 'Braku udzielenia dostępu do schowka. Udostępnij schowek, żeby kontynuować',
+    warningMessage: string,
   ): MatDialogRef<ClipboardBlockDialogComponent> {
     const dialogRef = this.dialog.open(ClipboardBlockDialogComponent, {
       data: warningMessage,

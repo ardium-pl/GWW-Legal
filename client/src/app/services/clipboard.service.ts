@@ -3,9 +3,9 @@ import { DialogService } from './dialog.service';
 import { TPR_input } from './tpr/tpr-input.types';
 
 const ACCESS_DENIED_MESSAGE =
-  'Zablokowano dostęp do tekstu i obrazów skopiowanych do schowka.';
-const WRONG_TYPE_MESSAGE = 'W schowku znajdują się dane nieprawidłowego typu.';
-const WRONG_DATA_MESSAGE = 'W schowku znajdują się nieprawidłowe dane.';
+  'Zablokowano dostęp do schowka. Udziel dostępu, żeby kontynuować';
+const WRONG_TYPE_MESSAGE = 'W schowku znajdują się dane nieprawidłowego typu. Pobierz dane z arkusza TPR i spróbuj ponownie';
+const WRONG_DATA_MESSAGE = 'W schowku znajdują się nieprawidłowe dane. Pobierz dane z arkusza TPR i spróbuj ponownie';
 
 @Injectable({
   providedIn: 'root',
