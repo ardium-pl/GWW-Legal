@@ -18,6 +18,7 @@ export class ClipboardService {
     try {
       const copiedData = await navigator.clipboard.readText();
       this.getJsonFromClipboard(copiedData);
+      return copiedData;
     } catch (error) {
       this.dialogService.openDialog(ACCESS_DENIED_MESSAGE);
     }
@@ -41,10 +42,14 @@ export class ClipboardService {
         'taxID',
         'transactions',
       ];
-      const objectKeys = Object.keys(object);
-      const isObjectIncomplete = keysToCheck.some((key) => {
-        return !objectKeys.some((objectKey) => objectKey === key);
+      let isObjectIncomplete = false;
+      object.map((val: TPR_input) => {
+        const objectKeys = Object.keys(val);
+        isObjectIncomplete = keysToCheck.some((key) => {
+          return !objectKeys.some((objectKey) => objectKey === key);
+        });
       });
+
       if (isObjectIncomplete) this.dialogService.openDialog(WRONG_TYPE_MESSAGE);
     } catch (err) {
       this.dialogService.openDialog(WRONG_DATA_MESSAGE);

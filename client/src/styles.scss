@@ -1,5 +1,12 @@
 @import "./variables";
 @import "./assets/theme/standard-backdrop";
+@import "./assets/theme/custom-select.custom";
+
+.material-customized {
+  &.custom-select {
+    @include custom-select;
+  }
+}
 
 html,
 body {
@@ -32,6 +39,7 @@ body {
   --bg-dark: #f5f5f5;
 
   --red: rgb(239, 53, 29);
+  --warning: rgb(235, 85, 15);
   --green: rgb(68, 162, 72);
 
   --main: #3f51b5;

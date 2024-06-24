@@ -1,0 +1,9 @@
+@if (list?.length) {
+  <mat-select [(ngModel)]="selectedValue" name="pdk">
+    @for (el of list; track el) {
+      <mat-option class="material-customized custom-select" [value]="el">{{
+        el
+      }}</mat-option>
+    }
+  </mat-select>
+}

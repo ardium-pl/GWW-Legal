@@ -1,0 +1,10 @@
+@mixin custom-select {
+  span {
+    color: var(--text2);
+  }
+
+  .mat-pseudo-checkbox-minimal.mat-pseudo-checkbox-checked::after,
+  .mat-pseudo-checkbox-minimal.mat-pseudo-checkbox-indeterminate::after {
+    color: var(--main);
+  }
+}
