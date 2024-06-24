@@ -112,8 +112,6 @@ export class NsaPage implements OnInit {
   }
 
   ngOnInit() {
-    this.nsaFormPart2.markAsDirty();
-
     this.showGptResultsImmediately.set(
       localStorage.getItem('showGptResultsImmediately') === 'true',
     );
@@ -161,11 +159,8 @@ export class NsaPage implements OnInit {
     if (this.disabledNextPage()) return;
 
     const values = this.nsaFormPart2.value;
-    if (this.nsaFormPart2.dirty) {
-      this.nsaService.fetchGptAnswers(values as NsaFormPart2);
-      this.nsaFormPart3.reset();
-    }
-    this.nsaFormPart2.markAsPristine();
+    this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+    this.nsaFormPart3.reset();
     this.nextPage();
   }
 
@@ -315,7 +310,7 @@ export class NsaPage implements OnInit {
     const dialogRef = this.dialog.open<
       ConfirmationDialogComponent,
       ConfirmationDialogData
-      >(ConfirmationDialogComponent, {
+    >(ConfirmationDialogComponent, {
       data: {
         title: 'rozpocząć od nowa?',
         swapButtonColors: true,
@@ -328,7 +323,7 @@ export class NsaPage implements OnInit {
       if (!confirmed) return;
 
       this._resetForm();
-    })
+    });
   }
 
   private _resetForm() {
