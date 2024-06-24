@@ -35,9 +35,9 @@
           <mat-card-actions>
             <div [matTooltip]="getCourtRulingButtonTooltip()">
               <button mat-flat-button color="primary" type="submit"
-                [disabled]="nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty">
+                [disabled]="isFindCaseButtonDisabled">
                 Wyszukaj
-              </button> <!-- TODO fix bug -->
+              </button>
             </div>
             @if (nsaService.isRulingLoading()) {
             <div class="spinner-container">

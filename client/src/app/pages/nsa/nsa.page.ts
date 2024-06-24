@@ -96,6 +96,14 @@ export class NsaPage implements OnInit {
   readonly caseSigntaureInput =
     viewChild<ElementRef<HTMLInputElement>>('caseSigntaureInput');
 
+  get isFindCaseButtonDisabled(): boolean {
+    return (
+      this.nsaService.isRulingLoading() ||
+      !this.nsaFormPart1.valid ||
+      !this.nsaFormPart1.dirty
+    );
+  }
+
   ngOnInit() {
     this.nsaFormPart2.markAsDirty();
 
@@ -308,6 +316,7 @@ export class NsaPage implements OnInit {
     // execute after all other code has finished executing
     setTimeout(() => {
       this.nsaFormPart1.controls.caseSignature.setErrors(null);
+      this.nsaFormPart1.controls.caseSignature.markAsDirty();
 
       const inputEl = this.caseSigntaureInput()!.nativeElement;
       inputEl.focus();
