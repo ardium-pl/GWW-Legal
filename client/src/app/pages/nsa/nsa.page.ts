@@ -8,9 +8,9 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import {
@@ -57,7 +57,6 @@ const DEFAULT_USER_MESSAGES = [
     MatTooltipModule,
     MarkdownModule,
     MatCheckboxModule,
-    TableComponent,
   ],
 })
 export class NsaPage implements OnInit {
