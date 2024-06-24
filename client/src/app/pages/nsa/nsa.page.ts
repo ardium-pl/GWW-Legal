@@ -17,6 +17,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -25,7 +26,12 @@ import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
   MatTooltipModule,
 } from '@angular/material/tooltip';
-import { IconComponent, RequiredStarComponent } from 'app/components';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogData,
+  IconComponent,
+  RequiredStarComponent,
+} from 'app/components';
 import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { RequestState } from 'app/services/types';
@@ -68,6 +74,7 @@ const DEFAULT_USER_MESSAGES = [
 })
 export class NsaPage implements OnInit {
   readonly nsaService = inject(NsaService);
+  readonly dialog = inject(MatDialog);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -293,10 +300,36 @@ export class NsaPage implements OnInit {
 
   //! resetting
   onClickResetButton() {
+    if (
+      !this.nsaService.areGptAnswersReady() ||
+      this.nsaService.isAdditionalAnswerLoading()
+    ) {
+      this.showResetConfirmDialog();
+      return;
+    }
+
     this._resetForm();
   }
 
-  showResetConfirmDialog() {}
+  showResetConfirmDialog() {
+    const dialogRef = this.dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData
+      >(ConfirmationDialogComponent, {
+      data: {
+        title: 'rozpocząć od nowa?',
+        swapButtonColors: true,
+        description:
+          'Niektóre odpowiedzi od AI nie zostały jeszcze załadowane. Po rozpoczęciu od nowa wszelkie prośby o odpowiedź zostaną anulowane.',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this._resetForm();
+    })
+  }
 
   private _resetForm() {
     this.nsaService.resetData();

@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
 import { RequestState } from '../types';
-import { catchError } from 'rxjs';
+import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 
 @Injectable({
   providedIn: 'root',
 })
-export class NsaService {
+export class NsaService implements OnDestroy {
   private readonly http = inject(HttpClient);
 
   //! court ruling
@@ -31,6 +31,7 @@ export class NsaService {
     const sub = this.http
       .post(apiUrl('/nsa/query'), { caseSignature })
       .pipe(
+        takeUntil(this.cancel$),
         catchError((err, caught) => {
           this._rulingRequestState.set(RequestState.Error);
           const errorCode = (err.error as { code: RulingErrorCode }).code;
@@ -97,6 +98,7 @@ export class NsaService {
     streams.forEach((stream, i) => {
       const sub = stream
         .pipe(
+          takeUntil(this.cancel$),
           catchError((err, caught) => {
             this._gptAnswersProgress.update((v) => {
               const newProgress = [...v];
@@ -153,6 +155,7 @@ export class NsaService {
         systemMessage,
         userMessage,
       })
+      .pipe(takeUntil(this.cancel$))
       .subscribe((res) => {
         this._additionalAnswerResponse.set(res as string);
         this._isAdditionalAnswerLoading.set(false);
@@ -170,5 +173,17 @@ export class NsaService {
 
     this._isAdditionalAnswerLoading.set(false);
     this._additionalAnswerResponse.set(null);
+    
+    this._cancelAllRequests();
+  }
+   
+  private readonly cancel$ = new Subject<void>();
+  private _cancelAllRequests(): void {
+    this.cancel$.next();
+  }
+
+  ngOnDestroy(): void {
+    this._cancelAllRequests();
+    this.cancel$.complete();
   }
 }
