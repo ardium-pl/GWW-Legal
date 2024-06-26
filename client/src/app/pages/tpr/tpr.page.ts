@@ -2,7 +2,7 @@ import {
   Component,
   OnDestroy,
   OnInit,
-  WritableSignal,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -32,11 +32,8 @@ import { GetTransactionDataUtil } from 'app/utils/get-transaction-data.util';
 export class TprPage implements OnInit, OnDestroy {
   private readonly clipboardService = inject(ClipboardService);
   private readonly destroy$$ = new Subject<void>();
-  companyColumnDefs = companyColDefs;
-  transactionColumnDefs = transactionColDefs;
-
-  companyData: WritableSignal<TPR_input[] | null> = signal(null);
-  transactionData: WritableSignal<TransactionCategories> = signal({
+  readonly companyData = signal<TPR_input[]>([]);
+  readonly transactionData = signal<TransactionCategories>({
     categoryA: [],
     categoryB: [],
     categoryC: [],
@@ -44,7 +41,9 @@ export class TprPage implements OnInit, OnDestroy {
     categoryE: [],
     categoryF: [],
   });
-  itterableTransactionData: WritableSignal<any> = signal([]);
+  readonly itterableTransactionData = signal<any>(null);
+  readonly companyColumnDefs = computed(() => companyColDefs);
+  readonly transactionColumnDefs = computed(() => transactionColDefs);
 
   public ngOnInit(): void {
     const observableFrom$ = from(this.clipboardService.readClipboard());

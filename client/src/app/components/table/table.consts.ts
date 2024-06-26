@@ -69,7 +69,7 @@ export const companyColDefs: ColDef[] = [
   },
 ];
 
-export const transactionColDefs = [
+export const transactionColDefs: ColDef[] = [
   {
     field: 'transactionCategory',
     headerName: 'Kategoria',

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, Signal, signal } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridSizeChangedEvent } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -12,10 +12,16 @@ import { TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
-export class TableComponent {
-  @Input() public colDefs: ColDef[] = [];
+export class TableComponent implements OnInit {
+  @Input() public colDefs: Signal<ColDef[]> = signal([]);
   @Input() public inputData: TPR_input[] | Transaction[] | null = null;
+  readonly gridData = signal<TPR_input[] | Transaction[] | null>([]);
+
   tooltipShowDelay = 500;
+
+  public ngOnInit(): void {
+    this.gridData.set(this.inputData);
+  }
 
   onGridSizeChanged(params: GridSizeChangedEvent) {
     // get the current grids width
