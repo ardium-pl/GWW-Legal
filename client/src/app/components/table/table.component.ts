@@ -1,86 +1,54 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  WritableSignal,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef } from 'ag-grid-community';
+import { ColDef, GridSizeChangedEvent } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { ClipboardService } from 'app/services/clipboard.service';
-import { TPR_input } from 'app/services/tpr/tpr-input.types';
-import { Subject, from, takeUntil, tap } from 'rxjs';
-import { DropdownCellComponent } from '../dropdown-cell/dropdown-cell.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
+
 @Component({
   selector: 'app-table',
   standalone: true,
-  imports: [AgGridAngular, FormsModule, ReactiveFormsModule],
+  imports: [AgGridAngular],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
-export class TableComponent implements OnInit, OnDestroy {
-  private readonly clipboardService = inject(ClipboardService);
-  private readonly destroy$$ = new Subject<void>();
-  rowData: WritableSignal<TPR_input[]> = signal([]);
+export class TableComponent {
+  @Input() public colDefs: ColDef[] = [];
+  @Input() public inputData: TPR_input[] | Transaction[] | null = null;
+  tooltipShowDelay = 500;
 
-  constructor() {}
+  onGridSizeChanged(params: GridSizeChangedEvent) {
+    // get the current grids width
+    var gridWidth = document.querySelector('.ag-body-viewport')!.clientWidth;
 
-  public ngOnInit(): void {
-    const observableFrom$ = from(this.clipboardService.readClipboard());
-    observableFrom$
-      .pipe(
-        takeUntil(this.destroy$$),
-        tap((clipboardData) => {
-          if (clipboardData)
-            this.rowData.update(() => [...JSON.parse(clipboardData)]);
-        }),
-      )
-      .subscribe();
+    // keep track of which columns to hide/show
+    var columnsToShow = [];
+    var columnsToHide = [];
+
+    // iterate over all columns (visible or not) and work out
+    // now many columns can fit (based on their minWidth)
+    var totalColsWidth = 0;
+    var allColumns = params.api.getColumns();
+    if (allColumns && allColumns.length > 0) {
+      for (var i = 0; i < allColumns.length; i++) {
+        var column = allColumns[i];
+        totalColsWidth += column.getMinWidth() || 0;
+        if (totalColsWidth > gridWidth) {
+          columnsToHide.push(column.getColId());
+        } else {
+          columnsToShow.push(column.getColId());
+        }
+      }
+    }
+
+    // show/hide columns based on current grid width
+    params.api.setColumnsVisible(columnsToShow, true);
+    params.api.setColumnsVisible(columnsToHide, false);
+
+    // wait until columns stopped moving and fill out
+    // any available space to ensure there are no gaps
+    window.setTimeout(() => {
+      params.api.sizeColumnsToFit();
+    }, 10);
   }
-
-  public ngOnDestroy(): void {
-    this.destroy$$.next();
-    this.destroy$$.complete();
-  }
-
-  colDefs: ColDef[] = [
-    { field: 'periodFrom', headerName: 'Okres od' },
-    { field: 'periodUntil', headerName: 'Okres do' },
-    { field: 'taxID', headerName: 'Numer NIP' },
-    { field: 'fullName', headerName: 'Nazwa' },
-    { field: 'countryCode', headerName: 'Kod kraju' },
-    {
-      field: 'pkdCode',
-      headerName: 'Kod PKD',
-      cellRenderer: DropdownCellComponent,
-      cellRendererParams: {
-        list: ['17.40', '24.33', '19.03', '20.52'], // przykładowe dane wyświetlane w liście dropdowna
-      },
-    },
-    { field: 'taxCategory', headerName: 'Kategoria podmiotu w ramach art. 11' },
-    {
-      field: 'operatingMargin',
-      headerName: 'Marża operacyjna',
-      valueFormatter: (p) => p.value + '%',
-    },
-    {
-      field: 'profitMargin',
-      headerName: 'Marża zysku',
-      valueFormatter: (p) => p.value + '%',
-    },
-    {
-      field: 'returnOnAssets',
-      headerName: 'Zwrot z aktywów',
-      valueFormatter: (p) => p.value + '%',
-    },
-    {
-      field: 'returnOnEquity',
-      headerName: 'Zwrot z kapitału',
-      valueFormatter: (p) => p.value + '%',
-    },
-  ];
 }
