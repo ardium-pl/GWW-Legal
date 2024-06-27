@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { TableComponent } from 'app/components/table/table.component';
 import {
@@ -42,8 +35,8 @@ export class TprPage implements OnInit, OnDestroy {
     categoryF: [],
   });
   readonly itterableTransactionData = signal<any>(null);
-  readonly companyColumnDefs = computed(() => companyColDefs);
-  readonly transactionColumnDefs = computed(() => transactionColDefs);
+  readonly companyColumnDefs = companyColDefs;
+  readonly transactionColumnDefs = transactionColDefs;
 
   public ngOnInit(): void {
     const observableFrom$ = from(this.clipboardService.readClipboard());

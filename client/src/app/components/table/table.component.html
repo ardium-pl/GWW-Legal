@@ -2,8 +2,8 @@
   <ag-grid-angular
     class="ag-theme-quartz"
     domLayout="autoHeight"
-    [rowData]="gridData()"
-    [columnDefs]="colDefs()"
+    [rowData]="inputData"
+    [columnDefs]="colDefs"
     [tooltipShowDelay]="tooltipShowDelay"
     (gridSizeChanged)="onGridSizeChanged($event)"
   />

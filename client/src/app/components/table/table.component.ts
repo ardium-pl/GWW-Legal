@@ -12,16 +12,12 @@ import { TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
-export class TableComponent implements OnInit {
-  @Input() public colDefs: Signal<ColDef[]> = signal([]);
+export class TableComponent {
+  @Input() public colDefs: ColDef[] | null = null;
   @Input() public inputData: TPR_input[] | Transaction[] | null = null;
-  readonly gridData = signal<TPR_input[] | Transaction[] | null>([]);
+  readonly gridData: TPR_input[] | Transaction[] | null = null;
 
   tooltipShowDelay = 500;
-
-  public ngOnInit(): void {
-    this.gridData.set(this.inputData);
-  }
 
   onGridSizeChanged(params: GridSizeChangedEvent) {
     // get the current grids width
