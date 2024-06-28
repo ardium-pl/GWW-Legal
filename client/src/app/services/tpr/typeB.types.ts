@@ -5,7 +5,7 @@ export type TransakcjaKategoriaB<
   PrzedmiotB: string;
   WartoscB:[
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -19,7 +19,7 @@ export type TransakcjaKategoriaB<
     Kraj: string;
     WartoscBKraj1: [
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
       },
@@ -38,7 +38,7 @@ type KC01 = {
   KorektaCT4: 'KC01';
   WartKorektyCT4: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },

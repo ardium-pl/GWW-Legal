@@ -1,4 +1,3 @@
-// Base TransakcjaKategoriaF type with generic support variables
 export type TransakcjaKategoriaF<
   K extends KorektaCenTransferowych = KorektaCenTransferowych
 > = {
@@ -6,7 +5,7 @@ export type TransakcjaKategoriaF<
   PrzedmiotF: string;
   WartoscF: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -20,7 +19,7 @@ export type TransakcjaKategoriaF<
     Kraj: string;
     WartoscFKraj1: [
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
       },
@@ -39,7 +38,7 @@ type KC01 = {
   KorektaCT6: 'KC01';
   WartKorektyCT6: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },

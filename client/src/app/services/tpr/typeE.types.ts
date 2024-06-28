@@ -1,4 +1,3 @@
-// Base TransakcjaKategoriaE type with generic support variables
 export type TransakcjaKategoriaE<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
@@ -8,7 +7,7 @@ export type TransakcjaKategoriaE<
   PrzedmiotE: string;
   WartoscE: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -46,7 +45,7 @@ type KC01 = {
   KorektaCT3: 'KC01';
   WartKorektyCT3: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -66,7 +65,7 @@ type ZW01 = {
     Kraj: string;
     WartoscEKraj1: [
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
       },
@@ -138,3 +137,4 @@ type SposobKalkulacjiOplaty =
   | 'SK04'
   | 'SK05'
   | 'SK06';
+

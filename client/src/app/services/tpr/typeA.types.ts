@@ -7,7 +7,7 @@ export type TransakcjaKategoriaA<
   PrzedmiotA: string;
   WartoscA: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -23,7 +23,7 @@ type KC01 = {
   KorektaCT1: 'KC01';
   WartKorektyCT1: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -43,7 +43,7 @@ type ZW01 = {
     Kraj: string;
     WartoscAKraj1: [
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
       },
@@ -63,7 +63,7 @@ type TK01 = {
     Kraj: string;
     WartoscAKraj2: [
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
       },

@@ -98,8 +98,8 @@ export const transactionColDefs: ColDef[] = [
   },
   {
     field: 'compensation',
-    headerName: 'Kompresja',
-    headerTooltip: 'Kompresja',
+    headerName: 'Kompensata',
+    headerTooltip: 'Kompensata',
   },
   {
     field: 'taxExemptionCode',

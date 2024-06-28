@@ -7,7 +7,7 @@ export type TransakcjaKategoriaC<
   PrzedmiotC: string;
   WartoscC: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -17,7 +17,7 @@ export type TransakcjaKategoriaC<
   Kompensata: Kompensata;
   KapitalC: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -25,7 +25,7 @@ export type TransakcjaKategoriaC<
   ];
   ZadluzenieC: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -33,7 +33,7 @@ export type TransakcjaKategoriaC<
   ];
   OdsetkiCm: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -41,7 +41,7 @@ export type TransakcjaKategoriaC<
   ];
   OdsetkiCk: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -55,7 +55,7 @@ type KC01 = {
   KorektaCT2: 'KC01';
   WartKorektyCT2: [
     {
-      _attr: {
+      _attributes: {
         kodWaluty: string;
       };
     },
@@ -74,7 +74,7 @@ type ZW01 = {
     Kraj: string;
     WartoscCKraj1: [
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
       },
@@ -94,7 +94,7 @@ type TK01 = {
     Kraj: string;
     WartoscCKraj2: [
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
       },
