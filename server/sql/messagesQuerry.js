@@ -1,47 +1,25 @@
 import { createTCPConnection } from './sqlConnect.js';
 
-export async function getOrSetUserMessage(userMessage) {
+export async function getUserMessageId(userMessage) {
     const connection = await createTCPConnection();
-    try {
-        const [results] = await connection.query(`SELECT id FROM user_messages WHERE content = ?`, [userMessage]);
-
-        if (results.length === 0) {
-            const [insertResult] = await connection.query(
-                `INSERT INTO user_messages (content) VALUES (?)`,
-                [userMessage]
-            );
-            return insertResult.insertId;
-        } else {
-            return results[0].id;
-        }
-    } catch (err) {
-        console.log(`Error in getOrSetUserMessage: ${err}`);
-        return false;
-    } finally {
-        connection.end();
-    }
+    const [results] = await connection.query(`SELECT id FROM user_messages WHERE content = ?`, [userMessage]);
+    return results.length > 0 ? results[0].id : null;
 }
 
-
-export async function getOrSetSystemMessage(systemMessage) {
+export async function insertUserMessage(userMessage) {
     const connection = await createTCPConnection();
+    const [insertResult] = await connection.query(`INSERT INTO user_messages (content) VALUES (?)`, [userMessage]);
+    return insertResult.insertId;
+}
 
-    try {
-        const [results] = await connection.query(`SELECT id FROM system_messages WHERE content = ?`, [systemMessage]);
+export async function getSystemMessageId(systemMessage) {
+    const connection = await createTCPConnection();
+    const [results] = await connection.query(`SELECT id FROM system_messages WHERE content = ?`, [systemMessage]);
+    return results.length > 0 ? results[0].id : null;
+}
 
-        if (!results.length) { 
-            const [insertResult] = await connection.query(
-                `INSERT INTO system_messages (content) VALUES (?)`,
-                [systemMessage]
-            );
-            return insertResult.insertId;
-        } else {
-            return results[0].id;
-        }
-    } catch (err) {
-        console.log(`Error in getOrSetSystemMessage: ${err}`);
-        return false;
-    } finally {
-        connection.end();
-    }
+export async function insertSystemMessage(systemMessage) {
+    const connection = await createTCPConnection();
+    const [insertResult] = await connection.query(`INSERT INTO system_messages (content) VALUES (?)`, [systemMessage]);
+    return insertResult.insertId;
 }
