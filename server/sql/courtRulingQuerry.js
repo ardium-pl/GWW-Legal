@@ -23,5 +23,5 @@ export async function getCourtRulingID(caseSignature) {
     if (results.length != 0) {
         return results[0].id;
     }
-    return false;
+    return null;
 }

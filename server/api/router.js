@@ -7,7 +7,6 @@ import { getCourtRulingID, getRulingBySignature, getSignatureByContent } from ".
 import { getGptResponse } from "../sql/gptAnswQuerry.js";
 import { getSystemMessageId, getUserMessageId } from "../sql/messagesQuerry.js";
 
-
 nsaRouter.post("/api/nsa/query", async (req, res) => {
   try {
     const { caseSignature } = req.body;
@@ -44,7 +43,7 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
 
 nsaRouter.post("/api/nsa/question", async (req, res) => {
   try {
-    const { courtRuling, systemMessage, userMessage } = req.body;
+    const { caseSignature, courtRuling, systemMessage, userMessage } = req.body;
     if (!courtRuling) {
       return res.status(400).send({ error: "Court ruling is required." });
     }
@@ -57,12 +56,12 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
       }
     }
 
-    const caseSignature = await getSignatureByContent(courtRuling);
     const courtRulingID = await getCourtRulingID(caseSignature);
     const systemMessageID = await getSystemMessageId(systemMessage);
     const userMessageID = await getUserMessageId(userMessage);
 
-    const response = await getGptResponse(courtRulingID, systemMessageID, userMessageID) || await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature);
+    const response = await getGptResponse(courtRulingID, systemMessageID, userMessageID) ||
+      await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature);
 
     res.status(200).json(response);
   } catch (error) {

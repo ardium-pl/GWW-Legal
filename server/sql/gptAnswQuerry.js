@@ -9,7 +9,7 @@ export async function getGptResponse(courtRulingID, systemMessageID, userMessage
                    AND user_message_id = ?`;
 
     const [rows] = await connection.execute(query, [courtRulingID, systemMessageID, userMessageID]);
-    return rows.length > 0 ? rows[0].answer : false;
+    return rows.length > 0 ? rows[0].answer : null;
 }
 
 export async function setGptResponse(courtRulingID, systemMessageID, userMessageID, response) {
