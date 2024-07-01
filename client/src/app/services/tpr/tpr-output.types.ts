@@ -1,4 +1,6 @@
 import { TransakcjaKategoriaA } from './typeA.types';
+import { TransakcjaKategoriaA1 } from './typeA1.types';
+import { TransakcjaKategoriaA2 } from './typeA2.types';
 import { TransakcjaKategoriaB } from './typeB.types';
 import { TransakcjaKategoriaC } from './typeC.types';
 import { TransakcjaKategoriaE } from './typeE.types';
@@ -45,6 +47,8 @@ export type TPR = {
       };
       Transakcja: Array<
         | TransakcjaKategoriaA
+        | TransakcjaKategoriaA1
+        | TransakcjaKategoriaA2
         | TransakcjaKategoriaB
         | TransakcjaKategoriaC
         | TransakcjaKategoriaE

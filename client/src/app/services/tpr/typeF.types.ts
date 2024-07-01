@@ -1,7 +1,8 @@
+// Base TransakcjaKategoriaF type with generic support variables
 export type TransakcjaKategoriaF<
   K extends KorektaCenTransferowych = KorektaCenTransferowych
 > = {
-  KategoriaF: string;
+  KategoriaF: '1501'|'2501';
   PrzedmiotF: string;
   WartoscF: [
     {
@@ -11,10 +12,9 @@ export type TransakcjaKategoriaF<
     },
     number
   ];
-  SupportVarCorrection: K;
   Kompensata: Kompensata;
   KodZW1: 'ZW01';
-  PodstZW: '11n1';
+  PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuF1: {
     Kraj: string;
     WartoscFKraj1: [
@@ -26,14 +26,11 @@ export type TransakcjaKategoriaF<
       number
     ];
   };
-} & SupportVarCorrectionMap<K>;
+} &
+(K extends 'KC01' ? KC01 : {}) &
+(K extends 'KC02' ? KC02 : {});
 
-// SupportVar mappings for KorektaCenTransferowych
-type SupportVarCorrectionMap<K extends KorektaCenTransferowych> =
-  K extends 'KC01' ? KC01 :
-  K extends 'KC02' ? KC02 : {};
 
-// KorektaCenTransferowych types
 type KC01 = {
   KorektaCT6: 'KC01';
   WartKorektyCT6: [
@@ -53,3 +50,4 @@ type KC02 = {
 // Common types
 type KorektaCenTransferowych = 'KC01' | 'KC02';
 type Kompensata = 'KS01' | 'KS02' | 'KS03';
+type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';

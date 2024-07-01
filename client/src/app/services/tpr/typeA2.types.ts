@@ -1,21 +1,42 @@
-export type TransakcjaKategoriaA<
+export type TransakcjaKategoriaA2<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
-  MW extends MetodyBadania = MetodyBadania
+  MW extends MetodyBadania = MetodyBadania,
+  UD extends Udział = Udział,
 > = {
-  KategoriaA: string;
-  PrzedmiotA: string;
-  WartoscA: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
-  Kompensata: Kompensata;
-  SupportVarMetoda: MW;
+    KategoriaA2: '3101';
+    RodzajUm: RodzajUmowy;
+    PrzedmiotA2: string;
+    WartoscA2: [
+        {
+          _attributes: {
+            kodWaluty: string;
+          };
+        },
+        number
+      ];
+    Wklad: [
+        {
+          _attributes: {
+            kodWaluty: string;
+          };
+        },
+        number
+      ]; 
+    WkladOgolny: [
+        {
+          _attributes: {
+            kodWaluty: string;
+          };
+        },
+        number
+      ];  
+    Kompensata: Kompensata;
+    SupportVarMetoda: MW;
 }&
+(UD extends 'UD01' ? UD01 : {})&
+(UD extends 'UD02' ? UD02 : {})&
+(UD extends 'UD03' ? UD03 : {})&
 (K extends 'KC01' ? KC01 : {}) &
 (K extends 'KC02' ? KC02 : {}) &
 (ZW extends 'ZW01' ? ZW01 : {}) &
@@ -26,6 +47,21 @@ export type TransakcjaKategoriaA<
 (MW extends 'MW06' ? MW06: {}) &
 (MW extends 'MW02' | 'MW03' | 'MW05' ? MW02_MW03_MW05 : {});
 
+
+type UD01 = {  
+  Udzial1: 'UD01';
+  ProcentUdzial1: number;
+}
+
+type UD02 = {
+  Udzial2: 'UD02';
+  ProcentUdzial2: number;
+}
+
+type UD03 = {
+  Udzial3: 'UD03';
+  ProcentUdzial3: number;
+}
 type KC01 = {
   KorektaCT1:'KC01';
   WartKorektyCT1:[
@@ -350,3 +386,5 @@ type ZrodloDanychZgodnosci =
   | 'AZ08'
   | 'AZ09';
 type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+type RodzajUmowy = 'RT01' | 'RT02';
+type Udział = 'UD01' | 'UD02' | 'UD03';

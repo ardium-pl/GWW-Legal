@@ -1,9 +1,11 @@
+import { ExternalExpr } from "@angular/compiler";
+
 export type TransakcjaKategoriaC<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania
 > = {
-  KategoriaC: string;
+  KategoriaC: '1201' | '1202' | '1203' | '1204' | '2201' | '2202' | '2203' | '2204';
   PrzedmiotC: string;
   WartoscC: [
     {
@@ -13,7 +15,6 @@ export type TransakcjaKategoriaC<
     },
     number
   ];
-  SupportVarCorrection: K;
   Kompensata: Kompensata;
   KapitalC: [
     {
@@ -47,9 +48,13 @@ export type TransakcjaKategoriaC<
     },
     number // Podać w tysiącach
   ];
-  SupportVarKodZW: ZW;
-  SupportVarMetoda: MW;
-};
+} &
+  (K extends 'KC01' ? KC01 : {}) &
+  (K extends 'KC02' ? KC02 : {}) &
+  (ZW extends 'ZW01' ? ZW01 : {}) &
+  (ZW extends 'ZW02' ? ZW02 : {}) &
+  (MW extends 'MW00' ? MW00 : {}) &
+  (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06' ? MW01toMW06 : {});
 
 type KC01 = {
   KorektaCT2: 'KC01';
@@ -69,7 +74,7 @@ type KC02 = {
 
 type ZW01 = {
   KodZW1: 'ZW01';
-  PodstZW: '11n1'; // only this value appears at the client
+  PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuC1: {
     Kraj: string;
     WartoscCKraj1: [
@@ -83,10 +88,12 @@ type ZW01 = {
   };
 };
 
-type ZW02 = {
+type ZW02<
+  TK extends RodzajTransakcji = RodzajTransakcji
+> = {
   KodZW2: 'ZW02';
-  SupportVarRodzajTransakcji: RodzajTransakcji;
-};
+} & (TK extends 'TK01' ? TK01 : {}) &
+  (TK extends 'TK02' ? TK02 : {});
 
 type TK01 = {
   RodzajTrans1: 'TK01';
@@ -108,17 +115,27 @@ type TK02 = {
   Kraj: string;
 };
 
-type KategoriaC_MW00 = {
+type MW00 = {
   MetodaC1: 'MW00';
 };
 
-type KategorieMW01toMW06 = {
+type MW01toMW06<
+  KP extends Korekta = Korekta,
+  OP extends RodzajOprocentowania = RodzajOprocentowania,
+  RP extends RodzajPrzedzialu = RodzajPrzedzialu
+> = {
   MetodaC: 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
   ZrodloDanychFin: ZrodloDanychFinansowych;
-  SupportVarKorektaPorownywalnosciWynikow: Korekta;
-  SupportVarSposobKalkulacjiOprocentowania: RodzajOprocentowania;
-  SupportVarRodzajPrzedzialu: RodzajPrzedzialu;
-};
+} &
+  (KP extends 'KP01' ? KP01 : {}) &
+  (KP extends 'KP02' ? KP02 : {}) &
+  (OP extends 'OP01' ? OP01 : {}) &
+  (OP extends 'OP02' ? OP02 : {}) &
+  (OP extends 'OP03' ? OP03 : {}) &
+  (OP extends 'OP04' | 'OP05' ? OP04_OP05 : {}) &
+  (RP extends 'RP01' ? RP01 : {}) &
+  (RP extends 'RP02' ? RP02 : {}) &
+  (RP extends 'RP03' ? RP03 : {});
 
 type KP01 = {
   KorektyPorWyn3: 'KP01';
@@ -129,10 +146,35 @@ type KP02 = {
   KorektyPorWynProg: number;
 };
 
-//   type OP01 = {
-//     KalkOproc1:'OP01';
-//     Marza:
-//   }
+type OP01<
+  SB extends NazwaStopyBazowej = NazwaStopyBazowej,
+  TB extends TerminStopyBazowej = TerminStopyBazowej
+> = {
+  KalkOproc1: 'OP01';
+  Marza: number; // show in %
+
+} &
+  (SB extends 'SB01' | 'SB02' | 'SB03' | 'SB04' | 'SB05' | 'SB06' | 'SB07' | 'SB08' ? SB01toSB08 : {}) &
+  (SB extends 'SB09' ? SB09 : {}) &
+  (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB01toTB06 : {}) &
+  (TB extends 'TB07' ? TB07 : {});
+
+type SB01toSB08 = {
+  KodSB1: 'SB01' | 'SB02' | 'SB03' | 'SB04' | 'SB05' | 'SB06' | 'SB07' | 'SB08';
+}
+
+type SB09 = {
+  InnaSB: string;
+}
+
+type TB01toTB06 = {
+  TerminSB: 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06';
+}
+
+type TB07 = {
+  TerminInny: 'TB07';
+  Okres: string;
+}
 
 type OP02 = {
   KalkOproc2: 'OP02';
@@ -183,3 +225,6 @@ type ZrodloDanychFinansowych = 'ZD01' | 'ZD02' | 'ZD03' | 'ZD04' | 'ZD05';
 type Korekta = 'KP01' | 'KP02';
 type RodzajOprocentowania = 'OP01' | 'OP02' | 'OP03' | 'OP04' | 'OP05';
 type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
+type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+type NazwaStopyBazowej = 'SB01' | 'SB02' | 'SB03' | 'SB04' | 'SB05' | 'SB06' | 'SB07' | 'SB08' | 'SB09';
+type TerminStopyBazowej = 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' | 'TB07';

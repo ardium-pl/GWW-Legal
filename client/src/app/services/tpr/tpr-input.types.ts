@@ -20,6 +20,7 @@ export type Transaction = {
   currencyCode: string;
   correction: 'KC01' | 'KC02';
   compensation: 'KS01' | 'KS02' | 'KS03';
+  safeHarbour: string;
 };
 
 export type TransactionCategories = {

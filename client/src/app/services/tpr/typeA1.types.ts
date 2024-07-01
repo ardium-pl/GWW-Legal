@@ -1,20 +1,21 @@
-export type TransakcjaKategoriaA<
+export type TransakcjaKategoriaA1<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
-  MW extends MetodyBadania = MetodyBadania
+  MW extends MetodyBadania = MetodyBadania,
 > = {
-  KategoriaA: string;
-  PrzedmiotA: string;
-  WartoscA: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
-  Kompensata: Kompensata;
-  SupportVarMetoda: MW;
+    KategoriaA1: '3001' | '3002' | '3003' | '3004' | '3005' | '3006' | '3007' | '3008' | '3009' | '3010' | '3011' | '3012' | '3013';
+    WynRestrukt: WynagrodzenieZaRestrukturyzację;
+    PrzedmiotA1: string;
+    WartoscA1: [
+        {
+          _attributes: {
+            kodWaluty: string;
+          };
+        },
+        number
+      ];
+    Kompensata: Kompensata;
+    SupportVarMetoda: MW;
 }&
 (K extends 'KC01' ? KC01 : {}) &
 (K extends 'KC02' ? KC02 : {}) &
@@ -350,3 +351,9 @@ type ZrodloDanychZgodnosci =
   | 'AZ08'
   | 'AZ09';
 type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+type WynagrodzenieZaRestrukturyzację = 
+  | 'RM01'
+  | 'RM02'
+  | 'RM03'
+  | 'RM04'
+  | 'RM05';
