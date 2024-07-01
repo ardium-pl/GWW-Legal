@@ -46,11 +46,11 @@ export type TPR = {
         RentKW: number;
       };
       Transakcja: Array<
-        | TransakcjaKategoriaA
-        | TransakcjaKategoriaA1
-        | TransakcjaKategoriaA2
+        // | TransakcjaKategoriaA
+        // | TransakcjaKategoriaA1
+        // | TransakcjaKategoriaA2
         | TransakcjaKategoriaB
-        | TransakcjaKategoriaC
+        // | TransakcjaKategoriaC
         | TransakcjaKategoriaE
         | TransakcjaKategoriaF
       >;
