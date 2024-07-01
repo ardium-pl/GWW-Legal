@@ -1,10 +1,11 @@
+// src/app/xml-generator/xml-generator.component.ts
 import { Component, OnInit } from '@angular/core';
-import { DataExportService } from 'app/services/data-export.service';
-import { TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
+import { TPR_input } from 'app/services/tpr/tpr-input.types';
 import { translateToTPR } from 'app/utils/tpr-translator.util';
 import * as xmljs from 'xml-js';
 import { ButtonComponent } from '../button/button.component';
-import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver'
+import { DataExportService } from 'app/services/data-export.service';
 
 @Component({
   selector: 'app-xml-generator',
@@ -15,15 +16,13 @@ import { saveAs } from 'file-saver';
 })
 export class XmlGeneratorComponent implements OnInit {
   tprData: TPR_input[] = [];
-  transactionData: Transaction[] = [];
 
   constructor(private dataExportService: DataExportService) {}
 
   ngOnInit() {
-    this.dataExportService.getTPRData().subscribe((data: TPR_input[]) => {
-      this.tprData = data;
+    this.dataExportService.tprData$.subscribe(data => {
+      this.tprData = data as TPR_input[];
     });
-
   }
 
   generateXML() {
@@ -36,5 +35,4 @@ export class XmlGeneratorComponent implements OnInit {
       saveAs(blob, 'tpr_data.xml');
     }
   }
-  
 }

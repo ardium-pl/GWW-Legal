@@ -15,17 +15,22 @@ export type TransakcjaKategoriaA<
   ];
   Kompensata: Kompensata;
   SupportVarMetoda: MW;
-}&
-(K extends 'KC01' ? KC01 : {}) &
-(K extends 'KC02' ? KC02 : {}) &
-(ZW extends 'ZW01' ? ZW01 : {}) &
-(ZW extends 'ZW02' ? ZW02 : {}) &
-(MW extends 'MW00' ? MW00 : {}) &
-(MW extends 'MW01' ? MW01 : {}) &
-(MW extends 'MW04' ? MW04: {}) & 
-(MW extends 'MW06' ? MW06: {}) &
-(MW extends 'MW02' | 'MW03' | 'MW05' ? MW02_MW03_MW05 : {});
+}
 
+function isMW00<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW00{
+  return true;
+}
+
+function isKC01<T extends TransakcjaKategoriaA>(obj: T): obj is T & KC01{
+  return true;
+}
+
+const obj = {} as TransakcjaKategoriaA;
+if(isMW00(obj)){
+  if(isKC01(obj)){
+
+  }
+}
 type KC01 = {
   KorektaCT1:'KC01';
   WartKorektyCT1:[

@@ -7,6 +7,7 @@ export const companyColDefs: ColDef[] = [
     field: 'periodFrom',
     headerName: 'Okres od',
     headerTooltip: 'Okres od',
+    editable: true
   },
   {
     field: 'periodUntil',
