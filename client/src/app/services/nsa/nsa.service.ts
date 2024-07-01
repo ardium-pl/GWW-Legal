@@ -34,7 +34,7 @@ export class NsaService {
     this._rulingRequestState.set(RequestState.Pending);
     this._caseSignature = caseSignature;
     const sub = this.http
-      .post(apiUrl('/api/nsa/query'), { caseSignature })
+      .post(apiUrl('/nsa/query'), { caseSignature })
       .pipe(
         catchError((err, caught) => {
           this._rulingRequestState.set(RequestState.Error);
@@ -93,7 +93,7 @@ export class NsaService {
       formOutput.userMessage2,
       formOutput.userMessage3,
     ].map((userMessage) =>
-      this.http.post(apiUrl('/api/nsa/question'), {
+      this.http.post(apiUrl('/nsa/question'), {
         caseSignature,
         courtRuling,
         systemMessage: formOutput.systemMessage,
