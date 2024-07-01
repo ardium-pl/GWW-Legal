@@ -1,10 +1,7 @@
 import OpenAI from "openai";
-import * as dotenv from "dotenv";
 import { setGptResponse } from "../sql/gptAnswQuerry.js";
 import { getSystemMessageId, getUserMessageId, insertSystemMessage, insertUserMessage } from "../sql/messagesQuerry.js";
 import { getCourtRulingID, insertRuling } from "../sql/courtRulingQuerry.js"
-
-dotenv.config(); // delete at production
 
 const openai = new OpenAI();
 
