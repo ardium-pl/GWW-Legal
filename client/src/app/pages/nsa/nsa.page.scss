@@ -2,164 +2,254 @@
 
 $gap: 12px;
 
-app-nsa {
-  .page-container {
-    flex-direction: column;
-    justify-content: stretch;
-    max-height: 100%;
-    width: max-content;
-    align-items: center;
-    margin: 0 auto;
+.pager-container,
+form {
+  min-width: min(720px, 90vw);
+  width: 720px;
+  max-width: 90vw;
+  display: flex;
+}
+.indigo-stripe {
+  position: absolute;
+  right: 0;
+  left: 0;
+  height: 8px;
+  width: 100%;
+  margin-bottom: 0;
+  background-color: var(--indigo600);
+  border-radius: 4px 4px 0 0;
+}
+.gray-stripe {
+  background-color: #e0e0e0;
+  width: 100%;
+  height: 1px;
+}
+.image-container {
+  margin-left: 7px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 
-    >div {
-      flex-grow: 1;
-    }
+  .logo {
+    height: calc($logoHeight / 4);
+    width: calc($logoWidth / 4);
+    margin-top: 8px;
   }
-  .page-container,
-  .pager-container,
-  form {
-    min-width: min(720px, 90vw);
-    width: 720px;
-    max-width: 90vw;
-    display: flex;
-  }
-  .pager-container {
-    height: calc(100vh - 2 * #{$bodyPaddingVertical});
-    height: calc(100dvh - 2 * #{$bodyPaddingVertical});
-    max-height: calc(100vh - 2 * #{$bodyPaddingVertical});
-    max-height: calc(100dvh - 2 * #{$bodyPaddingVertical});
-    overflow: hidden;
-  }
-  form {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: $gap;
+}
+.image-text {
+  font-size: 13px;
+  margin-left: 5px;
+  padding: $gap;
+}
+.pager-container {
+  margin: 0 auto;
+  height: calc(100vh - 2 * #{$bodyPaddingVertical});
+  height: calc(100dvh - 2 * #{$bodyPaddingVertical});
+  max-height: calc(100vh - 2 * #{$bodyPaddingVertical});
+  max-height: calc(100dvh - 2 * #{$bodyPaddingVertical});
+  overflow: hidden;
+
+  > * {
     position: relative;
-    padding: 0 4px 4px 4px;
     left: calc(-100% * var(--_pager-page));
     transition: left 0.35s ease;
-    overflow: auto;
   }
-  .buttons-container {
+}
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: $gap - 4px;
+}
+form {
+  padding: 0 4px 4px 4px;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: auto;
+}
+mat-card {
+  padding: 0 16px;
+  width: 100%;
+
+  &:not(:last-child) {
+    margin-bottom: $gap;
+  }
+}
+mat-card-header {
+  font-size: 18px;
+  font-weight: 500;
+}
+mat-card-content {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+mat-form-field {
+  width: 288px;
+  max-width: 100%;
+
+  &.full-size {
     width: 100%;
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 4px 0 4px;
+  }
+}
+textarea {
+  min-height: 12em;
+  max-height: 22rem;
+}
+.ruling-text {
+  padding-top: 12px;
+}
+.reset-button-container {
+  position: relative;
+}
+.reset-button {
+  position: absolute;
+  right: 0;
+  bottom: $gap - 4px;
+  pointer-events: none;
+  opacity: 0;
+  appearance: none;
 
-    button {
-      transition: opacity 0.2s ease, transform 0.2s ease;
+  &.active {
+    pointer-events: all;
+    opacity: 1;
+    appearance: auto;
+  }
+}
+mat-card-actions {
+  display: flex;
+  gap: 24px;
+}
+.buttons-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+}
+.loading-icon {
+  height: 24px;
 
-      &.invisible {
-        opacity: 0;
-        transform: scale(0);
-      }
-    }
-  }
-  mat-card {
-    padding: 0 16px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-  mat-card-header {
-    font-size: 18px;
-    font-weight: 500;
-  }
-  mat-card-content {
-    padding-top: 24px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  mat-form-field {
-    width: 288px;
-    max-width: 100%;
-
-    &.full-size {
-      width: 100%;
-    }
-  }
-  textarea {
-    min-height: 12em;
-    max-height: 22rem;
-  }
-  .ruling-text {
-    padding-top: 12px;
-  }
-  .reset-button-container {
-    position: relative;
-  }
-  .reset-button {
-    position: absolute;
-    right: 0;
-    bottom: $gap - 4px;
-    pointer-events: none;
+  &.invisible {
     opacity: 0;
-    appearance: none;
-    // transition: opacity 0.025s ease;
+    transform: scale(0);
+  }
+}
 
-    &.active {
-      pointer-events: all;
-      opacity: 1;
-      appearance: auto;
-    }
-  }
-  mat-card-actions {
-    display: flex;
-    gap: 24px;
-  }
-  .progress-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .progress-indicator {
-    display: flex;
-    align-items: center;
-    gap: 1ch;
-  }
-  .loading-icon {
-    height: 24px;
+mat-card {
+  padding: 0 16px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+mat-card-header {
+  font-size: 18px;
+  font-weight: 500;
+}
+mat-card-content {
+  padding-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+mat-form-field {
+  width: 288px;
+  max-width: 100%;
 
-    &.is-loaded-true {
-      color: var(--green);
-    }
-    &.is-loaded-ERROR {
-      color: rgb(var(--danger-700));
-    }
+  &.full-size {
+    width: 100%;
+  }
+}
+textarea {
+  min-height: 12em;
+  max-height: 22rem;
+}
+.ruling-text {
+  padding-top: 12px;
+}
+.reset-button-container {
+  position: relative;
+}
+.reset-button {
+  position: absolute;
+  right: 0;
+  bottom: $gap - 4px;
+  pointer-events: none;
+  opacity: 0;
+  appearance: none;
+  // transition: opacity 0.025s ease;
 
-    mat-spinner {
-      width: 24px !important;
-      height: 24px !important;
-    }
+  &.active {
+    pointer-events: all;
+    opacity: 1;
+    appearance: auto;
   }
-  .divided-card {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
+}
+mat-card-actions {
+  display: flex;
+  gap: 24px;
+}
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1ch;
+}
+.loading-icon {
+  height: 24px;
+
+  &.is-loaded-true {
+    color: var(--green);
   }
-  .checkbox-container {
-    align-self: flex-end;
+  &.is-loaded-ERROR {
+    color: rgb(var(--danger-700));
+  }
+
+  mat-spinner {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+.divided-card {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+.checkbox-container {
+  align-self: flex-end;
+  position: relative;
+  left: 12px;
+  top: 10px;
+
+  .mdc-checkbox {
     position: relative;
-    left: 12px;
-    top: 10px;
-
-    .mdc-checkbox {
-      position: relative;
-      left: 4px;
-    }
+    left: 4px;
   }
-  mat-checkbox {
-    user-select: none;
-  }
-  .fab-container {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+}
+mat-checkbox {
+  user-select: none;
+}
+.fab-container {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }

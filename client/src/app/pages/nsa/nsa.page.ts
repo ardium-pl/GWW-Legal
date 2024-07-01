@@ -20,6 +20,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -28,7 +29,12 @@ import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
   MatTooltipModule,
 } from '@angular/material/tooltip';
-import { IconComponent, RequiredStarComponent } from 'app/components';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogData,
+  IconComponent,
+  RequiredStarComponent,
+} from 'app/components';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
@@ -78,6 +84,7 @@ const DEFAULT_USER_MESSAGES = [
 export class NsaPage implements OnInit, OnDestroy {
   readonly nsaService = inject(NsaService);
   readonly searchService = inject(SearchService);
+  readonly dialog = inject(MatDialog);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -103,8 +110,18 @@ export class NsaPage implements OnInit, OnDestroy {
     ]),
   });
 
-  ngOnInit(): void {
-    this.nsaFormPart2.markAsDirty();
+  readonly caseSigntaureInput =
+    viewChild<ElementRef<HTMLInputElement>>('caseSigntaureInput');
+
+  get isFindCaseButtonDisabled(): boolean {
+    return (
+      this.nsaService.isRulingLoading() ||
+      !this.nsaFormPart1.valid ||
+      !this.nsaFormPart1.dirty
+    );
+  }
+
+  ngOnInit() {
     this.showGptResultsImmediately.set(
       localStorage.getItem('showGptResultsImmediately') === 'true',
     );
@@ -152,11 +169,9 @@ export class NsaPage implements OnInit, OnDestroy {
     if (this.disabledNextPage()) return;
 
     const values = this.nsaFormPart2.value;
-    if (this.nsaFormPart2.dirty) {
-      this.nsaService.fetchGptAnswers(values as NsaFormPart2);
-      this.nsaFormPart3.reset();
-    }
-    this.nsaFormPart2.markAsPristine();
+    this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+    this.nsaFormPart3.reset();
+    this.nextPage();
   }
 
   fetchAdditionalAnswer(): void {
@@ -227,7 +242,7 @@ export class NsaPage implements OnInit, OnDestroy {
     effect(
       () => {
         this.searchService.searchText.set(
-          this.nsaService.rulingResponse() ?? '',
+          this.nsaService.getCleanCourtRuling() ?? '',
         );
       },
       { allowSignalWrites: true },
@@ -349,5 +364,73 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   prevPage(): void {
     this.currentPagerPage.update((v) => v - 1);
+  }
+
+  part1NextPage(): void {
+    if (this.nsaService.rulingRequestState() === 'error') {
+      this.nsaService.setManualCourtRuling(
+        this.nsaFormPart1.controls.rulingText.value!,
+      );
+    }
+    this.nextPage();
+  }
+
+  //! resetting
+  onClickResetButton() {
+    if (
+      !this.nsaService.areGptAnswersReady() ||
+      this.nsaService.isAdditionalAnswerLoading()
+    ) {
+      this.showResetConfirmDialog();
+      return;
+    }
+
+    this._resetForm();
+  }
+
+  showResetConfirmDialog() {
+    const dialogRef = this.dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData
+    >(ConfirmationDialogComponent, {
+      data: {
+        title: 'rozpocząć od nowa?',
+        swapButtonColors: true,
+        description:
+          'Niektóre odpowiedzi od AI nie zostały jeszcze załadowane. Po rozpoczęciu od nowa wszelkie prośby o odpowiedź zostaną anulowane.',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this._resetForm();
+    });
+  }
+
+  private _resetForm() {
+    this.nsaService.resetData();
+
+    this.nsaFormPart1.controls.rulingText.reset();
+    this.nsaFormPart2.reset({
+      systemMessage: DEFAULT_SYSTEM_MESSAGE,
+      userMessage1: DEFAULT_USER_MESSAGES[0],
+      userMessage2: DEFAULT_USER_MESSAGES[1],
+      userMessage3: DEFAULT_USER_MESSAGES[2],
+    });
+    this.nsaFormPart3.reset();
+
+    this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
+    this.currentPagerPage.set(0);
+
+    // execute after all other code has finished executing
+    setTimeout(() => {
+      this.nsaFormPart1.controls.caseSignature.setErrors(null);
+      this.nsaFormPart1.controls.caseSignature.markAsDirty();
+
+      const inputEl = this.caseSigntaureInput()!.nativeElement;
+      inputEl.focus();
+      inputEl.setSelectionRange(0, inputEl.value.length);
+    }, 0);
   }
 }

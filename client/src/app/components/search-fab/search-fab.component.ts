@@ -1,11 +1,13 @@
 import {
   Component,
+  ElementRef,
   ViewEncapsulation,
   computed,
   input,
   model,
   output,
-  signal
+  signal,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -30,6 +32,8 @@ import { IconComponent } from '../icon/icon.component';
   encapsulation: ViewEncapsulation.None,
 })
 export class SearchFabComponent {
+  readonly inputEl = viewChild<ElementRef<HTMLInputElement>>('inputEl');
+
   readonly active = model.required<boolean>();
 
   readonly current = input.required<number | string | null>();
@@ -53,6 +57,7 @@ export class SearchFabComponent {
   open() {
     this.active.set(true);
     this.openEvent.emit();
+    this.inputEl()?.nativeElement.focus();
   }
   close() {
     this.active.set(false);
