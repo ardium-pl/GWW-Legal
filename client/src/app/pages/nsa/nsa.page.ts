@@ -1,7 +1,10 @@
 import {
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
+  ViewEncapsulation,
+  computed,
   effect,
   inject,
   signal,
@@ -32,10 +35,13 @@ import {
   IconComponent,
   RequiredStarComponent,
 } from 'app/components';
+import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
+import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
+import { isNull } from 'simple-bool';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -63,17 +69,21 @@ const DEFAULT_USER_MESSAGES = [
     MatTooltipModule,
     MarkdownModule,
     MatCheckboxModule,
+    SearchFabComponent,
   ],
   providers: [
     NsaService,
+    SearchService,
     provideMarkdown(),
     { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
   ],
   templateUrl: './nsa.page.html',
   styleUrl: './nsa.page.scss',
+  encapsulation: ViewEncapsulation.None,
 })
-export class NsaPage implements OnInit {
+export class NsaPage implements OnInit, OnDestroy {
   readonly nsaService = inject(NsaService);
+  readonly searchService = inject(SearchService);
   readonly dialog = inject(MatDialog);
 
   readonly nsaFormPart1 = new FormGroup({
@@ -195,13 +205,14 @@ export class NsaPage implements OnInit {
         this.nsaFormPart3.controls.additionalQuestion.enable();
       }
     });
+    //store last value of showGptResultsImmediately in localStorage
     effect(() => {
-      // show immediately
       localStorage.setItem(
         'showGptResultsImmediately',
         this.showGptResultsImmediately().toString(),
       );
     });
+    //reset wasShowGptResultsImmediatelyChangedDuringPending when results are loaded
     effect(
       () => {
         if (
@@ -213,6 +224,9 @@ export class NsaPage implements OnInit {
       },
       { allowSignalWrites: true },
     );
+    //   disable wasShowGptResultsImmediatelyChangedDuringPending when:
+    // - showGptResultsImmediately is turned on and
+    // - at least one answer is already loaded
     effect(
       () => {
         if (
@@ -224,7 +238,62 @@ export class NsaPage implements OnInit {
       },
       { allowSignalWrites: true },
     );
+    //copy ruling into search service
+    effect(
+      () => {
+        this.searchService.searchText.set(
+          this.nsaService.getCleanCourtRuling() ?? '',
+        );
+      },
+      { allowSignalWrites: true },
+    );
+    //scroll to highlighted part
+    effect(() => {
+      //for detecting changes to highlighted text
+      this.searchService.highlightedText();
+
+      setTimeout(() => {
+        this._scrollToCurrentMark();
+      }, 0);
+    });
+    //subscribe to ctrl+f
+    effect((onCleanup) => {
+      const sub = this.searchService.ctrlFObservable()?.subscribe(() => {
+        this.currentPagerPage.set(0);
+        this._scrollToCurrentMark();
+        if (isNull(this.searchService.current())) {
+          this.searchService.current.set(1);
+        }
+      });
+      onCleanup(() => {
+        sub?.unsubscribe();
+      });
+    });
   }
+
+  private _scrollToCurrentMark(): void {
+    this.rulingTextEl()
+      ?.nativeElement.querySelector('mark.current')
+      ?.scrollIntoView();
+  }
+
+  //! search
+  readonly rulingTextEl = viewChild<ElementRef<HTMLElement>>('rulingTextEl');
+
+  onSearchChange(phrase: string): void {
+    this.searchService.searchPhrase.set(phrase);
+    this.searchService.current.set(1);
+
+    setTimeout(() => {
+      if (this.searchService.total() && this.currentPagerPage() !== 0) {
+        this.searchService.current.set(1);
+        this.currentPagerPage.set(0);
+        this._scrollToCurrentMark();
+      }
+    }, 0);
+  }
+
+  ngOnDestroy(): void {}
 
   //! show immediately checkbox
   readonly showGptResultsImmediately = signal<boolean>(false);
@@ -260,6 +329,9 @@ export class NsaPage implements OnInit {
   //! pager
   readonly currentPagerPage = signal<number>(0);
 
+  readonly visiblePrevPage = computed(() => this.currentPagerPage() > 0);
+  readonly visibleNextPage = computed(() => this.currentPagerPage() !== 2);
+
   disabledNextPage() {
     const page = this.currentPagerPage();
     switch (page) {
@@ -277,6 +349,21 @@ export class NsaPage implements OnInit {
     return false;
   }
 
+  nextPage(): void {
+    this.currentPagerPage.update((v) => v + 1);
+
+    if (this.currentPagerPage() === 0) {
+      if (this.nsaService.rulingRequestState() === 'error') {
+        this.nsaService.setManualCourtRuling(
+          this.nsaFormPart1.controls.rulingText.value!,
+        );
+      }
+    }
+  }
+  prevPage(): void {
+    this.currentPagerPage.update((v) => v - 1);
+  }
+
   part1NextPage(): void {
     if (this.nsaService.rulingRequestState() === 'error') {
       this.nsaService.setManualCourtRuling(
@@ -284,13 +371,6 @@ export class NsaPage implements OnInit {
       );
     }
     this.nextPage();
-  }
-
-  nextPage(): void {
-    this.currentPagerPage.update((v) => v + 1);
-  }
-  prevPage(): void {
-    this.currentPagerPage.update((v) => v - 1);
   }
 
   //! resetting
