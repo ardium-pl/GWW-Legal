@@ -23,16 +23,12 @@ export class TableComponent{
 
   constructor(private dataExportService: DataExportService) {}
 
-
   getGridData(){
     let rowData: any = [];
     this.agGrid.api.forEachNode(node => rowData.push(node.data));
     if (rowData.length > 0 && this.isTPRData(rowData[0])) {
       this.dataExportService.setTprData(rowData as TPR_input[]);
-      console.log("Combined grid data: " + JSON.stringify(rowData));
     }
-
-    return rowData;
   }
 
   isTPRData(data: TPR_input | Transaction): data is TPR_input {

@@ -12,17 +12,17 @@ export type TPR = {
       xmlns: string;
     };
     Naglowek: {
-      KodFormularza: [
-        {
+      KodFormularza: {
+        
           _attributes: {
             kodSystemowy: string;
             kodPodatku: string;
             rodzajZobowiazania: string;
             wersjaSchemy: string;
           };
-        },
-        string,
-      ];
+        
+        _text: string,
+        };
       WariantFormularza: number;
       CelZlozenia: number;
       OkresOd: string;

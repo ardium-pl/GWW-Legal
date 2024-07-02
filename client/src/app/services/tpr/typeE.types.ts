@@ -6,14 +6,12 @@ export type TransakcjaKategoriaE<
 > = {
   KategoriaE: '1401'|'2401';
   PrzedmiotE: string;
-  WartoscE: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
+  WartoscE: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number;
+  };
   Kompensata: Kompensata;
   RodzajDN: RodzajeWartosciNiematerialnych;
 } &
@@ -22,41 +20,37 @@ export type TransakcjaKategoriaE<
   (ZW extends 'ZW01' ? ZW01 : {}) &
   (ZW extends 'ZW02' ? ZW02 : {}) &
   (MW extends 'MW00' ? MW00 : {}) &
-  (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06' ? MW01toMW06<KP> : {})
+  (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06' ? MW01toMW06<KP> : {});
 
-type KC01 = {
+export type KC01 = {
   KorektaCT3: 'KC01';
-  WartKorektyCT3: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
+  WartKorektyCT3: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number;
+  };
 }
 
-type KC02 = {
+export type KC02 = {
   BrakKorektyCT3: 'KC02';
 }
 
-type ZW01 = {
+export type ZW01 = {
   KodZW1: 'ZW01';
   PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuE1: {
     Kraj: string;
-    WartoscEKraj1: [
-      {
-        _attributes: {
-          kodWaluty: string;
-        };
-      },
-      number
-    ];
+    WartoscEKraj1: {
+      _attributes: {
+        kodWaluty: string;
+      };
+      _text: number;
+    };
   };
 }
 
-type ZW02<
+export type ZW02<
   TK extends RodzajTransakcji = RodzajTransakcji
 > = {
   KodZW2: 'ZW02';
@@ -64,31 +58,29 @@ type ZW02<
   (TK extends 'TK01' ? TK01 : {}) &
   (TK extends 'TK02' ? TK02 : {});
 
-type TK01 = {
+export type TK01 = {
   RodzajTrans1: 'TK01';
   InformacjaOKrajuE2: {
     Kraj: string;
-    WartoscEKraj2: [
-      {
-        _attributes: {
-          kodWaluty: string;
-        };
-      },
-      number
-    ];
+    WartoscEKraj2: {
+      _attributes: {
+        kodWaluty: string;
+      };
+      _text: number;
+    };
   };
 }
 
-type TK02 = {
+export type TK02 = {
   RodzajTrans2: 'TK02';
   Kraj: string;
 }
 
-type MW00 = {
+export type MW00 = {
   MetodaE1: 'MW00';
 }
 
-type MW01toMW06<KP extends Korekta> = {
+export type MW01toMW06<KP extends Korekta> = {
   MetodaE: 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
   RodzajAnalizy: RodzajAnalizy;
   SposobWyrCeny: string;
@@ -101,18 +93,18 @@ type MW01toMW06<KP extends Korekta> = {
   (KP extends 'KP01' ? KP01 : {}) &
   (KP extends 'KP02' ? KP02 : {});
 
-type KP01 = {
+export type KP01 = {
   KorektyPorWyn4: 'KP01';
 }
 
-type KP02 = {
+export type KP02 = {
   KorektyPorWyn8: 'KP02';
 }
 
 // Common types
-type KorektaCenTransferowych = 'KC01' | 'KC02';
-type Kompensata = 'KS01' | 'KS02' | 'KS03';
-type RodzajeWartosciNiematerialnych =
+export type KorektaCenTransferowych = 'KC01' | 'KC02';
+export type Kompensata = 'KS01' | 'KS02' | 'KS03';
+export type RodzajeWartosciNiematerialnych =
   | 'DN01'
   | 'DN02'
   | 'DN03'
@@ -121,8 +113,8 @@ type RodzajeWartosciNiematerialnych =
   | 'DN06'
   | 'DN07'
   | 'DN08';
-type ZwolnienieArt11n = 'ZW01' | 'ZW02';
-type RodzajAnalizy =
+export type ZwolnienieArt11n = 'ZW01' | 'ZW02';
+export type RodzajAnalizy =
   | 'RA01'
   | 'RA02'
   | 'RA03'
@@ -132,7 +124,7 @@ type RodzajAnalizy =
   | 'RA07'
   | 'RA08'
   | 'RA09';
-type MetodyBadania =
+export type MetodyBadania =
   | 'MW00'
   | 'MW01'
   | 'MW02'
@@ -140,13 +132,13 @@ type MetodyBadania =
   | 'MW04'
   | 'MW05'
   | 'MW06';
-type RodzajTransakcji = 'TK01' | 'TK02';
-type Korekta = 'KP01' | 'KP02';
-type SposobKalkulacjiOplaty =
+export type RodzajTransakcji = 'TK01' | 'TK02';
+export type Korekta = 'KP01' | 'KP02';
+export type SposobKalkulacjiOplaty =
   | 'SK01'
   | 'SK02'
   | 'SK03'
   | 'SK04'
   | 'SK05'
   | 'SK06';
-type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';

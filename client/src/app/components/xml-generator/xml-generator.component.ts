@@ -28,8 +28,7 @@ export class XmlGeneratorComponent implements OnInit {
   generateXML() {
     if (this.tprData.length > 0) {
       const tpr = translateToTPR(this.tprData[0]);
-      console.log('Translated TPR:', tpr);
-      const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 4 });
+      const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
       console.log('Generated XML:', xmlVar);
       const blob = new Blob([xmlVar], { type: 'application/xml' });
       saveAs(blob, 'tpr_data.xml');
