@@ -2,7 +2,7 @@ import { TransakcjaKategoriaE } from 'app/services/tpr/typeE.types';
 import { Transaction } from 'app/services/tpr/tpr-input.types';
 import { mapKorektaCenTransferowych, mapZwolnienieArt11n } from './categoryEHelpers';
 
-export function translateCategoryE(transaction: any): any {
+export function translateCategoryE(transaction: any): TransakcjaKategoriaE {
     console.log("Transakcja" + transaction);
     let transakcja: any = {
         KategoriaE: transaction.transactionCategory as '1401' | '2401',
@@ -14,7 +14,7 @@ export function translateCategoryE(transaction: any): any {
             _text: transaction.transactionValue,
         },
         Kompensata: transaction.compensation,
-        RodzajDN: 'DN01', // Assuming you have this field in transaction
+        RodzajDN: 'DN01', 
     };
 
     console.log("Transakcja" + transakcja);

@@ -5,49 +5,39 @@ export type TransakcjaKategoriaC<
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania
 > = {
-  KategoriaC: '1201' | '1202' | '1203' | '1204' | '2201' | '2202' | '2203' | '2204';
+  KategoriaC: string;
   PrzedmiotC: string;
-  WartoscC: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
+  WartoscC: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number;
+  };
   Kompensata: Kompensata;
-  KapitalC: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number // Podać w tysiącach
-  ];
-  ZadluzenieC: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number // Podać w tysiącach
-  ];
-  OdsetkiCm: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number // Podać w tysiącach
-  ];
-  OdsetkiCk: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number // Podać w tysiącach
-  ];
+  KapitalC: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number; // Podać w tysiącach
+  };
+  ZadluzenieC: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number; // Podać w tysiącach
+  };
+  OdsetkiCm: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number; // Podać w tysiącach
+  };
+  OdsetkiCk: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number; // Podać w tysiącach
+  };
 } &
   (K extends 'KC01' ? KC01 : {}) &
   (K extends 'KC02' ? KC02 : {}) &
@@ -58,14 +48,12 @@ export type TransakcjaKategoriaC<
 
 type KC01 = {
   KorektaCT2: 'KC01';
-  WartKorektyCT2: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
+  WartKorektyCT2: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number;
+  };
 };
 
 type KC02 = {
@@ -77,14 +65,12 @@ type ZW01 = {
   PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuC1: {
     Kraj: string;
-    WartoscCKraj1: [
-      {
-        _attributes: {
-          kodWaluty: string;
-        };
-      },
-      number
-    ];
+    WartoscCKraj1: {
+      _attributes: {
+        kodWaluty: string;
+      };
+      _text: number;
+    };
   };
 };
 
@@ -99,14 +85,12 @@ type TK01 = {
   RodzajTrans1: 'TK01';
   InformacjaOKrajuC2: {
     Kraj: string;
-    WartoscCKraj2: [
-      {
-        _attributes: {
-          kodWaluty: string;
-        };
-      },
-      number
-    ];
+    WartoscCKraj2: {
+      _attributes: {
+        kodWaluty: string;
+      };
+      _text: number;
+    };
   };
 };
 

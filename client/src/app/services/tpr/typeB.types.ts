@@ -3,27 +3,23 @@ export type TransakcjaKategoriaB<
 > = {
   KategoriaB: '1101'|'2101';
   PrzedmiotB: string;
-  WartoscB: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
+  WartoscB: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number;
+  };
   Kompensata: Kompensata;
   KodZW1: 'ZW01';
   PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuB1: {
     Kraj: string;
-    WartoscBKraj1: [
-      {
-        _attributes: {
-          kodWaluty: string;
-        };
-      },
-      number
-    ];
+    WartoscBKraj1: {
+      _attributes: {
+        kodWaluty: string;
+      };
+      _text: number;
+    };
   };
 } &
   (K extends 'KC01' ? KC01 : {}) &
@@ -32,14 +28,12 @@ export type TransakcjaKategoriaB<
 
 type KC01 = {
   KorektaCT4: 'KC01';
-  WartKorektyCT4: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number
-  ];
+  WartKorektyCT4: {
+    _attributes: {
+      kodWaluty: string;
+    };
+    _text: number;
+  };
 };
 
 type KC02 = {
