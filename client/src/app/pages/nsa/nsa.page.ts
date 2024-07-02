@@ -358,8 +358,6 @@ export class NsaPage implements OnInit, OnDestroy {
           this.nsaFormPart1.controls.rulingText.value!,
         );
       }
-    } else if (this.currentPagerPage() === 1) {
-      this.fetchGptAnswers();
     }
   }
   prevPage(): void {
