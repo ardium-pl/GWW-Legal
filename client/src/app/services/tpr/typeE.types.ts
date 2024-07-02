@@ -15,11 +15,11 @@ export type TransakcjaKategoriaE<
   Kompensata: Kompensata;
   RodzajDN: RodzajeWartosciNiematerialnych;
 } &
-  (K extends 'KC01' ? KC01 : {}) &
+  (K extends 'KC01' ? KC01 : {}) |
   (K extends 'KC02' ? KC02 : {}) &
-  (ZW extends 'ZW01' ? ZW01 : {}) &
+  (ZW extends 'ZW01' ? ZW01 : {}) |
   (ZW extends 'ZW02' ? ZW02 : {}) &
-  (MW extends 'MW00' ? MW00 : {}) &
+  (MW extends 'MW00' ? MW00 : {}) |
   (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06' ? MW01toMW06<KP> : {});
 
 export type KC01 = {

@@ -22,7 +22,7 @@ export type TransakcjaKategoriaB<
     };
   };
 } &
-  (K extends 'KC01' ? KC01 : {}) &
+  (K extends 'KC01' ? KC01 : {}) |
   (K extends 'KC02' ? KC02 : {});
 
 
@@ -37,7 +37,7 @@ type KC01 = {
 };
 
 type KC02 = {
-  BrakKorektyCT4: 'KC02';
+  BrakKorektyCT4?: 'KC02';
 };
 
 // Common types

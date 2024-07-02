@@ -1,4 +1,4 @@
-import { TransakcjaKategoriaA } from './typeA.types';
+// import { TransakcjaKategoriaA } from './typeA.types';
 import { TransakcjaKategoriaA1 } from './typeA1.types';
 import { TransakcjaKategoriaA2 } from './typeA2.types';
 import { TransakcjaKategoriaB } from './typeB.types';

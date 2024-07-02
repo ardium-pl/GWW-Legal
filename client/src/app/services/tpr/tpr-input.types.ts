@@ -21,6 +21,7 @@ export type Transaction = {
   correction: 'KC01' | 'KC02';
   compensation: 'KS01' | 'KS02' | 'KS03';
   safeHarbour: string;
+  korektaCenTransferowych: string;
 };
 
 export type TransactionCategories = {

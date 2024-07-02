@@ -89,14 +89,6 @@ export function translateTransactions(transactions: Transaction[]): Transakcja[]
         kraj: 'Poland',
         zwolnienieArt11nCurrency: 'USD',
         zwolnienieArt11nValue: 400,
-        metodaE: 'MW01',
-        rodzajAnalizy: 'RA01',
-        sposobWyrCeny: 'Example Method',
-        kalkOplaty1: 'SK01',
-        poziomOpl1: 10,
-        wynikAPKO1D1: 5,
-        wynikAPKO1G1: 15,
-        korekta: 'KP01'
     };
     
 
@@ -165,33 +157,50 @@ export function translateTransactions(transactions: Transaction[]): Transakcja[]
                         //   } as TransakcjaKategoriaA2;
 
                         case '1101':
-                        case '2101':
-                          return {
-                            KategoriaB: transaction.transactionCategory as '1101' | '2101',
-                            PrzedmiotB: transaction.subjectMatter,
-                            WartoscB: {
-                              
-                                _attributes: {
-                                  kodWaluty: transaction.currencyCode,
-                                },
-                              
-                              _text: transaction.transactionValue,
-                            },
-                            Kompensata: transaction.compensation,
-                            KodZW1: 'ZW01', // Example value, adjust as needed
-                            PodstZW: '11n1', // Example value, adjust as needed
-                            InformacjaOKrajuB1: {
-                              Kraj: 'PL', // Example value, adjust as needed
-                              WartoscBKraj1: {
+                        case '2101': {
+                                const commonData = {
+                                    KategoriaB: transaction.transactionCategory as '1101' | '2101',
+                                    PrzedmiotB: transaction.subjectMatter,
+                                    WartoscB: {
+                                        _attributes: {
+                                            kodWaluty: transaction.currencyCode,
+                                        },
+                                        _text: transaction.transactionValue,
+                                    },
+                                    Kompensata: transaction.compensation,
+                                    KodZW1: 'ZW01',
+                                    PodstZW: '11n1',
+                                    InformacjaOKrajuB1: {
+                                        Kraj: 'PL',
+                                        WartoscBKraj1: {
+                                            _attributes: {
+                                                kodWaluty: transaction.currencyCode,
+                                            },
+                                            _text: transaction.transactionValue,
+                                        },
+                                    },
+                                };
+            
+                                if (transaction.korektaCenTransferowych === 'KC01') {
+                                    return {
+                                        ...commonData,
+                                        KorektaCT4: 'KC01',
+                                        WartKorektyCT4: {
+                                            _attributes: {
+                                                kodWaluty: transaction.currencyCode,
+                                            },
+                                            _text: transaction.transactionValue,
+                                        },
+                                    } as TransakcjaKategoriaB<'KC01'>;
+                                } else {
+                                    return {
+                                        ...commonData,
+                                        BrakKorektyCT4: 'KC02',
+                                    } as TransakcjaKategoriaB<'KC02'>;
+                                }
+            
                                 
-                                  _attributes: {
-                                    kodWaluty: transaction.currencyCode,
-                                  },
-                                
-                                _text: transaction.transactionValue,
-                                },
-                            },
-                          } as TransakcjaKategoriaB;
+                            }
 
                         // case '1201':
                         // case '1202':
@@ -253,30 +262,49 @@ export function translateTransactions(transactions: Transaction[]): Transakcja[]
                     return translateCategoryE(transactiona);
 
                 case '1501':
-                case '2501':
-                    return {
-                        KategoriaF: transaction.transactionCategory as '1501' | '2501',
-                        PrzedmiotF: transaction.subjectMatter,
-                        WartoscF: {
-                            _attributes: {
-                                kodWaluty: transaction.currencyCode,
-                            },
-                            _text: transaction.transactionValue,
-                        },
-                        Kompensata: transaction.compensation,
-                        KodZW1: 'ZW01', // Example value, adjust as needed
-                        PodstZW: '11n1', // Example value, adjust as needed
-                        InformacjaOKrajuF1: {
-                            Kraj: 'PL', // Example value, adjust as needed
-                            WartoscFKraj1: {
-                                _attributes: {
-                                    kodWaluty: transaction.currencyCode,
+                case '2501': {
+                            const commonData = {
+                                KategoriaF: transaction.transactionCategory as '1501' | '2501',
+                                PrzedmiotF: transaction.subjectMatter,
+                                WartoscF: {
+                                    _attributes: {
+                                        kodWaluty: transaction.currencyCode,
+                                    },
+                                    _text: transaction.transactionValue,
                                 },
-                                _text: transaction.transactionValue,
-                            },
-                        },
-                    } as TransakcjaKategoriaF;
-
+                                Kompensata: transaction.compensation,
+                                KodZW1: 'ZW01',
+                                PodstZW: '11n1',
+                                InformacjaOKrajuF1: {
+                                    Kraj: 'PL',
+                                    WartoscFKraj1: {
+                                        _attributes: {
+                                            kodWaluty: transaction.currencyCode,
+                                        },
+                                        _text: transaction.transactionValue,
+                                    },
+                                },
+                            };
+        
+                            if (transaction.korektaCenTransferowych === 'KC01') {
+                                return {
+                                    ...commonData,
+                                    KorektaCT6: 'KC01',
+                                    WartKorektyCT6: {
+                                        _attributes: {
+                                            kodWaluty: transaction.currencyCode,
+                                        },
+                                        _text: transaction.transactionValue,
+                                    },
+                                } as TransakcjaKategoriaF<'KC01'>;
+                            } else {
+                                return {
+                                    ...commonData,
+                                    BrakKorektyCT6: 'KC02',
+                                } as TransakcjaKategoriaF<'KC02'>;
+                            }
+        
+                        }
                 default:
                     return undefined;
             }
