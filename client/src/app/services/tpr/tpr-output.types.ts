@@ -50,7 +50,7 @@ export type TPR = {
         // | TransakcjaKategoriaA1
         // | TransakcjaKategoriaA2
         | TransakcjaKategoriaB
-        // | TransakcjaKategoriaC
+        | TransakcjaKategoriaC
         | TransakcjaKategoriaE
         | TransakcjaKategoriaF
       >;

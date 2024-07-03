@@ -22,8 +22,7 @@ export type TransakcjaKategoriaF<
     };
   };
 } &
-(K extends 'KC01' ? KC01 : {}) |
-(K extends 'KC02' ? KC02 : {});
+(K extends 'KC01' ? KC01 : K extends 'KC02' ? KC02 : {});
 
 
 type KC01 = {

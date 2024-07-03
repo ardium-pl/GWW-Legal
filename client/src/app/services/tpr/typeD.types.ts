@@ -45,7 +45,7 @@ export type TransakcjaKategoriaD<
     _text: number;
   };
 } &
-(K extends 'KC01' ? KC01 : {}) &
+(K extends 'KC01' ? KC01 : {}) |
 (K extends 'KC02' ? KC02 : {}) &
 (
   | { NIPKontr1: string; PESELKontr1?: never; NrIdKontr1?: never }
