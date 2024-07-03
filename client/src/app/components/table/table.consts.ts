@@ -7,6 +7,7 @@ export const companyColDefs: ColDef[] = [
     field: 'periodFrom',
     headerName: 'Okres od',
     headerTooltip: 'Okres od',
+    editable: true
   },
   {
     field: 'periodUntil',
@@ -98,8 +99,8 @@ export const transactionColDefs: ColDef[] = [
   },
   {
     field: 'compensation',
-    headerName: 'Kompresja',
-    headerTooltip: 'Kompresja',
+    headerName: 'Kompensata',
+    headerTooltip: 'Kompensata',
   },
   {
     field: 'taxExemptionCode',
