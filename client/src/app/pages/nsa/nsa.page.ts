@@ -36,6 +36,7 @@ import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
+import { FormTableComponent } from 'app/components/form-table/form-table.component';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -49,6 +50,13 @@ const DEFAULT_USER_MESSAGES = [
 @Component({
   selector: 'app-nsa',
   standalone: true,
+  providers: [
+    NsaService,
+    provideMarkdown(),
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
+  ],
+  templateUrl: './nsa.page.html',
+  styleUrl: './nsa.page.scss',
   imports: [
     MatCardModule,
     MatFormFieldModule,
@@ -63,14 +71,8 @@ const DEFAULT_USER_MESSAGES = [
     MatTooltipModule,
     MarkdownModule,
     MatCheckboxModule,
+    FormTableComponent,
   ],
-  providers: [
-    NsaService,
-    provideMarkdown(),
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
-  ],
-  templateUrl: './nsa.page.html',
-  styleUrl: './nsa.page.scss',
 })
 export class NsaPage implements OnInit {
   readonly nsaService = inject(NsaService);

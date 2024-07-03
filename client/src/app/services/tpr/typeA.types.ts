@@ -243,11 +243,11 @@ type TW03_or_TW04_or_TW05_or_TW06_for_KategoriaA_MW06 = {
   TechWyceny3: 'TW03' | 'TW04' | 'TW05' | 'TW06';
 };
 
-type KorektaCenTransferowych = 'KC01' | 'KC02';
-type Kompensata = 'KS01' | 'KS02' | 'KS03';
-type ZwolnienieArt11n = 'ZW01' | 'ZW02';
-type RodzajTransakcji = 'TK01' | 'TK02';
-type MetodyBadania =
+export type KorektaCenTransferowych = 'KC01' | 'KC02';
+export type Kompensata = 'KS01' | 'KS02' | 'KS03';
+export type ZwolnienieArt11n = 'ZW01' | 'ZW02';
+export type RodzajTransakcji = 'TK01' | 'TK02';
+export type MetodyBadania =
   | 'MW00'
   | 'MW01'
   | 'MW02'
@@ -255,12 +255,16 @@ type MetodyBadania =
   | 'MW04'
   | 'MW05'
   | 'MW06';
-type SposobWeryfikacjiEynkowegoPoziomuCeny = 'SW01' | 'SW02' | 'SW03' | 'SW04';
-type Korekta = 'KP01' | 'KP02';
-type SposobUjeciaCeny = 'CK01' | 'CK02';
-type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
-type RodzajMetodyPodzialuZysku = 'PZ01' | 'PZ02' | 'PZ03' | 'PZ04';
-type WskaznikFinansowy =
+export type SposobWeryfikacjiEynkowegoPoziomuCeny =
+  | 'SW01'
+  | 'SW02'
+  | 'SW03'
+  | 'SW04';
+export type Korekta = 'KP01' | 'KP02';
+export type SposobUjeciaCeny = 'CK01' | 'CK02';
+export type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
+export type RodzajMetodyPodzialuZysku = 'PZ01' | 'PZ02' | 'PZ03' | 'PZ04';
+export type WskaznikFinansowy =
   | 'WF01'
   | 'WF02'
   | 'WF03'
@@ -278,17 +282,24 @@ type WskaznikFinansowy =
   | 'WF15'
   | 'WF16'
   | 'WF17';
-type RodzajPorownania = 'PR01' | 'PR02' | 'PR03';
-type PodmiotBadany = 'PB01' | 'PB02';
-type KryteriumGeograficzne =
+export type RodzajPorownania = 'PR01' | 'PR02' | 'PR03';
+export type PodmiotBadany = 'PB01' | 'PB02';
+export type KryteriumGeograficzne =
   | 'KG01'
   | 'KG02'
   | 'KG03'
   | 'KG04'
   | 'KG05'
   | 'KG06';
-type TechWyceny = 'TW01' | 'TW02' | 'TW03' | 'TW04' | 'TW05' | 'TW06' | 'TW07';
-type OkresPrognozy =
+export type TechWyceny =
+  | 'TW01'
+  | 'TW02'
+  | 'TW03'
+  | 'TW04'
+  | 'TW05'
+  | 'TW06'
+  | 'TW07';
+export type OkresPrognozy =
   | 'TB01'
   | 'TB02'
   | 'TB03'
@@ -296,7 +307,7 @@ type OkresPrognozy =
   | 'TB05'
   | 'TB06'
   | 'TB07';
-type ZrodloDanychZgodnosci =
+export type ZrodloDanychZgodnosci =
   | 'AZ01'
   | 'AZ02'
   | 'AZ03'
