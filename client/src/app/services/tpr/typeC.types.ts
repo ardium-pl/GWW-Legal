@@ -39,11 +39,11 @@ export type TransakcjaKategoriaC<
     _text: number; // Podać w tysiącach
   };
 } &
-  (K extends 'KC01' ? KC01 : {}) &
+  (K extends 'KC01' ? KC01 : {}) |
   (K extends 'KC02' ? KC02 : {}) &
-  (ZW extends 'ZW01' ? ZW01 : {}) &
+  (ZW extends 'ZW01' ? ZW01 : {}) |
   (ZW extends 'ZW02' ? ZW02 : {}) &
-  (MW extends 'MW00' ? MW00 : {}) &
+  (MW extends 'MW00' ? MW00 : {}) |
   (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06' ? MW01toMW06 : {});
 
 type KC01 = {
@@ -78,7 +78,7 @@ type ZW02<
   TK extends RodzajTransakcji = RodzajTransakcji
 > = {
   KodZW2: 'ZW02';
-} & (TK extends 'TK01' ? TK01 : {}) &
+} & (TK extends 'TK01' ? TK01 : {}) |
   (TK extends 'TK02' ? TK02 : {});
 
 type TK01 = {
@@ -111,14 +111,14 @@ type MW01toMW06<
   MetodaC: 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
   ZrodloDanychFin: ZrodloDanychFinansowych;
 } &
-  (KP extends 'KP01' ? KP01 : {}) &
+  (KP extends 'KP01' ? KP01 : {}) |
   (KP extends 'KP02' ? KP02 : {}) &
-  (OP extends 'OP01' ? OP01 : {}) &
-  (OP extends 'OP02' ? OP02 : {}) &
-  (OP extends 'OP03' ? OP03 : {}) &
+  (OP extends 'OP01' ? OP01 : {}) |
+  (OP extends 'OP02' ? OP02 : {}) |
+  (OP extends 'OP03' ? OP03 : {}) |
   (OP extends 'OP04' | 'OP05' ? OP04_OP05 : {}) &
-  (RP extends 'RP01' ? RP01 : {}) &
-  (RP extends 'RP02' ? RP02 : {}) &
+  (RP extends 'RP01' ? RP01 : {}) |
+  (RP extends 'RP02' ? RP02 : {}) |
   (RP extends 'RP03' ? RP03 : {});
 
 type KP01 = {
@@ -138,9 +138,9 @@ type OP01<
   Marza: number; // show in %
 
 } &
-  (SB extends 'SB01' | 'SB02' | 'SB03' | 'SB04' | 'SB05' | 'SB06' | 'SB07' | 'SB08' ? SB01toSB08 : {}) &
+  (SB extends 'SB01' | 'SB02' | 'SB03' | 'SB04' | 'SB05' | 'SB06' | 'SB07' | 'SB08' ? SB01toSB08 : {}) |
   (SB extends 'SB09' ? SB09 : {}) &
-  (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB01toTB06 : {}) &
+  (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB01toTB06 : {}) |
   (TB extends 'TB07' ? TB07 : {});
 
 type SB01toSB08 = {

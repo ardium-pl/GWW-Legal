@@ -2,17 +2,15 @@ import { KC01, KC02, ZW01, ZW02, MW00, MW01toMW06, KorektaCenTransferowych, Zwol
 import { Transaction } from 'app/services/tpr/tpr-input.types';
 
 export function mapKorektaCenTransferowych(transaction: any): Partial<KC01 | KC02> {
-    switch (transaction.korekta) {
+    switch (transaction.correction) {
         case 'KC01':
             return {
                 KorektaCT3: 'KC01',
                 WartKorektyCT3: {
-                    
-                        _attributes: {
-                            kodWaluty: transaction.korektaCurrency,
-                        },
-                    
-                    _text: transaction.korektaValu  
+                    _attributes: {
+                        kodWaluty: transaction.korektaCurrency,
+                    },
+                    _text: transaction.korektaValue,
                 },
             };
         case 'KC02':
@@ -32,14 +30,12 @@ export function mapZwolnienieArt11n(transaction: any): Partial<ZW01 | ZW02> {
                 PodstZW: transaction.podstawaZwolnienia,
                 InformacjaOKrajuE1: {
                     Kraj: transaction.kraj,
-                    WartoscEKraj1:  {
-                        
-                            _attributes: {
-                                kodWaluty: transaction.zwolnienieCurrency,
-                            },
-                        
-                       _text: transaction.zwolnienieValue,
-                    }
+                    WartoscEKraj1: {
+                        _attributes: {
+                            kodWaluty: transaction.zwolnienieCurrency,
+                        },
+                        _text: transaction.zwolnienieValue,
+                    },
                 },
             };
         case 'ZW02':
@@ -58,14 +54,12 @@ function mapZW02(transaction: any): Partial<ZW02> {
             RodzajTrans1: 'TK01',
             InformacjaOKrajuE2: {
                 Kraj: transaction.kraj,
-                WartoscEKraj2: [
-                    {
-                        _attributes: {
-                            kodWaluty: transaction.zwolnienieCurrency,
-                        },
+                WartoscEKraj2: {
+                    _attributes: {
+                        kodWaluty: transaction.zwolnienieCurrency,
                     },
-                    transaction.zwolnienieValue,
-                ],
+                    _text: transaction.zwolnienieValue,
+                },
             },
         });
     } else if (transaction.rodzajTransakcji === 'TK02') {
@@ -104,7 +98,7 @@ export function mapMetodyBadania(transaction: any): Partial<MW00 | MW01toMW06<Ko
             if (transaction.korektaMetodyBadania === 'KP01') {
                 Object.assign(mw, { KorektyPorWyn4: 'KP01' });
             } else if (transaction.korektaMetodyBadania === 'KP02') {
-                Object.assign(mw, { KorektyPorWyn8: 'KP02', KorektaPorownywalnosciProg: transaction.korektaPorownywalnosciProg });
+                Object.assign(mw, { KorektyPorWyn8: 'KP02' });
             }
             return mw;
         default:
