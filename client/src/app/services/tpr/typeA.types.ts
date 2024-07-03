@@ -1,512 +1,319 @@
-// export type TransakcjaKategoriaA<
-//   K extends KorektaCenTransferowych = KorektaCenTransferowych,
-//   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
-//   MW extends MetodyBadania = MetodyBadania
-// > = {
-//   KategoriaA: string;
-//   PrzedmiotA: string;
-//   WartoscA: [
-//     {
-//       _attributes: {
-//         kodWaluty: string;
-//       };
-//     },
-//     number
-//   ];
-//   Kompensata: Kompensata;
-//   SupportVarMetoda: MW;
-// }
+export type TransakcjaKategoriaA<
+  K extends KorektaCenTransferowych = KorektaCenTransferowych,
+  ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
+  MW extends MetodyBadania = MetodyBadania,
+> = {
+  KategoriaA: string;
+  PrzedmiotA: string;
+  WartoscA: [
+    {
+      _attr: {
+        kodWaluty: string;
+      };
+    },
+    number,
+  ];
+  SupportVarCorrection: K;
+  Kompensata: Kompensata;
+  SupportVarKodZW: ZW;
+  SupportVarMetoda: MW;
+};
 
-// function isKC01<T extends TransakcjaKategoriaA>(obj: T): obj is T & KC01 {
-//   return (obj as any).KorektaCT1 === 'KC01';
-// }
+type KC01 = {
+  KorektaCT1: 'KC01';
+  WartKorektyCT1: [
+    {
+      _attr: {
+        kodWaluty: string;
+      };
+    },
+    number,
+  ];
+};
 
-// function isKC02<T extends TransakcjaKategoriaA>(obj: T): obj is T & KC02 {
-//   return (obj as any).BrakKorektyCT1 === 'KC02';
-// }
+type KC02 = {
+  BrakKorektyCT1: 'KC02';
+};
 
-// function isZW01<T extends TransakcjaKategoriaA>(obj: T): obj is T & ZW01 {
-//   return (obj as any).KodZW1 === 'ZW01';
-// }
+// ZwolnienieArt11n types
+type ZW01 = {
+  KodZW1: 'ZW01';
+  PodstZW: '11n1'; // only this value appears at the client
+  InformacjaOKrajuA1: {
+    Kraj: string;
+    WartoscAKraj1: [
+      {
+        _attr: {
+          kodWaluty: string;
+        };
+      },
+      number,
+    ];
+  };
+};
 
-// function isZW02<T extends TransakcjaKategoriaA>(obj: T): obj is T & ZW02 {
-//   return (obj as any).KodZW2 === 'ZW02';
-// }
+type ZW02 = {
+  KodZW2: 'ZW02';
+  SupportVarRodzajTransakcji: RodzajTransakcji;
+};
 
-// function isTK01<T extends ZW02>(obj: T): obj is T & TK01 {
-//   return (obj as any).RodzajTrans1 === 'TK01';
-// }
+type TK01 = {
+  RodzajTrans1: 'TK01';
+  InformacjaOKrajuA2: {
+    Kraj: string;
+    WartoscAKraj2: [
+      {
+        _attr: {
+          kodWaluty: string;
+        };
+      },
+      number,
+    ];
+  };
+};
 
-// function isTK02<T extends ZW02>(obj: T): obj is T & TK02 {
-//   return (obj as any).RodzajTrans2 === 'TK02';
-// }
+type TK02 = {
+  RodzajTrans2: 'TK02';
+  Kraj: string;
+};
 
-// function isMW00<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW00 {
-//   return obj.SupportVarMetoda === 'MW00';
-// }
+type KategoriaA_MW00 = {
+  Metoda00: 'MW00';
+};
 
-// function isMW01<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW01 {
-//   return obj.SupportVarMetoda === 'MW01';
-// }
+type KategoriaA_MW01 = {
+  Metoda01: 'MW01';
+  Weryfikacja: SposobWeryfikacjiEynkowegoPoziomuCeny;
+  SupportVarKorkta: Korekta;
+  SupportVarSposobUjeciaCeny: SposobUjeciaCeny;
+};
 
-// function isMW02<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW02_MW03_MW05 {
-//   return obj.SupportVarMetoda === 'MW02';
-// }
+type KP01 = {
+  KorektyPorWyn1: 'KP01';
+};
 
-// function isMW03<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW02_MW03_MW05 {
-//   return obj.SupportVarMetoda === 'MW03';
-// }
+type KP02 = {
+  KorektyPorWyn5: 'KP02';
+  KorektyPorWynProg: number;
+};
 
-// function isMW04<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW04 {
-//   return obj.SupportVarMetoda === 'MW04';
-// }
+type CK01 = {
+  SposobUjCeny1: 'CK01';
+  Waluta1: string;
+  CenaMin: number;
+  CenaMax: number;
+  Miara1: string; // Rodzaj jednostki miary np. kg, szt., l, roboczogodzina
+  SupportVarRodzajPrzedzialu: RodzajPrzedzialu;
+};
 
-// function isMW05<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW02_MW03_MW05 {
-//   return obj.SupportVarMetoda === 'MW05';
-// }
+type CK01_RP01_RP02 = {
+  RodzajPrzedz1: 'RP01' | 'RP02';
+  CenaPorMin1: number;
+  CenaPorMax1: number;
+};
 
-// function isMW06<T extends TransakcjaKategoriaA>(obj: T): obj is T & MW06 {
-//   return obj.SupportVarMetoda === 'MW06';
-// }
+type CK01_RP03 = {
+  RodzajPrzedz13: 'RP03';
+  CenaPorMin3: number;
+  CenaPorMax3: number;
+  OpisPrzedz: string;
+};
 
-// function isKP02InMW01<T extends MW01>(obj: T): obj is T & KP02 {
-//   return (obj as any).KorektyPorWyn1 === 'KP02';
-// }
+type CK01_RP04 = {
+  RodzajPrzedz2: 'RP04';
+  WysCenPor1: number;
+};
 
-// function isKP02InMW02_MW03_MW05<T extends MW02_MW03_MW05>(obj: T): obj is T & KP02_for_MW02_MW03_MW05 {
-//   return (obj as any).KorektyPorWyn2 === 'KP02';
-// }
+type CK02 = {
+  SposobUjCeny2: 'CK02';
+  ProcentMin: number;
+  ProcentMax: number;
+  Miara2: string; // Rodzaj jednostki miary np. kg, szt., l, roboczogodzina
+  SupportVarRodzajPrzedzialu: RodzajPrzedzialu;
+};
 
-// function isCK01InMW01<T extends MW01>(obj: T): obj is T & CK01 {
-//   return (obj as any).SposobUjCeny1 === 'CK01';
-// }
+type CK02_RP01_RP02 = {
+  RodzajPrzedz3: 'RP01' | 'RP02';
+  CenaPorMin2: number;
+  CenaPorMax2: number;
+};
 
-// function isCK02InMW01<T extends MW01>(obj: T): obj is T & CK02 {
-//   return (obj as any).SposobUjCeny2 === 'CK02';
-// }
+type CK02_RP03 = {
+  RodzajPrzedz14: 'RP03';
+  CenaPorMin4: number;
+  CenaPorMax4: number;
+  OpisPrzedz: string;
+};
 
-// function isRP01_RP02_for_CK01<T extends CK01>(obj: T): obj is T & RP01_RP02_for_CK01 {
-//   return (obj as any).RodzajPrzedz1 === 'RP01' || (obj as any).RodzajPrzedz1 === 'RP02';
-// }
+type CK02_RP04 = {
+  RodzajPrzedz4: 'RP04';
+  WysCenPor2: number;
+};
 
-// function isRP03_for_CK01<T extends CK01>(obj: T): obj is T & RP03_for_CK01 {
-//   return (obj as any).RodzajPrzedz13 === 'RP03';
-// }
+type KategoriaA_MW04 = {
+  Metoda04: 'MW04';
+  RodzMetodyPodzialu: RodzajMetodyPodzialuZysku;
+  SupportVarStrata: boolean;
+};
 
-// function isRP04_for_CK01<T extends CK01>(obj: T): obj is T & RP04_for_CK01 {
-//   return (obj as any).RodzajPrzedz2 === 'RP04';
-// }
+type StraraTrue_for_KategoriaA_MW04 = {
+  StrataPodm2: false;
+  ZaklZyskPodm2: number; // Podać w procentach
+  ZrealZyskPodm: number; // Podać w procentach
+};
 
-// function isRP01_RP02_for_CK02<T extends CK02>(obj: T): obj is T & RP01_RP02_for_CK02 {
-//   return (obj as any).RodzajPrzedz3 === 'RP01' || (obj as any).RodzajPrzedz3 === 'RP02';
-// }
+type StraraFalse_for_KategoriaA_MW04 = {
+  StrataPodm1: true;
+  ZaklZyskPodm1: number; // Podać w procentach
+};
 
-// function isRP03_for_CK02<T extends CK02>(obj: T): obj is T & RP03_for_CK02 {
-//   return (obj as any).RodzajPrzedz14 === 'RP03';
-// }
+type KategoriaA_MW02_MW03_MW05 = {
+  Metoda02: 'MW02' | 'MW03' | 'MW05';
+  SupportVarKorkta: Korekta;
+  WskaznikFinans: WskaznikFinansowy;
+  WynikTrans: number;
+  SupportVarRodzajPorownania: RodzajPorownania;
+  SupportVarRodzajPrzedzialu: RodzajPrzedzialu;
+};
 
-// function isRP04_for_CK02<T extends CK02>(obj: T): obj is T & RP04_for_CK02 {
-//   return (obj as any).RodzajPrzedz4 === 'RP04';
-// }
+type KP01_for_KategoriaA_MW02_MW03_MW05 = {
+  KorektyPorWyn2: 'KP01';
+};
 
-// const obj = {} as TransakcjaKategoriaA;
+type KP02_for_KategoriaA_MW02_MW03_MW05 = {
+  KorektyPorWyn6: 'KP02';
+  KorektyPorWynProg: number;
+};
 
-// if (isKC01(obj)) {
-//   const wartKorektyCT1 = obj.WartKorektyCT1;
-//   if (isZW01(obj)) {
-//     const podstZW = obj.PodstZW;
-//     const informacjaOKrajuA1 = obj.InformacjaOKrajuA1;
-//     const kraj = informacjaOKrajuA1.Kraj;
-//     const wartoscAKraj1 = informacjaOKrajuA1.WartoscAKraj1;
-//   } else if (isZW02(obj)) {
-//     const kodZW2 = obj.KodZW2;
-//     if (isTK01(obj)) {
-//       const informacjaOKrajuA2 = obj.InformacjaOKrajuA2;
-//       const kraj = informacjaOKrajuA2.Kraj;
-//       const wartoscAKraj2 = informacjaOKrajuA2.WartoscAKraj2;
-//     } else if (isTK02(obj)) {
-//       const kraj = obj.Kraj;
-//     }
-//     if (isMW01(obj)) {
-//       const weryfikacja = obj.Weryfikacja;
-//       if (isKP02InMW01(obj)) {
-//         const korektyPorWynProg = obj.KorektyPorWynProg;
-//       }
-//       if (isCK01InMW01(obj)) {
-//         const waluta1 = obj.Waluta1;
-//         const cenaMin = obj.CenaMin;
-//         const cenaMax = obj.CenaMax;
-//         const miara1 = obj.Miara1;
-//         if (isRP01_RP02_for_CK01(obj)) {
-//           const cenaPorMin1 = obj.CenaPorMin1;
-//           const cenaPorMax1 = obj.CenaPorMax1;
-//         } else if (isRP03_for_CK01(obj)) {
-//           const cenaPorMin3 = obj.CenaPorMin3;
-//           const cenaPorMax3 = obj.CenaPorMax3;
-//           const opisPrzedz = obj.OpisPrzedz;
-//         } else if (isRP04_for_CK01(obj)) {
-//           const wysCenPor1 = obj.WysCenPor1;
-//         }
-//       } else if (isCK02InMW01(obj)) {
-//         const procentMin = obj.ProcentMin;
-//         const procentMax = obj.ProcentMax;
-//         const miara2 = obj.Miara2;
-//         if (isRP01_RP02_for_CK02(obj)) {
-//           const cenaPorMin2 = obj.CenaPorMin2;
-//           const cenaPorMax2 = obj.CenaPorMax2;
-//         } else if (isRP03_for_CK02(obj)) {
-//           const cenaPorMin4 = obj.CenaPorMin4;
-//           const cenaPorMax4 = obj.CenaPorMax4;
-//           const opisPrzedz = obj.OpisPrzedz;
-//         } else if (isRP04_for_CK02(obj)) {
-//           const wysCenPor2 = obj.WysCenPor2;
-//         }
-//       }
-//     } else if (isMW02(obj) || isMW03(obj) || isMW05(obj)) {
-//       const wskaznikFinans = obj.WskaznikFinans;
-//       const wynikTrans = obj.WynikTrans;
-//       if (isKP02InMW02_MW03_MW05(obj)) {
-//         const korektyPorWynProg = obj.KorektyPorWynProg;
-//       }
-//       const rodzajPor1 = obj.;
-//       const wynikAP1 = obj.WynikAP1;
-//       const wynikAP2 = obj.WynikAP2;
-//     }
-//   }
-// } else if (isKC02(obj)) {
-//   const brakKorektyCT1 = obj.BrakKorektyCT1;
-// }
+type PR01_or_PR03_for_KategoriaA_MW02_MW03_MW05 = {
+  RodzPor1: 'PR01' | 'PR03';
+};
 
-// // Additional conditions for other MetodyBadania
-// if (isMW04(obj)) {
-//   const rodzMetodyPodzialu = obj.RodzMetodyPodzialu;
-//   const strataPodm = obj.StrataPodm2;
-//   if (!strataPodm) {
-//     const zaklZyskPodm = obj.ZaklZyskPodm2;
-//     const zrealZyskPodm = obj.ZrealZyskPodm;
-//   } else {
-//     const zaklZyskPodm = obj.ZaklZyskPodm1;
-//   }
-// } else if (isMW06(obj)) {
-//   const supportVarTechnikaWyceny = obj.SupportVarTechnikaWyceny;
-//   if (supportVarTechnikaWyceny === 'TW01' || supportVarTechnikaWyceny === 'TW02') {
-//     const wspDyskont = obj.WspDyskont;
-//     const okresPrognozy = obj.SupporterVarOkresPrognozy;
-//     if (okresPrognozy === 'TB07') {
-//       const terminInny = obj.TerminInny;
-//     }
-//   } else if (supportVarTechnikaWyceny === 'TW07') {
-//     const zrodloDanychZgodn = obj.ZrodloDanychZgodn;
-//   }
-// }
+type PR02_for_KategoriaA_MW02_MW03_MW05 = {
+  RodzPor2: 'PR02';
+  PodmiotBadany: PodmiotBadany;
+  KrytGeograf: KryteriumGeograficzne;
+};
 
-// type KC01 = {
-//   KorektaCT1: 'KC01';
-//   WartKorektyCT1: [
-//     {
-//       _attributes: {
-//         kodWaluty: string;
-//       };
-//     },
-//     number
-//   ];
-// }
+type RP01_or_RP02_for_KategoriaA_MW02_MW03_MW05 = {
+  RodzajPrzedz5: 'RP01' | 'RP02';
+  WynikAP1: number;
+  WynikAP2: number;
+};
 
-// type KC02 = {
-//   BrakKorektyCT1: 'KC02';
-// }
+type RP03_for_KategoriaA_MW02_MW03_MW05 = {
+  RodzajPrzedz15: 'RP03';
+  WynikAP3: number;
+  WynikAP4: number;
+  OpisPrzedz: string;
+};
 
-// type ZW01 = {
-//   KodZW1: 'ZW01';
-//   PodstZW?: PodstawaZwolnienia;
-//   InformacjaOKrajuA1: {
-//     Kraj: string;
-//     WartoscAKraj1: [
-//       {
-//         _attributes: {
-//           kodWaluty: string;
-//         };
-//       },
-//       number
-//     ];
-//   };
-// };
+type RP04_for_KategoriaA_MW02_MW03_MW05 = {
+  RodzajPrzedz6: 'RP04';
+  WynikAP: number;
+};
 
-// type ZW02<
-//   TK extends RodzajTransakcji = RodzajTransakcji
-// > = {
-//   KodZW2: 'ZW02';
-// } & (TK extends 'TK01' ? TK01 : {}) &
-//   (TK extends 'TK02' ? TK02 : {});
+type KategoriaA_MW06 = {
+  Metoda06: 'MW06';
+  SupportVarTechnikaWyceny: TechWyceny;
+};
 
-// type TK01 = {
-//   RodzajTrans1: 'TK01';
-//   InformacjaOKrajuA2: {
-//     Kraj: string;
-//     WartoscAKraj2: [
-//       {
-//         _attributes: {
-//           kodWaluty: string;
-//         };
-//       },
-//       number
-//     ];
-//   };
-// };
+type TW01_or_TW02_for_KategoriaA_MW06 = {
+  TechWyceny1: 'TW01' | 'TW02';
+  WspDyskont: number;
+  SupporterVarOkresPrognozy: OkresPrognozy;
+};
 
-// type TK02 = {
-//   RodzajTrans2: 'TK02';
-//   Kraj: string;
-// };
+type TB01_or_TB02_or_TB03_or_TB04_or_TB05_or_TB06_for_TW01_or_TW02_for_KategoriaA_MW06 =
+  {
+    OkresProg1: 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06';
+  };
 
-// type MW00 = {
-//   Metoda00: 'MW00';
-// };
+type TB07_for_TW01_or_TW02_for_KategoriaA_MW06 = {
+  OkresProg2: 'TW07';
+  TerminInny: ZrodloDanychZgodnosci;
+};
 
-// type MW01<
-//   KP extends Korekta = Korekta,
-//   CK extends SposobUjeciaCeny = SposobUjeciaCeny
-// > = {
-//   Metoda01: 'MW01';
-//   Weryfikacja: SposobWeryfikacjiEynkowegoPoziomuCeny;
-// } & (KP extends 'KP01' ? KP01 : {}) &
-//   (KP extends 'KP02' ? KP02 : {}) &
-//   (CK extends 'CK01' ? CK01 : {}) &
-//   (CK extends 'CK02' ? CK02 : {});
+type TW07_for_KategoriaA_MW06 = {
+  TechWyceny2: 'TW07';
+  ZrodloDanychZgodn: ZrodloDanychZgodnosci;
+};
 
-// type KP01 = {
-//   KorektyPorWyn1: 'KP01';
-// };
+type TW03_or_TW04_or_TW05_or_TW06_for_KategoriaA_MW06 = {
+  TechWyceny3: 'TW03' | 'TW04' | 'TW05' | 'TW06';
+};
 
-// type KP02 = {
-//   KorektyPorWyn5: 'KP02';
-//   KorektyPorWynProg: number;
-// };
-
-// type CK01<
-//   RP extends RodzajPrzedzialu = RodzajPrzedzialu
-// > = {
-//   SposobUjCeny1: 'CK01';
-//   Waluta1: string;
-//   CenaMin: number;
-//   CenaMax: number;
-//   Miara1: string; // Rodzaj jednostki miary np. kg, szt., l, roboczogodzina
-// } & (RP extends 'RP01' | 'RP02' ? RP01_RP02_for_CK01 : {}) &
-//   (RP extends 'RP03' ? RP03_for_CK01 : {}) &
-//   (RP extends 'RP04' ? RP04_for_CK01 : {});
-
-// type RP01_RP02_for_CK01 = {
-//   RodzajPrzedz1: 'RP01' | 'RP02';
-//   CenaPorMin1: number;
-//   CenaPorMax1: number;
-// };
-
-// type RP03_for_CK01 = {
-//   RodzajPrzedz13: 'RP03';
-//   CenaPorMin3: number;
-//   CenaPorMax3: number;
-//   OpisPrzedz: string;
-// };
-
-// type RP04_for_CK01 = {
-//   RodzajPrzedz2: 'RP04';
-//   WysCenPor1: number;
-// };
-
-// type CK02<
-//   RP extends RodzajPrzedzialu = RodzajPrzedzialu
-// > = {
-//   SposobUjCeny2: 'CK02';
-//   ProcentMin: number;
-//   ProcentMax: number;
-//   Miara2: string; // Rodzaj jednostki miary np. kg, szt., l, roboczogodzina
-// } & (RP extends 'RP01' | 'RP02' ? RP01_RP02_for_CK02 : {}) &
-//   (RP extends 'RP03' ? RP03_for_CK02 : {}) &
-//   (RP extends 'RP04' ? RP04_for_CK02 : {});
-
-// type RP01_RP02_for_CK02 = {
-//   RodzajPrzedz3: 'RP01' | 'RP02';
-//   CenaPorMin2: number;
-//   CenaPorMax2: number;
-// };
-
-// type RP03_for_CK02 = {
-//   RodzajPrzedz14: 'RP03';
-//   CenaPorMin4: number;
-//   CenaPorMax4: number;
-//   OpisPrzedz: string;
-// };
-
-// type RP04_for_CK02 = {
-//   RodzajPrzedz4: 'RP04';
-//   WysCenPor2: number;
-// };
-
-// type MW04<loss extends boolean = boolean> = {
-//   Metoda04: 'MW04';
-//   RodzMetodyPodzialu: RodzajMetodyPodzialuZysku;
-// } & (loss extends false ? lossFalse : {}) &
-//   (loss extends true ? lossTrue : {});
-
-// type lossFalse = {
-//   StrataPodm2: false;
-//   ZaklZyskPodm2: number; // Podać w procentach
-//   ZrealZyskPodm: number; // Podać w procentach
-// };
-
-// type lossTrue = {
-//   StrataPodm1: true;
-//   ZaklZyskPodm1: number; // Podać w procentach
-// };
-
-// type MW02_MW03_MW05<
-//   KP extends Korekta = Korekta,
-//   PR extends RodzajPorownania = RodzajPorownania,
-//   RP extends RodzajPrzedzialu = RodzajPrzedzialu
-// > = {
-//   Metoda02: 'MW02' | 'MW03' | 'MW05';
-//   WskaznikFinans: WskaznikFinansowy;
-//   WynikTrans: number;
-// } & (KP extends 'KP01' ? KP01_for_MW02_MW03_MW05 : {}) &
-//   (KP extends 'KP02' ? KP02_for_MW02_MW03_MW05 : {}) &
-//   (PR extends 'PR01' | 'PR03' ? PR01_PR03_for_MW02_MW03_MW05 : {}) &
-//   (PR extends 'PR02' ? PR02_for_KategoriaA_MW02_MW03_MW05 : {}) &
-//   (RP extends 'RP01' | 'RP02' ? RP01_RP02_for_MW02_MW03_MW05 : {}) &
-//   (RP extends 'RP03' ? RP03_for_MW02_MW03_MW05 : {}) &
-//   (RP extends 'RP04' ? RP04_for_MW02_MW03_MW05 : {});
-
-// type KP01_for_MW02_MW03_MW05 = {
-//   KorektyPorWyn2: 'KP01';
-// };
-
-// type KP02_for_MW02_MW03_MW05 = {
-//   KorektyPorWyn6: 'KP02';
-//   KorektyPorWynProg: number;
-// };
-
-// type PR01_PR03_for_MW02_MW03_MW05 = {
-//   RodzPor1: 'PR01' | 'PR03';
-// };
-
-// type PR02_for_KategoriaA_MW02_MW03_MW05 = {
-//   RodzPor2: 'PR02';
-//   PodmiotBadany: PodmiotBadany;
-//   KrytGeograf: KryteriumGeograficzne;
-// };
-
-// type RP01_RP02_for_MW02_MW03_MW05 = {
-//   RodzajPrzedz5: 'RP01' | 'RP02';
-//   WynikAP1: number;
-//   WynikAP2: number;
-// };
-
-// type RP03_for_MW02_MW03_MW05 = {
-//   RodzajPrzedz15: 'RP03';
-//   WynikAP3: number;
-//   WynikAP4: number;
-//   OpisPrzedz: string;
-// };
-
-// type RP04_for_MW02_MW03_MW05 = {
-//   RodzajPrzedz6: 'RP04';
-//   WynikAP: number;
-// };
-
-// type MW06<TW extends TechWyceny = TechWyceny> = {
-//   Metoda06: 'MW06';
-//   SupportVarTechnikaWyceny: TechWyceny;
-// } & (TW extends 'TW01' | 'TW02' ? TW01_TW02_for_MW06 : {}) &
-//   (TW extends 'TW07' ? TW07_for_MW06 : {}) &
-//   (TW extends 'TW03' | 'TW04' | 'TW05' | 'TW06' ? TW03_to_TW06_for_MW06 : {});
-
-// type TW01_TW02_for_MW06<
-//   TB extends OkresPrognozy = OkresPrognozy
-// > = {
-//   TechWyceny1: 'TW01' | 'TW02';
-//   WspDyskont: number;
-//   SupporterVarOkresPrognozy: OkresPrognozy;
-// } & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB_for_TW01_TW02 : {}) &
-//   (TB extends 'TB07' ? TB07_for_TW01_TW02 : {});
-
-// type TB_for_TW01_TW02 = {
-//   OkresProg1: 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06';
-// };
-
-// type TB07_for_TW01_TW02 = {
-//   OkresProg2: 'TW07';
-//   TerminInny: ZrodloDanychZgodnosci;
-// };
-
-// type TW07_for_MW06 = {
-//   TechWyceny2: 'TW07';
-//   ZrodloDanychZgodn: ZrodloDanychZgodnosci;
-// };
-
-// type TW03_to_TW06_for_MW06 = {
-//   TechWyceny3: 'TW03' | 'TW04' | 'TW05' | 'TW06';
-// };
-
-// type KorektaCenTransferowych = 'KC01' | 'KC02';
-// type Kompensata = 'KS01' | 'KS02' | 'KS03';
-// type ZwolnienieArt11n = 'ZW01' | 'ZW02';
-// type RodzajTransakcji = 'TK01' | 'TK02';
-// type MetodyBadania =
-//   | 'MW00'
-//   | 'MW01'
-//   | 'MW02'
-//   | 'MW03'
-//   | 'MW04'
-//   | 'MW05'
-//   | 'MW06';
-// type SposobWeryfikacjiEynkowegoPoziomuCeny = 'SW01' | 'SW02' | 'SW03' | 'SW04';
-// type Korekta = 'KP01' | 'KP02';
-// type SposobUjeciaCeny = 'CK01' | 'CK02';
-// type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
-// type RodzajMetodyPodzialuZysku = 'PZ01' | 'PZ02' | 'PZ03' | 'PZ04';
-// type WskaznikFinansowy =
-//   | 'WF01'
-//   | 'WF02'
-//   | 'WF03'
-//   | 'WF04'
-//   | 'WF05'
-//   | 'WF06'
-//   | 'WF07'
-//   | 'WF08'
-//   | 'WF09'
-//   | 'WF10'
-//   | 'WF11'
-//   | 'WF12'
-//   | 'WF13'
-//   | 'WF14'
-//   | 'WF15'
-//   | 'WF16'
-//   | 'WF17';
-// type RodzajPorownania = 'PR01' | 'PR02' | 'PR03';
-// type PodmiotBadany = 'PB01' | 'PB02';
-// type KryteriumGeograficzne =
-//   | 'KG01'
-//   | 'KG02'
-//   | 'KG03'
-//   | 'KG04'
-//   | 'KG05'
-//   | 'KG06';
-// type TechWyceny = 'TW01' | 'TW02' | 'TW03' | 'TW04' | 'TW05' | 'TW06' | 'TW07';
-// type OkresPrognozy =
-//   | 'TB01'
-//   | 'TB02'
-//   | 'TB03'
-//   | 'TB04'
-//   | 'TB05'
-//   | 'TB06'
-//   | 'TB07';
-// type ZrodloDanychZgodnosci =
-//   | 'AZ01'
-//   | 'AZ02'
-//   | 'AZ03'
-//   | 'AZ04'
-//   | 'AZ05'
-//   | 'AZ06'
-//   | 'AZ07'
-//   | 'AZ08'
-//   | 'AZ09';
-// type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+export type KorektaCenTransferowych = 'KC01' | 'KC02';
+export type Kompensata = 'KS01' | 'KS02' | 'KS03';
+export type ZwolnienieArt11n = 'ZW01' | 'ZW02';
+export type RodzajTransakcji = 'TK01' | 'TK02';
+export type MetodyBadania =
+  | 'MW00'
+  | 'MW01'
+  | 'MW02'
+  | 'MW03'
+  | 'MW04'
+  | 'MW05'
+  | 'MW06';
+export type SposobWeryfikacjiEynkowegoPoziomuCeny =
+  | 'SW01'
+  | 'SW02'
+  | 'SW03'
+  | 'SW04';
+export type Korekta = 'KP01' | 'KP02';
+export type SposobUjeciaCeny = 'CK01' | 'CK02';
+export type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
+export type RodzajMetodyPodzialuZysku = 'PZ01' | 'PZ02' | 'PZ03' | 'PZ04';
+export type WskaznikFinansowy =
+  | 'WF01'
+  | 'WF02'
+  | 'WF03'
+  | 'WF04'
+  | 'WF05'
+  | 'WF06'
+  | 'WF07'
+  | 'WF08'
+  | 'WF09'
+  | 'WF10'
+  | 'WF11'
+  | 'WF12'
+  | 'WF13'
+  | 'WF14'
+  | 'WF15'
+  | 'WF16'
+  | 'WF17';
+export type RodzajPorownania = 'PR01' | 'PR02' | 'PR03';
+export type PodmiotBadany = 'PB01' | 'PB02';
+export type KryteriumGeograficzne =
+  | 'KG01'
+  | 'KG02'
+  | 'KG03'
+  | 'KG04'
+  | 'KG05'
+  | 'KG06';
+export type TechWyceny =
+  | 'TW01'
+  | 'TW02'
+  | 'TW03'
+  | 'TW04'
+  | 'TW05'
+  | 'TW06'
+  | 'TW07';
+export type OkresPrognozy =
+  | 'TB01'
+  | 'TB02'
+  | 'TB03'
+  | 'TB04'
+  | 'TB05'
+  | 'TB06'
+  | 'TB07';
+export type ZrodloDanychZgodnosci =
+  | 'AZ01'
+  | 'AZ02'
+  | 'AZ03'
+  | 'AZ04'
+  | 'AZ05'
+  | 'AZ06'
+  | 'AZ07'
+  | 'AZ08'
+  | 'AZ09';

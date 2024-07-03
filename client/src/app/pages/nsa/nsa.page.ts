@@ -1,4 +1,12 @@
-import { Component, OnInit, effect, inject, signal } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -9,6 +17,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -17,12 +26,17 @@ import {
   MAT_TOOLTIP_DEFAULT_OPTIONS,
   MatTooltipModule,
 } from '@angular/material/tooltip';
-import { IconComponent, RequiredStarComponent } from 'app/components';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogData,
+  IconComponent,
+  RequiredStarComponent,
+} from 'app/components';
 import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
-import { TableComponent } from 'app/components/table/table.component';
+import { FormTableComponent } from 'app/components/form-table/form-table.component';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -57,10 +71,12 @@ const DEFAULT_USER_MESSAGES = [
     MatTooltipModule,
     MarkdownModule,
     MatCheckboxModule,
+    FormTableComponent,
   ],
 })
 export class NsaPage implements OnInit {
   readonly nsaService = inject(NsaService);
+  readonly dialog = inject(MatDialog);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -86,9 +102,18 @@ export class NsaPage implements OnInit {
     ]),
   });
 
-  ngOnInit() {
-    this.nsaFormPart2.markAsDirty();
+  readonly caseSigntaureInput =
+    viewChild<ElementRef<HTMLInputElement>>('caseSigntaureInput');
 
+  get isFindCaseButtonDisabled(): boolean {
+    return (
+      this.nsaService.isRulingLoading() ||
+      !this.nsaFormPart1.valid ||
+      !this.nsaFormPart1.dirty
+    );
+  }
+
+  ngOnInit() {
     this.showGptResultsImmediately.set(
       localStorage.getItem('showGptResultsImmediately') === 'true',
     );
@@ -136,11 +161,8 @@ export class NsaPage implements OnInit {
     if (this.disabledNextPage()) return;
 
     const values = this.nsaFormPart2.value;
-    if (this.nsaFormPart2.dirty) {
-      this.nsaService.fetchGptAnswers(values as NsaFormPart2);
-      this.nsaFormPart3.reset();
-    }
-    this.nsaFormPart2.markAsPristine();
+    this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+    this.nsaFormPart3.reset();
     this.nextPage();
   }
 
@@ -271,5 +293,64 @@ export class NsaPage implements OnInit {
   }
   prevPage(): void {
     this.currentPagerPage.update((v) => v - 1);
+  }
+
+  //! resetting
+  onClickResetButton() {
+    if (
+      !this.nsaService.areGptAnswersReady() ||
+      this.nsaService.isAdditionalAnswerLoading()
+    ) {
+      this.showResetConfirmDialog();
+      return;
+    }
+
+    this._resetForm();
+  }
+
+  showResetConfirmDialog() {
+    const dialogRef = this.dialog.open<
+      ConfirmationDialogComponent,
+      ConfirmationDialogData
+    >(ConfirmationDialogComponent, {
+      data: {
+        title: 'rozpocząć od nowa?',
+        swapButtonColors: true,
+        description:
+          'Niektóre odpowiedzi od AI nie zostały jeszcze załadowane. Po rozpoczęciu od nowa wszelkie prośby o odpowiedź zostaną anulowane.',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this._resetForm();
+    });
+  }
+
+  private _resetForm() {
+    this.nsaService.resetData();
+
+    this.nsaFormPart1.controls.rulingText.reset();
+    this.nsaFormPart2.reset({
+      systemMessage: DEFAULT_SYSTEM_MESSAGE,
+      userMessage1: DEFAULT_USER_MESSAGES[0],
+      userMessage2: DEFAULT_USER_MESSAGES[1],
+      userMessage3: DEFAULT_USER_MESSAGES[2],
+    });
+    this.nsaFormPart3.reset();
+
+    this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
+    this.currentPagerPage.set(0);
+
+    // execute after all other code has finished executing
+    setTimeout(() => {
+      this.nsaFormPart1.controls.caseSignature.setErrors(null);
+      this.nsaFormPart1.controls.caseSignature.markAsDirty();
+
+      const inputEl = this.caseSigntaureInput()!.nativeElement;
+      inputEl.focus();
+      inputEl.setSelectionRange(0, inputEl.value.length);
+    }, 0);
   }
 }
