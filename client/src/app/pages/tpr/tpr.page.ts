@@ -13,12 +13,17 @@ import {
 } from 'app/services/tpr/tpr-input.types';
 import { Subject, from, takeUntil, tap } from 'rxjs';
 import { GetTransactionDataUtil } from 'app/utils/get-transaction-data.util';
-import { FormTableComponent } from 'app/components/form-table/form-table.component';
+import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
 
 @Component({
   selector: 'tpr-nsa',
   standalone: true,
-  imports: [TableComponent, FormTableComponent, MatCardModule, MatTabsModule],
+  imports: [
+    TableComponent,
+    TransactionTableComponent,
+    MatCardModule,
+    MatTabsModule,
+  ],
   providers: [ClipboardService],
   templateUrl: './tpr.page.html',
   styleUrl: './tpr.page.scss',

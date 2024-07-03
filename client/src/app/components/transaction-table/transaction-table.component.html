@@ -1,8 +1,8 @@
-@if (data) {
+@if (data()) {
   <ag-grid-angular
     class="ag-theme-quartz"
     domLayout="autoHeight"
-    [rowData]="data"
+    [rowData]="data()"
     [columnDefs]="colDefs"
     [getRowId]="getRowId"
     [defaultColDef]="defaultColDef"
