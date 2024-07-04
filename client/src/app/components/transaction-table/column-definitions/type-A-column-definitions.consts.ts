@@ -67,9 +67,6 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Kategoria',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
-    cellEditorParams: {
-      maxLength: 20,
-    },
   },
   {
     field: 'Przedmiot',
@@ -78,9 +75,6 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Przedmiot',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
-    cellEditorParams: {
-      maxLength: 20,
-    },
   },
   {
     field: 'Wartosc',
@@ -99,9 +93,6 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Kod waluty transakcji',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
-    cellEditorParams: {
-      maxLength: 20,
-    },
   },
   {
     field: 'Korekta',
@@ -131,9 +122,6 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
     type: 'correctionType',
-    cellEditorParams: {
-      maxLength: 20,
-    },
   },
   {
     field: 'Kompensata',
@@ -159,11 +147,11 @@ export const transactionAColDefs: ColDef[] = [
     field: 'PodstawaZwolnienia',
     headerName: 'Podstawa zwolnienia',
     headerTooltip: 'Podstawa zwolnienia',
-    cellEditor: 'agTextCellEditor',
+    cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     type: 'exemptionType',
     cellEditorParams: {
-      values: ['11n1', '11n1a', '11n2'],
+      values: ['', '11n1', '11n1a', '11n2'],
     } as ISelectCellEditorParams,
   },
   {

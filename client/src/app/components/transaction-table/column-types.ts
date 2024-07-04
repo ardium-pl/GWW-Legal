@@ -201,6 +201,15 @@ export const columnTypes: {
           data.OkresPrognozy !== 'TB07',
       ),
   },
+  NrIdType: {
+    editable: ({ data }) => {
+      return data.IdentyfikatorKontrahenta === 'NrId';
+    },
+    cellStyle: ({ data }) =>
+      data.IdentyfikatorKontrahenta !== 'NrId'
+        ? { backgroundColor: 'var(--bg2-light)' }
+        : { backgroundColor: '#fff' },
+  },
 };
 
 function getCellStyle(isDisabled: boolean) {

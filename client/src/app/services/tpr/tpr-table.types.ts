@@ -87,3 +87,19 @@ export type TransactionBTable = {
   WartoscTransakcjiZwolnienia: number;
   KodWalutyKraju: string;
 };
+
+export type TransactionDTable = {
+  Kategoria: string;
+  Przedmiot: string;
+  Wartosc: number;
+  KodWaluty: string;
+  Korekta: KorektaCenTransferowych;
+  WartoscKorekty: number;
+  KodWalutyKorekty: string;
+  Kompensata: Kompensata;
+  Zwolnienie: ZwolnienieArt11n;
+  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
+  KodKrajuZwolnienia: string;
+  WartoscTransakcjiZwolnienia: number;
+  KodWalutyKraju: string;
+};
