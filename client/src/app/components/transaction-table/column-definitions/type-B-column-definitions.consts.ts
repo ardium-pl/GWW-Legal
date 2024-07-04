@@ -4,25 +4,9 @@ import {
   ISelectCellEditorParams,
 } from 'ag-grid-community';
 
-export const defaultData = {
-  Kategoria: '',
-  Przedmiot: '',
-  Wartosc: 0,
-  KodWaluty: '',
-  Korekta: 'KC01',
-  WartoscKorekty: 0,
-  KodWalutyKorekty: '',
-  Kompensata: 'KS01',
-  Zwolnienie: 'ZW01',
-  PodstawaZwolnienia: '11n1',
-  KodKrajuZwolnienia: '',
-  WartoscTransakcjiZwolnienia: 0,
-  KodWalutyKraju: '',
-};
-
 export const transactionBColDefs: ColDef[] = [
   {
-    field: 'Kategoria',
+    field: 'transactionCategory',
     colId: 'Kategoria',
     headerName: 'Kategoria',
     headerTooltip: 'Kategoria',
@@ -30,7 +14,7 @@ export const transactionBColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Przedmiot',
+    field: 'subjectMatter',
     colId: 'Przedmiot',
     headerName: 'Przedmiot',
     headerTooltip: 'Przedmiot',
@@ -38,7 +22,7 @@ export const transactionBColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Wartosc',
+    field: 'transactionValue',
     colId: 'Wartosc',
     headerName: 'Wartość transakcji',
     headerTooltip: 'Wartość transakcji',
@@ -49,14 +33,14 @@ export const transactionBColDefs: ColDef[] = [
     } as INumberCellEditorParams,
   },
   {
-    field: 'KodWaluty',
+    field: 'currencyCode',
     headerName: 'Kod waluty transakcji',
     headerTooltip: 'Kod waluty transakcji',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
   },
   {
-    field: 'Korekta',
+    field: 'correction',
     headerName: 'Korekta',
     headerTooltip: 'Korekta',
     cellEditor: 'agSelectCellEditor',
@@ -85,7 +69,7 @@ export const transactionBColDefs: ColDef[] = [
     type: 'correctionType',
   },
   {
-    field: 'Kompensata',
+    field: 'compensation',
     headerName: 'Kompensata',
     headerTooltip: 'Kompensata',
     cellEditor: 'agSelectCellEditor',

@@ -3,65 +3,10 @@ import {
   INumberCellEditorParams,
   ISelectCellEditorParams,
 } from 'ag-grid-community';
-import { TransactionATable } from 'app/services/tpr/tpr-table.types';
-
-export const defaultData: TransactionATable = {
-  Kategoria: '',
-  Przedmiot: '',
-  Wartosc: 0,
-  KodWaluty: '',
-  Korekta: 'KC01',
-  WartoscKorekty: 0,
-  KodWalutyKorekty: '',
-  Kompensata: 'KS01',
-  Zwolnienie: 'ZW01',
-  PodstawaZwolnienia: '11n1',
-  KodKrajuZwolnienia: '',
-  WartoscTransakcjiZwolnienia: 0,
-  KodWalutyKraju: '',
-  RodzajTransakcji: 'TK01',
-  KodKrajuTransakcji: '',
-  WartośćTransakcjiKraju: 0,
-  KodWalutyKrajuTransakcji: '',
-  MetodyBadania: 'MW01',
-  SposobWeryfikacji: 'SW01',
-  KorektaMetodyBadania: 'KP01',
-  KorektaPorownywalnosciProg: 0,
-  SposobUjeciaCeny: 'CK01',
-  Waluta1: '',
-  CenaMinimalna: 0,
-  CenaMaksymalna: 0,
-  Miara1: '',
-  RodzajPrzedzialu: 'RP01',
-  CenaPorownywalnaMin: 0,
-  CenaPorownywalnaMax: 0,
-  OpisPrzedzialu: '',
-  WysokoscCenyPorownywalnej: 0,
-  ProcentMinimalny: 0,
-  ProcentMaksymalny: 0,
-  Miara2: '',
-  DolnaGranica: 0,
-  GornaGranica: 0,
-  WysokoscWskaznikaFinansowego: 0,
-  WskaznikFinansowy: 'WF01',
-  WynikTransakcji: 0,
-  RodzajPorownania: 'PR01',
-  PodmiotBadany: 'PB01',
-  KryteriumGeograficzne: 'KG01',
-  RodzajMetodyPodzialuZysku: 'PZ01',
-  Strata: false,
-  ZakladanyZysk: 0,
-  ZrealizowanyZysk: 0,
-  TechWyceny: 'TW01',
-  WspolczynnikDyskontowy: 0,
-  OkresPrognozy: 'TB01',
-  TerminInny: 'AZ01',
-  ZrodloDanychZgodnosci: 'AZ01',
-};
 
 export const transactionAColDefs: ColDef[] = [
   {
-    field: 'Kategoria',
+    field: 'transactionCategory',
     colId: 'Kategoria',
     headerName: 'Kategoria',
     headerTooltip: 'Kategoria',
@@ -69,7 +14,7 @@ export const transactionAColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Przedmiot',
+    field: 'subjectMatter',
     colId: 'Przedmiot',
     headerName: 'Przedmiot',
     headerTooltip: 'Przedmiot',
@@ -77,7 +22,7 @@ export const transactionAColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Wartosc',
+    field: 'transactionValue',
     colId: 'Wartosc',
     headerName: 'Wartość transakcji',
     headerTooltip: 'Wartość transakcji',
@@ -88,14 +33,14 @@ export const transactionAColDefs: ColDef[] = [
     } as INumberCellEditorParams,
   },
   {
-    field: 'KodWaluty',
+    field: 'currencyCode',
     headerName: 'Kod waluty transakcji',
     headerTooltip: 'Kod waluty transakcji',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
   },
   {
-    field: 'Korekta',
+    field: 'correction',
     headerName: 'Korekta',
     headerTooltip: 'Korekta',
     cellEditor: 'agSelectCellEditor',
@@ -124,7 +69,7 @@ export const transactionAColDefs: ColDef[] = [
     type: 'correctionType',
   },
   {
-    field: 'Kompensata',
+    field: 'compensation',
     headerName: 'Kompensata',
     headerTooltip: 'Kompensata',
     cellEditor: 'agSelectCellEditor',
@@ -275,9 +220,9 @@ export const transactionAColDefs: ColDef[] = [
         data.MetodyBadania === 'MW03' ||
         data.MetodyBadania === 'MW05') &&
       data.Zwolnienie === 'ZW02' &&
-      data.KorektaMetodyBadania === 'KP02',
+      data.correctionMetodyBadania === 'KP02',
     cellStyle: ({ data }) =>
-      data.KorektaMetodyBadania !== 'KP02' ||
+      data.correctionMetodyBadania !== 'KP02' ||
       data.MetodyBadania === 'MW04' ||
       data.MetodyBadania === 'MW06' ||
       data.MetodyBadania === 'MW00' ||

@@ -24,20 +24,13 @@ export type Transaction = {
   korektaCenTransferowych: string;
 };
 
-export type TransactionTableInput = {
-  Kategoria: string;
-  Przedmiot: string;
-  Wartosc: number;
-  KodWaluty: string;
-  Korekta: 'KC01' | 'KC02';
-  Kompensata: 'KS01' | 'KS02' | 'KS03';
-};
+export type CategorizedTransaction = Transaction & { Id: number };
 
 export type TransactionCategories = {
-  categoryA: Transaction[];
-  categoryB: Transaction[];
-  categoryC: Transaction[];
-  categoryD: Transaction[];
-  categoryE: Transaction[];
-  categoryF: Transaction[];
+  categoryA: CategorizedTransaction[];
+  categoryB: CategorizedTransaction[];
+  categoryC: CategorizedTransaction[];
+  categoryD: CategorizedTransaction[];
+  categoryE: CategorizedTransaction[];
+  categoryF: CategorizedTransaction[];
 };

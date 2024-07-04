@@ -17,16 +17,24 @@ import {
   OkresPrognozy,
   ZrodloDanychZgodnosci,
 } from './typeA.types';
+import {
+  NazwaStopyBazowej,
+  RodzajOprocentowania,
+  TerminStopyBazowej,
+  ZrodloDanychFinansowych,
+} from './typeC.types';
 
 export type TransactionATable = {
-  Kategoria: string;
-  Przedmiot: string;
-  Wartosc: number;
-  KodWaluty: string;
-  Korekta: KorektaCenTransferowych;
+  Id: number;
+  transactionCategory: string;
+  subjectMatter: string;
+  transactionValue: number;
+  currencyCode: string;
+  correction: KorektaCenTransferowych;
   WartoscKorekty: number;
   KodWalutyKorekty: string;
-  Kompensata: Kompensata;
+  compensation: Kompensata;
+  safeHarbour: string;
   Zwolnienie: ZwolnienieArt11n;
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
   KodKrajuZwolnienia: string;
@@ -73,14 +81,16 @@ export type TransactionATable = {
 };
 
 export type TransactionBTable = {
-  Kategoria: string;
-  Przedmiot: string;
-  Wartosc: number;
-  KodWaluty: string;
-  Korekta: KorektaCenTransferowych;
+  Id: number;
+  transactionCategory: string;
+  subjectMatter: string;
+  transactionValue: number;
+  currencyCode: string;
+  correction: KorektaCenTransferowych;
   WartoscKorekty: number;
   KodWalutyKorekty: string;
-  Kompensata: Kompensata;
+  compensation: Kompensata;
+  safeHarbour: string;
   Zwolnienie: ZwolnienieArt11n;
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
   KodKrajuZwolnienia: string;
@@ -88,18 +98,61 @@ export type TransactionBTable = {
   KodWalutyKraju: string;
 };
 
-export type TransactionCTable = {};
+export type TransactionCTable = {
+  Id: number;
+  transactionCategory: string;
+  subjectMatter: string;
+  transactionValue: number;
+  currencyCode: string;
+  correction: KorektaCenTransferowych;
+  WartoscKorekty: number;
+  KodWalutyKorekty: string;
+  compensation: Kompensata;
+  safeHarbour: string;
+  Kapital: number;
+  KodWalutyKapitalu: string;
+  Zadluzenie: number;
+  KodWalutyZadluzenia: string;
+  WysokoscOdsetekMemorialowo: number;
+  KodWalutyOdsetekMemorialowych: string;
+  WysokoscOdsetekKasowo: number;
+  KodWalutyOdsetekKasowych: string;
+  Zwolnienie: ZwolnienieArt11n;
+  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
+  KodKrajuZwolnienia: string;
+  WartoscTransakcjiZwolnienia: number;
+  KodWalutyKraju: string;
+  MetodyBadania: MetodyBadania;
+  ZrodloDanychFinansowych: ZrodloDanychFinansowych;
+  KorektaMetodyBadania: Korekta;
+  KorektaPorownywalnosciProg: number;
+  RodzajOprocentowania: RodzajOprocentowania;
+  Marza: number;
+  NazwaStopyBazowej: NazwaStopyBazowej;
+  InnaSB: string;
+  TerminStopyBazowej: TerminStopyBazowej;
+  Okres: string;
+  PoziomOprocentowania: number;
+  PoziomOprocentowaniaMinimalny: number;
+  PoziomOprocentowaniaMaksymalny: number;
+  RodzajPrzedzialu: RodzajPrzedzialu;
+  DolnaGranicaPrzedzialu: number;
+  GornaGranicaPrzedzialu: number;
+  OpisPrzedzialu: string;
+};
 
 export type TransactionDTable = {
-  Kategoria: string;
-  Przedmiot: string;
-  Wartosc: number;
-  KodWaluty: string;
-  Korekta: KorektaCenTransferowych;
+  Id: number;
+  transactionCategory: string;
+  subjectMatter: string;
+  transactionValue: number;
+  currencyCode: string;
+  correction: KorektaCenTransferowych;
   WartoscKorekty: number;
   KodWalutyKorekty: string;
   BrakKorektyCT5: 'KC02';
-  Kompensata: Kompensata;
+  compensation: Kompensata;
+  safeHarbour: string;
   KodWalutyKapitalu: string;
   KodWalutyZadluzenia: string;
   KodWalutyOdsetekMiesiecznych: string;
@@ -120,14 +173,16 @@ export type TransactionDTable = {
 export type TransactionETable = {};
 
 export type TransactionFTable = {
-  Kategoria: string;
-  Przedmiot: string;
-  Wartosc: number;
-  KodWaluty: string;
-  Korekta: KorektaCenTransferowych;
+  Id: number;
+  transactionCategory: string;
+  subjectMatter: string;
+  transactionValue: number;
+  currencyCode: string;
+  correction: KorektaCenTransferowych;
   WartoscKorekty: number;
   KodWalutyKorekty: string;
-  Kompensata: Kompensata;
+  safeHarbour: string;
+  compensation: Kompensata;
   Zwolnienie: ZwolnienieArt11n;
   TransakcjaZwolniona: 'ZW01';
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;

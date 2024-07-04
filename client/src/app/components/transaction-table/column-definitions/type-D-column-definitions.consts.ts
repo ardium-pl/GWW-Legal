@@ -6,7 +6,7 @@ import {
 
 export const transactionDColDefs: ColDef[] = [
   {
-    field: 'Kategoria',
+    field: 'transactionCategory',
     colId: 'Kategoria',
     headerName: 'Kategoria',
     headerTooltip: 'Kategoria',
@@ -14,7 +14,7 @@ export const transactionDColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Przedmiot',
+    field: 'subjectMatter',
     colId: 'Przedmiot',
     headerName: 'Przedmiot',
     headerTooltip: 'Przedmiot',
@@ -22,7 +22,7 @@ export const transactionDColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Wartosc',
+    field: 'transactionValue',
     colId: 'Wartosc',
     headerName: 'Wartość transakcji',
     headerTooltip: 'Wartość transakcji',
@@ -33,14 +33,14 @@ export const transactionDColDefs: ColDef[] = [
     } as INumberCellEditorParams,
   },
   {
-    field: 'KodWaluty',
+    field: 'currencyCode',
     headerName: 'Kod waluty transakcji',
     headerTooltip: 'Kod waluty transakcji',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
   },
   {
-    field: 'Korekta',
+    field: 'correction',
     headerName: 'Korekta',
     headerTooltip: 'Korekta',
     cellEditor: 'agSelectCellEditor',
@@ -78,12 +78,12 @@ export const transactionDColDefs: ColDef[] = [
     editable: false,
     valueFormatter: () => 'KC02',
     cellStyle: ({ data }) =>
-      data.Korekta !== 'KC02'
+      data.correction !== 'KC02'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
   {
-    field: 'Kompensata',
+    field: 'compensation',
     headerName: 'Kompensata',
     headerTooltip: 'Kompensata',
     cellEditor: 'agSelectCellEditor',

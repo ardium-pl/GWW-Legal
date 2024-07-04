@@ -11,14 +11,11 @@ import {
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import {
-  defaultData,
-  transactionAColDefs,
-} from './column-definitions/type-A-column-definitions.consts';
+import { transactionAColDefs } from './column-definitions/type-A-column-definitions.consts';
 import { DropdownCellComponent } from '../dropdown-cell/dropdown-cell.component';
 import {
+  CategorizedTransaction,
   Transaction,
-  TransactionTableInput,
 } from 'app/services/tpr/tpr-input.types';
 import { columnTypes } from './column-types';
 import {
@@ -38,36 +35,20 @@ import { transactionFColDefs } from './column-definitions/type-F-column-definiti
 })
 export class TransactionTableComponent implements OnInit {
   @Input() public transactionType: string = '';
-  @Input() public inputData: Transaction[] | null = null;
+  @Input() public inputData: CategorizedTransaction[] | null = null;
   public data = signal<
-    TransactionATable[] | TransactionBTable[] | TransactionTableInput[]
-  >([defaultData]);
+    TransactionATable[] | TransactionBTable[] | Transaction[]
+  >([]);
   public colDefs: ColDef[] = [];
   public gridApi!: GridApi<TransactionATable>;
   public defaultColDef: ColDef = {
-    filter: true,
-    enableCellChangeFlash: true,
     editable: true,
   };
 
   public ngOnInit(): void {
-    console.log(this.transactionType);
     this.colDefs = this.getColumnDef(this.transactionType);
     if (this.inputData) {
-      const modifiedInputData: TransactionTableInput[] = this.inputData.map(
-        (transaction) => {
-          const newTransaction = {
-            Kategoria: transaction.transactionCategory,
-            Przedmiot: transaction.subjectMatter,
-            Wartosc: transaction.transactionValue,
-            KodWaluty: transaction.currencyCode,
-            Korekta: transaction.correction,
-            Kompensata: transaction.compensation,
-          };
-          return newTransaction;
-        },
-      );
-      this.data.set(modifiedInputData);
+      this.data.set(this.inputData);
     }
   }
 
@@ -77,7 +58,7 @@ export class TransactionTableComponent implements OnInit {
         return transactionAColDefs;
       case 'B':
         return transactionBColDefs;
-      case 'B':
+      case 'C':
         return transactionBColDefs;
       case 'D':
         return transactionDColDefs;
@@ -89,8 +70,10 @@ export class TransactionTableComponent implements OnInit {
         return transactionAColDefs;
     }
   }
+
   onGridReady(params: GridReadyEvent<any>) {
     this.gridApi = params.api;
+    console.log('onGridReady');
   }
 
   public columnTypes: {
@@ -109,14 +92,13 @@ export class TransactionTableComponent implements OnInit {
     };
     event.api.applyTransaction(tx);
     this.gridApi.redrawRows();
-    this.getRawData();
   }
 
-  getRawData() {
-    let rawData: any[] = [];
-    this.gridApi.forEachNode(({ data }) => rawData?.push(data));
-    console.log(rawData);
-  }
+  // getRawData() {
+  //   let rawData: any[] = [];
+  //   this.gridApi.forEachNode(({ data }) => rawData?.push(data));
+  //   console.log(this.data());
+  // }
 
-  public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.id;
+  public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;
 }

@@ -6,7 +6,7 @@ import {
 
 export const transactionFColDefs: ColDef[] = [
   {
-    field: 'Kategoria',
+    field: 'transactionCategory',
     colId: 'Kategoria',
     headerName: 'Kategoria',
     headerTooltip: 'Kategoria',
@@ -14,7 +14,7 @@ export const transactionFColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Przedmiot',
+    field: 'subjectMatter',
     colId: 'Przedmiot',
     headerName: 'Przedmiot',
     headerTooltip: 'Przedmiot',
@@ -22,7 +22,7 @@ export const transactionFColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'Wartosc',
+    field: 'transactionValue',
     colId: 'Wartosc',
     headerName: 'Wartość transakcji',
     headerTooltip: 'Wartość transakcji',
@@ -33,14 +33,14 @@ export const transactionFColDefs: ColDef[] = [
     } as INumberCellEditorParams,
   },
   {
-    field: 'KodWaluty',
+    field: 'currencyCode',
     headerName: 'Kod waluty transakcji',
     headerTooltip: 'Kod waluty transakcji',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
   },
   {
-    field: 'Korekta',
+    field: 'correction',
     headerName: 'Korekta',
     headerTooltip: 'Korekta',
     cellEditor: 'agSelectCellEditor',
@@ -69,7 +69,7 @@ export const transactionFColDefs: ColDef[] = [
     type: 'correctionType',
   },
   {
-    field: 'Kompensata',
+    field: 'compensation',
     headerName: 'Kompensata',
     headerTooltip: 'Kompensata',
     cellEditor: 'agSelectCellEditor',

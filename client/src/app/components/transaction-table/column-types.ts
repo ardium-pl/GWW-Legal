@@ -5,9 +5,9 @@ export const columnTypes: {
 } = {
   correctionType: {
     editable: ({ data }) => {
-      return data.Korekta === 'KC01';
+      return data.correction === 'KC01';
     },
-    cellStyle: ({ data }) => getCellStyle(data.Korekta !== 'KC01'),
+    cellStyle: ({ data }) => getCellStyle(data.correction !== 'KC01'),
   },
   exemptionType: {
     editable: ({ data }) => {
@@ -206,9 +206,37 @@ export const columnTypes: {
       return data.IdentyfikatorKontrahenta === 'NrId';
     },
     cellStyle: ({ data }) =>
-      data.IdentyfikatorKontrahenta !== 'NrId'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+      getCellStyle(data.IdentyfikatorKontrahenta !== 'NrId'),
+  },
+  MetodyBadaniaType: {
+    editable: ({ data }) =>
+      data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02',
+    cellStyle: ({ data }) =>
+      getCellStyle(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00'),
+  },
+  RodzajOprocentowania1Type: {
+    editable: ({ data }) =>
+      data.MetodyBadania !== 'MW00' &&
+      data.Zwolnienie === 'ZW02' &&
+      data.RodzajOprocentowania === 'OP01',
+    cellStyle: ({ data }) =>
+      getCellStyle(
+        data.Zwolnienie !== 'ZW02' ||
+          data.MetodyBadania === 'MW00' ||
+          data.RodzajOprocentowania !== 'OP01',
+      ),
+  },
+  RodzajOprocentowania3Type: {
+    editable: ({ data }) =>
+      data.MetodyBadania !== 'MW00' &&
+      data.Zwolnienie === 'ZW02' &&
+      data.RodzajOprocentowania === 'OP03',
+    cellStyle: ({ data }) =>
+      getCellStyle(
+        data.Zwolnienie !== 'ZW02' ||
+          data.MetodyBadania === 'MW00' ||
+          data.RodzajOprocentowania !== 'OP03',
+      ),
   },
 };
 
