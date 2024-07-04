@@ -190,7 +190,6 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
 
                 case '1201':
                 case '1202': {
-                    console.log(transaction.safeHarbour);
                     if (transaction.safeHarbour === 'TAK') {
                         return {
                             KategoriaD: transaction.transactionCategory,
@@ -229,7 +228,7 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
                             KodZW1: 'ZW01',
                             PodstZW: '11n1',
                             Kraj: 'PL',
-                            NazwaKontr1: transaction.subjectMatter, // Adjust as needed
+                            NazwaKontr1: transaction.subjectMatter,
                             WartTransKontr1: {
                                 _attributes: {
                                     kodWaluty: transaction.currencyCode,
@@ -240,9 +239,9 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
                                 KorektaCT5: 'KC01',
                                 WartKorektyCT5: {
                                     _attributes: {
-                                        kodWaluty: transaction.currencyCode,
+                                        kodWaluty: transaction.KodWalutyKorekty,
                                     },
-                                    _text: transaction.transactionValue,
+                                    _text: transaction.WartoscKorekty,
                                 },
                             } : {
                                 BrakKorektyCT5: 'KC02',
