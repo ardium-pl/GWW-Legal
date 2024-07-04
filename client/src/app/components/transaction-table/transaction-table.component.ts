@@ -11,14 +11,21 @@ import {
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { transactionAColDefs } from './table.consts';
+import {
+  defaultData,
+  transactionAColDefs,
+} from './column-definitions/type-A-column-definitions.consts';
 import { DropdownCellComponent } from '../dropdown-cell/dropdown-cell.component';
 import {
   Transaction,
-  TransactionTable,
   TransactionTableInput,
 } from 'app/services/tpr/tpr-input.types';
 import { columnTypes } from './column-types';
+import {
+  TransactionATable,
+  TransactionBTable,
+} from 'app/services/tpr/tpr-table.types';
+import { transactionBColDefs } from './column-definitions/type-B-column-definitions.consts';
 
 @Component({
   selector: 'app-transaction-table',
@@ -28,64 +35,13 @@ import { columnTypes } from './column-types';
   styleUrls: ['./transaction-table.component.scss'],
 })
 export class TransactionTableComponent implements OnInit {
+  @Input() public transactionType: string = '';
   @Input() public inputData: Transaction[] | null = null;
-  public data = signal<TransactionTable[] | TransactionTableInput[]>([
-    {
-      Kategoria: '',
-      Przedmiot: '',
-      Wartosc: 0,
-      KodWaluty: '',
-      Korekta: 'KC01',
-      WartoscKorekty: 0,
-      KodWalutyKorekty: '',
-      Kompensata: 'KS01',
-      Zwolnienie: 'ZW01',
-      PodstawaZwolnienia: '11n1',
-      KodKrajuZwolnienia: '',
-      WartoscTransakcjiZwolnienia: 0,
-      KodWalutyKraju: '',
-      RodzajTransakcji: 'TK01',
-      KodKrajuTransakcji: '',
-      WartośćTransakcjiKraju: 0,
-      KodWalutyKrajuTransakcji: '',
-      MetodyBadania: 'MW01',
-      SposobWeryfikacji: 'SW01',
-      KorektaMetodyBadania: 'KP01',
-      KorektaPorownywalnosciProg: 0,
-      SposobUjeciaCeny: 'CK01',
-      Waluta1: '',
-      CenaMinimalna: 0,
-      CenaMaksymalna: 0,
-      Miara1: '',
-      RodzajPrzedzialu: 'RP01',
-      CenaPorownywalnaMin: 0,
-      CenaPorownywalnaMax: 0,
-      OpisPrzedzialu: '',
-      WysokoscCenyPorownywalnej: 0,
-      ProcentMinimalny: 0,
-      ProcentMaksymalny: 0,
-      Miara2: '',
-      DolnaGranica: 0,
-      GornaGranica: 0,
-      WysokoscWskaznikaFinansowego: 0,
-      WskaznikFinansowy: 'WF01',
-      WynikTransakcji: 0,
-      RodzajPorownania: 'PR01',
-      PodmiotBadany: 'PB01',
-      KryteriumGeograficzne: 'KG01',
-      RodzajMetodyPodzialuZysku: 'PZ01',
-      Strata: false,
-      ZakladanyZysk: 0,
-      ZrealizowanyZysk: 0,
-      TechWyceny: 'TW01',
-      WspolczynnikDyskontowy: 0,
-      OkresPrognozy: 'TB01',
-      TerminInny: 'AZ01',
-      ZrodloDanychZgodnosci: 'AZ01',
-    },
-  ]);
-  public colDefs: ColDef[] = transactionAColDefs;
-  public gridApi!: GridApi<TransactionTable>;
+  public data = signal<
+    TransactionATable[] | TransactionBTable[] | TransactionTableInput[]
+  >([defaultData]);
+  public colDefs: ColDef[] = [];
+  public gridApi!: GridApi<TransactionATable>;
   public defaultColDef: ColDef = {
     filter: true,
     enableCellChangeFlash: true,
@@ -93,6 +49,8 @@ export class TransactionTableComponent implements OnInit {
   };
 
   public ngOnInit(): void {
+    console.log(this.transactionType);
+    this.colDefs = this.getColumnDef(this.transactionType);
     if (this.inputData) {
       const modifiedInputData: TransactionTableInput[] = this.inputData.map(
         (transaction) => {
@@ -111,6 +69,16 @@ export class TransactionTableComponent implements OnInit {
     }
   }
 
+  getColumnDef(transactionType: string) {
+    switch (transactionType) {
+      case 'A':
+        return transactionAColDefs;
+      case 'B':
+        return transactionBColDefs;
+      default:
+        return transactionAColDefs;
+    }
+  }
   onGridReady(params: GridReadyEvent<any>) {
     this.gridApi = params.api;
   }
@@ -131,11 +99,13 @@ export class TransactionTableComponent implements OnInit {
     };
     event.api.applyTransaction(tx);
     this.gridApi.redrawRows();
+    this.getRawData();
   }
 
   getRawData() {
-    let rawData: TransactionTable[] | null = null;
-    this.gridApi.forEachNode(({ data }) => data && rawData?.push(data));
+    let rawData: any[] = [];
+    this.gridApi.forEachNode(({ data }) => rawData?.push(data));
+    console.log(rawData);
   }
 
   public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.id;

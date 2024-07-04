@@ -18,7 +18,10 @@
     @for (category of itterableTransactionData(); track $index) { @if
     (category[1].length) {
     <mat-tab [label]="getLabel(category[0])">
-      <app-transaction-table [inputData]="category[1]"></app-transaction-table>
+      <app-transaction-table
+        [inputData]="category[1]"
+        [transactionType]="category[0].slice(-1)"
+      ></app-transaction-table>
     </mat-tab>
     }}
   </mat-tab-group>
