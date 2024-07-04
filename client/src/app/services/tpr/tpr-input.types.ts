@@ -35,6 +35,15 @@ export type Transaction = {
   korektaCenTransferowych: string;
 };
 
+export type TransactionTableInput = {
+  Kategoria: string;
+  Przedmiot: string;
+  Wartosc: number;
+  KodWaluty: string;
+  Korekta: 'KC01' | 'KC02';
+  Kompensata: 'KS01' | 'KS02' | 'KS03';
+};
+
 export type TransactionCategories = {
   categoryA: Transaction[];
   categoryB: Transaction[];
