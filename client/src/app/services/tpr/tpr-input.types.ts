@@ -1,3 +1,4 @@
+import { EOF } from '@angular/compiler';
 import {
   Kompensata,
   Korekta,
@@ -20,7 +21,7 @@ export type TPR_input = {
   profitMargin: number;
   returnOnAssets: number;
   returnOnEquity: number;
-  transactions: Array<Transaction>;
+  transactions: Array<AllTransactionTables>;
 };
 
 export type Transaction = {
@@ -66,3 +67,7 @@ export type TransactionTable = {
   KorektaMetodyBadania: Korekta;
   KorektaPorownywalnosciProg: number;
 };
+
+export type AllTransactionTables = Transaction & TransactionTable &{
+  test: string;
+}

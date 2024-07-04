@@ -1,4 +1,4 @@
-import { TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
+import { AllTransactionTables, TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
 import { TPR, PozycjeSzczegolowe } from 'app/services/tpr/tpr-output.types';
 // import { TransakcjaKategoriaA } from 'app/services/tpr/typeA.types';
 import { TransakcjaKategoriaA1 } from 'app/services/tpr/typeA1.types';
@@ -8,10 +8,12 @@ import { TransakcjaKategoriaC } from 'app/services/tpr/typeC.types';
 import { TransakcjaKategoriaE } from 'app/services/tpr/typeE.types';
 import { TransakcjaKategoriaF } from 'app/services/tpr/typeF.types';
 import { translateCategoryE } from './translators/translate-typeE.utilss';
+import { translateCategoryC } from './translators/translate-typeC';
+import { TransakcjaKategoriaD } from 'app/services/tpr/typeD.types';
 
 export function translateToTPR(tprInput: TPR_input): TPR {
     // Translate transactions
-    const translatedTransactions = translateTransactions(tprInput.transactions) as Transakcja[];
+    const translatedTransactions = translateTransactions(tprInput.transactions) as AllTransactionTables[];
 
     // Map TPR_input to TPR
     const tpr: TPR = {
@@ -67,10 +69,11 @@ type Transakcja =
     //   | TransakcjaKategoriaA2
       | TransakcjaKategoriaB
       | TransakcjaKategoriaC
+      |TransakcjaKategoriaD
     | TransakcjaKategoriaE
     | TransakcjaKategoriaF;
 
-export function translateTransactions(transactions: Transaction[]): Transakcja[] {
+export function translateTransactions(transactions: AllTransactionTables[]): Transakcja[] {
     if (!transactions) {
         return [];
     }
@@ -185,172 +188,85 @@ export function translateTransactions(transactions: Transaction[]): Transakcja[]
                                 
                             }
 
-                // case '1201':
-                // case '1202': {
-                //     if (transaction.safeHarbour === 'TAK') {
-                //         return {
-                //             KategoriaD: transaction.transactionCategory,
-                //             PrzedmiotD: transaction.subjectMatter,
-                //             WartoscD: {
-                //                 _attributes: {
-                //                     kodWaluty: transaction.currencyCode,
-                //                 },
-                //                 _text: transaction.transactionValue,
-                //             },
-                //             Kompensata: transaction.compensation,
-                //             KapitalD: {
-                //                 _attributes: {
-                //                     kodWaluty: transaction.currencyCode,
-                //                 },
-                //                 _text: transaction.transactionValue,
-                //             },
-                //             ZadluzenieD: {
-                //                 _attributes: {
-                //                     kodWaluty: transaction.currencyCode,
-                //                 },
-                //                 _text: transaction.transactionValue,
-                //             },
-                //             OdsetkiDm: {
-                //                 _attributes: {
-                //                     kodWaluty: transaction.currencyCode,
-                //                 },
-                //                 _text: transaction.transactionValue,
-                //             },
-                //             OdsetkiDk: {
-                //                 _attributes: {
-                //                     kodWaluty: transaction.currencyCode,
-                //                 },
-                //                 _text: transaction.transactionValue,
-                //             },
-                //             KodZW1: 'ZW01',
-                //             PodstZW: '11n1',
-                //             Kraj: 'PL',
-                //             NazwaKontr1: transaction.subjectMatter, // Adjust as needed
-                //             WartTransKontr1: {
-                //                 _attributes: {
-                //                     kodWaluty: transaction.currencyCode,
-                //                 },
-                //                 _text: transaction.transactionValue,
-                //             },
-                //             ...(transaction.correction === 'KC01' ? {
-                //                 KorektaCT5: 'KC01',
-                //                 WartKorektyCT5: {
-                //                     _attributes: {
-                //                         kodWaluty: transaction.currencyCode,
-                //                     },
-                //                     _text: transaction.transactionValue,
-                //                 },
-                //             } : {
-                //                 BrakKorektyCT5: 'KC02',
-                //             }),
-                //             ...(
-                //                 transaction.Nrnip ? { NIPKontr1: transaction.NIPKontr1 } :
-                //                     transaction.PESELKontr1 ? { PESELKontr1: transaction.PESELKontr1 } :
-                //                         transaction.NrIdKontr1 ? {
-                //                             NrIdKontr1: transaction.NrIdKontr1,
-                //                             KodKrajuWydania1: transaction.KodKrajuWydania1
-                //                         } : {}
-                //             )
-                //         } as TransakcjaKategoriaD;
-                //     } else {
-                //         return {
-                //             KategoriaC: transaction.transactionCategory,
-                //             PrzedmiotC: transaction.subjectMatter,
-                //             WartoscC: [
-                //                 {
-                //                     _attributes: {
-                //                         kodWaluty: transaction.currencyCode,
-                //                     },
-                //                 },
-                //                 transaction.transactionValue,
-                //             ],
-                //             Kompensata: transaction.compensation,
-                //             KapitalC: [
-                //                 {
-                //                     _attributes: {
-                //                         kodWaluty: transaction.currencyCode,
-                //                     },
-                //                 },
-                //                 transaction.transactionValue, // Example value, adjust as needed
-                //             ],
-                //             ZadluzenieC: [
-                //                 {
-                //                     _attributes: {
-                //                         kodWaluty: transaction.currencyCode,
-                //                     },
-                //                 },
-                //                 transaction.transactionValue, // Example value, adjust as needed
-                //             ],
-                //             OdsetkiCm: [
-                //                 {
-                //                     _attributes: {
-                //                         kodWaluty: transaction.currencyCode,
-                //                     },
-                //                 },
-                //                 transaction.transactionValue, // Example value, adjust as needed
-                //             ],
-                //             OdsetkiCk: [
-                //                 {
-                //                     _attributes: {
-                //                         kodWaluty: transaction.currencyCode,
-                //                     },
-                //                 },
-                //                 transaction.transactionValue, // Example value, adjust as needed
-                //             ],
-                //         } as TransakcjaKategoriaC;
-                //     }
-                // }
+                case '1201':
+                case '1202': {
+                    console.log(transaction.safeHarbour);
+                    if (transaction.safeHarbour === 'TAK') {
+                        return {
+                            KategoriaD: transaction.transactionCategory,
+                            PrzedmiotD: transaction.subjectMatter,
+                            WartoscD: {
+                                _attributes: {
+                                    kodWaluty: transaction.currencyCode,
+                                },
+                                _text: transaction.transactionValue,
+                            },
+                            Kompensata: transaction.compensation,
+                            KapitalD: {
+                                _attributes: {
+                                    kodWaluty: transaction.currencyCode,
+                                },
+                                _text: transaction.transactionValue,
+                            },
+                            ZadluzenieD: {
+                                _attributes: {
+                                    kodWaluty: transaction.currencyCode,
+                                },
+                                _text: transaction.transactionValue,
+                            },
+                            OdsetkiDm: {
+                                _attributes: {
+                                    kodWaluty: transaction.currencyCode,
+                                },
+                                _text: transaction.transactionValue,
+                            },
+                            OdsetkiDk: {
+                                _attributes: {
+                                    kodWaluty: transaction.currencyCode,
+                                },
+                                _text: transaction.transactionValue,
+                            },
+                            KodZW1: 'ZW01',
+                            PodstZW: '11n1',
+                            Kraj: 'PL',
+                            NazwaKontr1: transaction.subjectMatter, // Adjust as needed
+                            WartTransKontr1: {
+                                _attributes: {
+                                    kodWaluty: transaction.currencyCode,
+                                },
+                                _text: transaction.transactionValue,
+                            },
+                            ...(transaction.correction === 'KC01' ? {
+                                KorektaCT5: 'KC01',
+                                WartKorektyCT5: {
+                                    _attributes: {
+                                        kodWaluty: transaction.currencyCode,
+                                    },
+                                    _text: transaction.transactionValue,
+                                },
+                            } : {
+                                BrakKorektyCT5: 'KC02',
+                            }),
+                            // ...(
+                            //     transaction.Nrnip ? { NIPKontr1: transaction.NIPKontr1 } :
+                            //         transaction.PESELKontr1 ? { PESELKontr1: transaction.PESELKontr1 } :
+                            //             transaction.NrIdKontr1 ? {
+                            //                 NrIdKontr1: transaction.NrIdKontr1,
+                            //                 KodKrajuWydania1: transaction.KodKrajuWydania1
+                            //             } : {}
+                            // )
+                        } as TransakcjaKategoriaD;
+                    } 
+                        return translateCategoryC(transaction);
+                        }
+                
                 case '1203':
                 case '1204':
                 case '2201':
                 case '2202':
                 case '2203':
                 case '2204':
-                    return {
-                        KategoriaC: transaction.transactionCategory,
-                        PrzedmiotC: transaction.subjectMatter,
-                        WartoscC: [
-                            {
-                                _attributes: {
-                                    kodWaluty: transaction.currencyCode,
-                                },
-                            },
-                            transaction.transactionValue,
-                        ],
-                        Kompensata: transaction.compensation,
-                        KapitalC: [
-                            {
-                                _attributes: {
-                                    kodWaluty: transaction.currencyCode,
-                                },
-                            },
-                            transaction.transactionValue, // Example value, adjust as needed
-                        ],
-                        ZadluzenieC: [
-                            {
-                                _attributes: {
-                                    kodWaluty: transaction.currencyCode,
-                                },
-                            },
-                            transaction.transactionValue, // Example value, adjust as needed
-                        ],
-                        OdsetkiCm: [
-                            {
-                                _attributes: {
-                                    kodWaluty: transaction.currencyCode,
-                                },
-                            },
-                            transaction.transactionValue, // Example value, adjust as needed
-                        ],
-                        OdsetkiCk: [
-                            {
-                                _attributes: {
-                                    kodWaluty: transaction.currencyCode,
-                                },
-                            },
-                            transaction.transactionValue, // Example value, adjust as needed
-                        ],
-                    } as TransakcjaKategoriaC;
+                    return translateCategoryC(transaction);
                         
                 case '1401':
                 case '2401':
@@ -374,9 +290,9 @@ export function translateTransactions(transactions: Transaction[]): Transakcja[]
                                     Kraj: 'PL',
                                     WartoscFKraj1: {
                                         _attributes: {
-                                            kodWaluty: transaction.currencyCode,
+                                            kodWaluty: transaction.KodKrajuTransakcji,
                                         },
-                                        _text: transaction.transactionValue,
+                                        _text: transaction.WartośćTransakcjiKraju,
                                     },
                                 },
                             };
@@ -387,9 +303,9 @@ export function translateTransactions(transactions: Transaction[]): Transakcja[]
                                     KorektaCT6: 'KC01',
                                     WartKorektyCT6: {
                                         _attributes: {
-                                            kodWaluty: transaction.currencyCode,
+                                            kodWaluty: transaction.KodWalutyKorekty,
                                         },
-                                        _text: transaction.transactionValue,
+                                        _text: transaction.WartoscKorekty,
                                     },
                                 } as TransakcjaKategoriaF<'KC01'>;
                             } else {
