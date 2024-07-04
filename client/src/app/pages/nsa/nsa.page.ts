@@ -36,6 +36,7 @@ import { NsaService } from 'app/services';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
+
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
 
 const DEFAULT_SYSTEM_MESSAGE =
@@ -71,6 +72,7 @@ const DEFAULT_USER_MESSAGES = [
     MatTooltipModule,
     MarkdownModule,
     MatCheckboxModule,
+    FormTableComponent,
   ],
 })
 export class NsaPage implements OnInit {

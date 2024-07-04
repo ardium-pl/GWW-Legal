@@ -73,7 +73,6 @@ export class TransactionTableComponent implements OnInit {
 
   onGridReady(params: GridReadyEvent<any>) {
     this.gridApi = params.api;
-    console.log('onGridReady');
   }
 
   public columnTypes: {
@@ -86,7 +85,6 @@ export class TransactionTableComponent implements OnInit {
     const newValue = event.newValue;
     const newData = { ...oldData };
     newData[field!] = event.newValue;
-    console.log('onCellEditRequest, updating ' + field + ' to ' + newValue);
     const tx = {
       update: [newData],
     };
@@ -94,11 +92,11 @@ export class TransactionTableComponent implements OnInit {
     this.gridApi.redrawRows();
   }
 
-  // getRawData() {
-  //   let rawData: any[] = [];
-  //   this.gridApi.forEachNode(({ data }) => rawData?.push(data));
-  //   console.log(this.data());
-  // }
+  getRawData() {
+    let rawData: any[] = [];
+    this.gridApi.forEachNode(({ data }) => rawData?.push(data));
+    console.log(this.data());
+  }
 
   public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;
 }
