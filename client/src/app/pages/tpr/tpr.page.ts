@@ -13,6 +13,7 @@ import {
 } from 'app/services/tpr/tpr-input.types';
 import { Subject, from, takeUntil, tap } from 'rxjs';
 import { GetTransactionDataUtil } from 'app/utils/get-transaction-data.util';
+import { FormTableComponent } from 'app/components/form-table/form-table.component';
 import { XmlGeneratorComponent } from 'app/components/xml-generator/xml-generator.component';
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
 
