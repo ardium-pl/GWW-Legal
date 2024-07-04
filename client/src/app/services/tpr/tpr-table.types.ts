@@ -88,7 +88,38 @@ export type TransactionBTable = {
   KodWalutyKraju: string;
 };
 
+export type TransactionCTable = {};
+
 export type TransactionDTable = {
+  Kategoria: string;
+  Przedmiot: string;
+  Wartosc: number;
+  KodWaluty: string;
+  Korekta: KorektaCenTransferowych;
+  WartoscKorekty: number;
+  KodWalutyKorekty: string;
+  BrakKorektyCT5: 'KC02';
+  Kompensata: Kompensata;
+  KodWalutyKapitalu: string;
+  KodWalutyZadluzenia: string;
+  KodWalutyOdsetekMiesiecznych: string;
+  KodWalutyOdsetekKwartalnych: string;
+  TransakcjaZwolniona: 'ZW01';
+  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
+  Kraj: string;
+  NazwaKontrahenta: string;
+  WartoscTransakcjiZKontrahentem: number;
+  KodWalutyTransakcjiZKontrahentem: string;
+  IdentyfikatorKontrahenta: 'NIP' | 'PESEL' | 'NrId';
+  Nip: string;
+  Pesel: string;
+  NrId: string;
+  KodKrajuWydania: string;
+};
+
+export type TransactionETable = {};
+
+export type TransactionFTable = {
   Kategoria: string;
   Przedmiot: string;
   Wartosc: number;
@@ -98,8 +129,9 @@ export type TransactionDTable = {
   KodWalutyKorekty: string;
   Kompensata: Kompensata;
   Zwolnienie: ZwolnienieArt11n;
+  TransakcjaZwolniona: 'ZW01';
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
-  KodKrajuZwolnienia: string;
-  WartoscTransakcjiZwolnienia: number;
+  KodKraju: string;
+  WartoscTransakcjiKraju: number;
   KodWalutyKraju: string;
 };

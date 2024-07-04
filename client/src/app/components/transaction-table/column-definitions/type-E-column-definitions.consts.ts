@@ -4,7 +4,7 @@ import {
   ISelectCellEditorParams,
 } from 'ag-grid-community';
 
-export const transactionDColDefs: ColDef[] = [
+export const transactionEColDefs: ColDef[] = [
   {
     field: 'Kategoria',
     colId: 'Kategoria',
@@ -76,7 +76,7 @@ export const transactionDColDefs: ColDef[] = [
     cellDataType: 'text',
     type: 'correctionType',
     editable: false,
-    valueFormatter: () => 'KC02',
+    valueFormatter: () => 'ZW01',
     cellStyle: ({ data }) =>
       data.Korekta !== 'KC02'
         ? { backgroundColor: 'var(--bg2-light)' }

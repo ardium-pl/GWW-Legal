@@ -27,6 +27,7 @@ import {
 } from 'app/services/tpr/tpr-table.types';
 import { transactionBColDefs } from './column-definitions/type-B-column-definitions.consts';
 import { transactionDColDefs } from './column-definitions/type-D-column-definitions.consts';
+import { transactionFColDefs } from './column-definitions/type-F-column-definitions.consts';
 
 @Component({
   selector: 'app-transaction-table',
@@ -76,8 +77,14 @@ export class TransactionTableComponent implements OnInit {
         return transactionAColDefs;
       case 'B':
         return transactionBColDefs;
+      case 'B':
+        return transactionBColDefs;
       case 'D':
         return transactionDColDefs;
+      case 'E':
+        return transactionBColDefs;
+      case 'F':
+        return transactionFColDefs;
       default:
         return transactionAColDefs;
     }

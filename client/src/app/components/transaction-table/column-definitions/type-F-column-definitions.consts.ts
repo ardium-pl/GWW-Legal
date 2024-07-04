@@ -4,23 +4,7 @@ import {
   ISelectCellEditorParams,
 } from 'ag-grid-community';
 
-export const defaultData = {
-  Kategoria: '',
-  Przedmiot: '',
-  Wartosc: 0,
-  KodWaluty: '',
-  Korekta: 'KC01',
-  WartoscKorekty: 0,
-  KodWalutyKorekty: '',
-  Kompensata: 'KS01',
-  Zwolnienie: 'ZW01',
-  PodstawaZwolnienia: '11n1',
-  KodKrajuZwolnienia: '',
-  WartoscTransakcjiZwolnienia: 0,
-  KodWalutyKraju: '',
-};
-
-export const transactionBColDefs: ColDef[] = [
+export const transactionFColDefs: ColDef[] = [
   {
     field: 'Kategoria',
     colId: 'Kategoria',
@@ -95,23 +79,22 @@ export const transactionBColDefs: ColDef[] = [
     } as ISelectCellEditorParams,
   },
   {
-    field: 'Zwolnienie',
-    headerName: 'Zwolnienie',
-    headerTooltip: 'Zwolnienie',
-    cellEditor: 'agSelectCellEditor',
+    field: 'TransakcjaZwolniona',
+    headerName: 'Transakcja zwolniona na podst. art. 11n pkt 1-2 ustawy',
+    headerTooltip: 'Transakcja zwolniona na podst. art. 11n pkt 1-2 ustawy',
+    cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
-    cellEditorParams: {
-      values: ['ZW01', 'ZW02'],
-    } as ISelectCellEditorParams,
+    editable: false,
+    valueFormatter: () => 'ZW01',
   },
   {
     field: 'PodstawaZwolnienia',
     headerName: 'Podstawa zwolnienia',
     headerTooltip: 'Podstawa zwolnienia',
-    cellEditor: 'agTextCellEditor',
+    cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['11n1', '11n1a', '11n2'],
+      values: ['', '11n1', '11n1a', '11n2'],
     } as ISelectCellEditorParams,
   },
   {
