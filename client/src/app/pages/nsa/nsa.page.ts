@@ -111,7 +111,7 @@ export class NsaPage implements OnInit, OnDestroy {
     additionalQuestion: new FormControl<string | null>(null, [
       Validators.required,
     ]),
-    unrelatedQuestions: new FormArray<FormControl<string | null>>([]),
+    independentQuestions: new FormArray<FormControl<string | null>>([]),
   });
 
   readonly caseSigntaureInput =
@@ -378,33 +378,33 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   //! adding questions
   onAddButtonClick() {
-    this.nsaFormPart3.controls.unrelatedQuestions.push(
+    this.nsaFormPart3.controls.independentQuestions.push(
       new FormControl<string>(''),
     );
   }
 
-  onUnrelatedQuestionButtonClick(index: number, control: FormControl) {
-    this.nsaService.fetchUnrelatedAnswer(
+  onindependentQuestionButtonClick(index: number, control: FormControl) {
+    this.nsaService.fetchindependentAnswer(
       this.nsaFormPart2.controls.systemMessage.value!,
       control.value!,
       index,
     );
   }
 
-  hasClickedFetchUnrelated(index: number) {
-    return this.nsaService.unrelatedQuestionsProgress()[index] != undefined;
+  hasClickedFetchindependent(index: number) {
+    return this.nsaService.independentQuestionsProgress()[index] != undefined;
   }
   isVisibleAddButton() {
     return (
-      this.nsaService.unrelatedQuestionsProgress().length ==
-      this.nsaFormPart3.controls.unrelatedQuestions.controls.length
+      this.nsaService.independentQuestionsProgress().length ==
+      this.nsaFormPart3.controls.independentQuestions.controls.length
     );
   }
-  unrelatedLoaded(index: number) {
-    return this.nsaService.unrelatedQuestionsLoaded()[index];
+  independentLoaded(index: number) {
+    return this.nsaService.independentQuestionsLoaded()[index];
   }
-  unrelatedLoading(index: number) {
-    return this.nsaService.unrelatedQuestionsLoaded()[index] == true;
+  independentLoading(index: number) {
+    return this.nsaService.independentQuestionsLoaded()[index] == true;
   }
 
   //! resetting

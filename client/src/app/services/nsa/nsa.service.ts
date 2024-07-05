@@ -166,29 +166,29 @@ export class NsaService implements OnDestroy {
       });
   }
 
-  //! unrelated questions
-  private readonly _unrelatedQuestionsProgress = signal<(boolean | 'ERROR')[]>(
+  //! independent questions
+  private readonly _independentQuestionsProgress = signal<(boolean | 'ERROR')[]>(
     [],
   );
-  public readonly unrelatedQuestionsProgress =
-    this._unrelatedQuestionsProgress.asReadonly();
+  public readonly independentQuestionsProgress =
+    this._independentQuestionsProgress.asReadonly();
 
-  private readonly _unrelatedQuestionsResponses = signal<(string | null)[]>([]);
-  public readonly unrelatedQuestionsResponses =
-    this._unrelatedQuestionsResponses.asReadonly();
+  private readonly _independentQuestionsResponses = signal<(string | null)[]>([]);
+  public readonly independentQuestionsResponses =
+    this._independentQuestionsResponses.asReadonly();
   
-  public readonly unrelatedQuestionsLoaded = computed(() => this._unrelatedQuestionsProgress().map(v => v != true))
+  public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true))
   
   effdf = effect(() => {
-    console.log(this._unrelatedQuestionsProgress(), this._unrelatedQuestionsResponses());
+    console.log(this._independentQuestionsProgress(), this._independentQuestionsResponses());
   })
 
-  fetchUnrelatedAnswer(
+  fetchindependentAnswer(
     systemMessage: string,
     userMessage: string,
     index: number,
   ): void {
-    this._unrelatedQuestionsProgress.update((arr) => {
+    this._independentQuestionsProgress.update((arr) => {
       const newArr = [...arr];
       newArr[index] = true;
       return newArr;
@@ -221,12 +221,12 @@ export class NsaService implements OnDestroy {
         }),
       )
       .subscribe((res) => {
-        this._unrelatedQuestionsProgress.update((arr) => {
+        this._independentQuestionsProgress.update((arr) => {
           const newArr = [...arr];
           newArr[index] = false;
           return newArr;
         });
-        this._unrelatedQuestionsResponses.update((arr) => {
+        this._independentQuestionsResponses.update((arr) => {
           const newArr = [...arr];
           newArr[index] = res as string;
           return newArr;

@@ -278,7 +278,7 @@
           }
         </mat-card-content>
       </mat-card>
-      } } @for (control of nsaFormPart3.controls.unrelatedQuestions.controls;
+      } } @for (control of nsaFormPart3.controls.independentQuestions.controls;
       track $index) {
       <mat-card>
         <mat-card-header>Niezależne pytanie</mat-card-header>
@@ -288,30 +288,30 @@
               matInput
               placeholder="Tu wpisz pytanie do AI"
               [formControl]="control"
-              [class.hidden]="hasClickedFetchUnrelated($index)"
+              [class.hidden]="hasClickedFetchindependent($index)"
             ></textarea>
-            @if (hasClickedFetchUnrelated($index)) {
+            @if (hasClickedFetchindependent($index)) {
             <div>{{ control.value }}</div>
             }
           </mat-form-field>
-          @if (!unrelatedLoaded($index)) {
+          @if (!independentLoaded($index)) {
           <div class="search-button-container">
             <button
               mat-flat-button
               color="primary"
               type="submit"
-              [disabled]="!control.value || unrelatedLoading($index)"
-              (click)="onUnrelatedQuestionButtonClick($index, control)"
+              [disabled]="!control.value || independentLoading($index)"
+              (click)="onindependentQuestionButtonClick($index, control)"
             >
               Zapytaj
             </button>
-            @if (unrelatedLoading($index)) {
+            @if (independentLoading($index)) {
             <mat-spinner />
             }
           </div>
-          } @if (unrelatedLoaded($index)) {
+          } @if (independentLoaded($index)) {
           <markdown>
-            {{ nsaService.unrelatedQuestionsResponses()[$index] }}
+            {{ nsaService.independentQuestionsResponses()[$index] }}
           </markdown>
           }
         </mat-card-content>
