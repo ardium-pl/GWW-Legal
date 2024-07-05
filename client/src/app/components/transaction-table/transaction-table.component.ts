@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal } from '@angular/core';
+import { Component, Input, OnInit, inject, signal } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   CellEditRequestEvent,
@@ -25,6 +25,7 @@ import {
 import { transactionBColDefs } from './column-definitions/type-B-column-definitions.consts';
 import { transactionDColDefs } from './column-definitions/type-D-column-definitions.consts';
 import { transactionFColDefs } from './column-definitions/type-F-column-definitions.consts';
+import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
 
 @Component({
   selector: 'app-transaction-table',
@@ -34,6 +35,7 @@ import { transactionFColDefs } from './column-definitions/type-F-column-definiti
   styleUrls: ['./transaction-table.component.scss'],
 })
 export class TransactionTableComponent implements OnInit {
+  private readonly tprDataServiceService = inject(TprDataServiceService);
   @Input() public transactionType: string = '';
   @Input() public inputData: CategorizedTransaction[] = [];
   public data = signal<
@@ -97,10 +99,26 @@ export class TransactionTableComponent implements OnInit {
     this.gridApi.redrawRows();
   }
 
-  getRawData() {
+  public sendData() {
+    this.tprDataServiceService.updateData(this.getRawData());
+  }
+
+  getRawData(): any[] {
     let rawData: any[] = [];
-    this.gridApi.forEachNode(({ data }) => rawData?.push(data));
-    console.log(this.data());
+    this.gridApi.forEachNode(({ data }) => {
+      const result: any = data;
+      this.removeNullUndefined(result);
+      rawData.push(result);
+    });
+    return rawData;
+  }
+
+  removeNullUndefined(obj: any) {
+    for (const key in obj) {
+      if (obj[key] === null || obj[key] === undefined) {
+        delete obj[key];
+      }
+    }
   }
 
   public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;

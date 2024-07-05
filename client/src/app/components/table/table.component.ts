@@ -15,7 +15,7 @@ import { companyColDefs } from './table.consts';
   styleUrls: ['./table.component.scss'],
 })
 export class TableComponent {
-  @Input() public inputData: TPR_input[] | null = null;
+  @Input() public inputData: (TPR_input | null)[] = [null];
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
   colDefs: ColDef[] = companyColDefs;

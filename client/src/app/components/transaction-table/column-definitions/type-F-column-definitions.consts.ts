@@ -94,7 +94,7 @@ export const transactionFColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['', '11n1', '11n1a', '11n2'],
+      values: [null, '11n1', '11n1a', '11n2'],
     } as ISelectCellEditorParams,
   },
   {

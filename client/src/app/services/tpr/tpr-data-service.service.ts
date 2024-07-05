@@ -1,9 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TprDataServiceService {
+  readonly allData = signal<any[]>([]);
 
-  constructor() { }
+  updateData(newData: any[]) {
+    this.allData.update((data) => [...data, ...newData]);
+  }
+
+  getData() {
+    return this.allData();
+  }
+
+  clearData() {
+    return this.allData.set([]);
+  }
 }

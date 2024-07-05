@@ -1,7 +1,7 @@
 <p class="table-header">Tabela informacji o przedsiębiorstwie</p>
 @if(companyData()){
 <mat-card class="table-card">
-  <app-table [inputData]="companyData()"></app-table>
+  <app-table [inputData]="[companyData()]"></app-table>
 </mat-card>
 }
 <p class="table-header">Tabele informacji o transakcjach</p>
@@ -25,4 +25,7 @@
 </mat-card>
 <mat-card class="table-card"> </mat-card>
 }
-<app-xml-generator class="xml-button"></app-xml-generator>
+<app-xml-generator
+  (click)="collectData()"
+  class="xml-button"
+></app-xml-generator>

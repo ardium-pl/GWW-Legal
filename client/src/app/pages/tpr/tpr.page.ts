@@ -1,4 +1,12 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  ViewChildren,
+  inject,
+  signal,
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { TableComponent } from 'app/components/table/table.component';
 import { ClipboardService } from 'app/services/clipboard.service';
@@ -11,6 +19,7 @@ import { Subject, from, takeUntil, tap } from 'rxjs';
 import { GetTransactionDataUtil } from 'app/utils/get-transaction-data.util';
 import { XmlGeneratorComponent } from 'app/components/xml-generator/xml-generator.component';
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
+import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
 
 @Component({
   selector: 'tpr-nsa',
@@ -27,9 +36,13 @@ import { TransactionTableComponent } from 'app/components/transaction-table/tran
   styleUrl: './tpr.page.scss',
 })
 export class TprPage implements OnInit, OnDestroy {
+  @ViewChildren(TransactionTableComponent)
+  children: QueryList<TransactionTableComponent> | undefined;
+  private readonly tprDataServiceService = inject(TprDataServiceService);
   private readonly clipboardService = inject(ClipboardService);
   private readonly destroy$$ = new Subject<void>();
-  readonly companyData = signal<TPR_input[]>([]);
+  readonly companyData = signal<TPR_input | null>(null);
+
   readonly transactionData = signal<TransactionCategories>({
     categoryA: [],
     categoryB: [],
@@ -47,7 +60,7 @@ export class TprPage implements OnInit, OnDestroy {
         takeUntil(this.destroy$$),
         tap((clipboardData: TPR_input) => {
           if (clipboardData) {
-            this.companyData.set([clipboardData]);
+            this.companyData.set(clipboardData);
             GetTransactionDataUtil(
               clipboardData,
               this.transactionData,
@@ -59,12 +72,23 @@ export class TprPage implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  public ngOnDestroy(): void {
+    this.destroy$$.next();
+    this.destroy$$.complete();
+  }
+
   public getLabel(category: string): string {
     return `Kategoria ${category.slice(-1)}`;
   }
 
-  public ngOnDestroy(): void {
-    this.destroy$$.next();
-    this.destroy$$.complete();
+  collectData() {
+    this.tprDataServiceService.clearData();
+    // Działanie przycisku do zbierania danych
+    this.children && this.children.forEach((child) => child.sendData());
+    const companyData = this.companyData();
+    if (companyData) {
+      companyData.transactions = this.tprDataServiceService.getData();
+    }
+    console.log(companyData);
   }
 }

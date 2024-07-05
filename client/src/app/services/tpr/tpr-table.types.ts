@@ -151,9 +151,9 @@ export type TransactionDTable = {
   WartoscKorekty: number;
   KodWalutyKorekty: string;
   BrakKorektyCT5: 'KC02';
-  compensation: Kompensata;
+  compensation?: Kompensata;
   safeHarbour: string;
-  KodWalutyKapitalu: string;
+  KodWalutyKapitalu?: string;
   KodWalutyZadluzenia: string;
   KodWalutyOdsetekMiesiecznych: string;
   KodWalutyOdsetekKwartalnych: string;
@@ -185,7 +185,7 @@ export type TransactionFTable = {
   compensation: Kompensata;
   Zwolnienie: ZwolnienieArt11n;
   TransakcjaZwolniona: 'ZW01';
-  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
+  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2';
   KodKraju: string;
   WartoscTransakcjiKraju: number;
   KodWalutyKraju: string;
