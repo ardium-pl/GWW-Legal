@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
-import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
-import { RequestState } from '../types';
+import { Injectable, OnDestroy, computed, effect, inject, signal } from '@angular/core';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
+import { RequestState } from '../types';
+import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -163,6 +163,74 @@ export class NsaService implements OnDestroy {
       .subscribe((res) => {
         this._additionalAnswerResponse.set(res as string);
         this._isAdditionalAnswerLoading.set(false);
+      });
+  }
+
+  //! unrelated questions
+  private readonly _unrelatedQuestionsProgress = signal<(boolean | 'ERROR')[]>(
+    [],
+  );
+  public readonly unrelatedQuestionsProgress =
+    this._unrelatedQuestionsProgress.asReadonly();
+
+  private readonly _unrelatedQuestionsResponses = signal<(string | null)[]>([]);
+  public readonly unrelatedQuestionsResponses =
+    this._unrelatedQuestionsResponses.asReadonly();
+  
+  public readonly unrelatedQuestionsLoaded = computed(() => this._unrelatedQuestionsProgress().map(v => v != true))
+  
+  effdf = effect(() => {
+    console.log(this._unrelatedQuestionsProgress(), this._unrelatedQuestionsResponses());
+  })
+
+  fetchUnrelatedAnswer(
+    systemMessage: string,
+    userMessage: string,
+    index: number,
+  ): void {
+    this._unrelatedQuestionsProgress.update((arr) => {
+      const newArr = [...arr];
+      newArr[index] = true;
+      return newArr;
+    });
+
+    const sub = this.http
+      .post(apiUrl('/nsa/question'), {
+        courtRuling: this.getCleanCourtRuling(),
+        systemMessage,
+        userMessage,
+      })
+      .pipe(
+        takeUntil(this.cancel$),
+        catchError((err, caught) => {
+          this._gptAnswersProgress.update((v) => {
+            const newProgress = [...v];
+            newProgress[index] = 'ERROR';
+            return newProgress;
+          });
+          this._gptAnswersResponse.update((v) => {
+            const newArr = v ? [...v] : [];
+            newArr[index] =
+              typeof err.error === 'string'
+                ? err.error
+                : 'Error: ' + err.status + ' ' + err.statusText;
+            return newArr;
+          });
+          sub.unsubscribe();
+          return caught;
+        }),
+      )
+      .subscribe((res) => {
+        this._unrelatedQuestionsProgress.update((arr) => {
+          const newArr = [...arr];
+          newArr[index] = false;
+          return newArr;
+        });
+        this._unrelatedQuestionsResponses.update((arr) => {
+          const newArr = [...arr];
+          newArr[index] = res as string;
+          return newArr;
+        });
       });
   }
 

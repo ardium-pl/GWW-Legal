@@ -237,10 +237,7 @@
       } @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()
       ) {
       <mat-card>
-        <mat-card-header>
-          Zadaj AI dodatkowe pytanie
-          <app-required-star />
-        </mat-card-header>
+        <mat-card-header> Zadaj AI dodatkowe pytanie </mat-card-header>
         <mat-card-content>
           Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego
           napisz proszę jak NSA uargumentował:
@@ -281,7 +278,50 @@
           }
         </mat-card-content>
       </mat-card>
-      } }
+      } } @for (control of nsaFormPart3.controls.unrelatedQuestions.controls;
+      track $index) {
+      <mat-card>
+        <mat-card-header>Niezależne pytanie</mat-card-header>
+        <mat-card-content>
+          <mat-form-field class="full-size">
+            <textarea
+              matInput
+              placeholder="Tu wpisz pytanie do AI"
+              [formControl]="control"
+              [class.hidden]="hasClickedFetchUnrelated($index)"
+            ></textarea>
+            @if (hasClickedFetchUnrelated($index)) {
+            <div>{{ control.value }}</div>
+            }
+          </mat-form-field>
+          @if (!unrelatedLoaded($index)) {
+          <div class="search-button-container">
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="!control.value || unrelatedLoading($index)"
+              (click)="onUnrelatedQuestionButtonClick($index, control)"
+            >
+              Zapytaj
+            </button>
+            @if (unrelatedLoading($index)) {
+            <mat-spinner />
+            }
+          </div>
+          } @if (unrelatedLoaded($index)) {
+          <markdown>
+            {{ nsaService.unrelatedQuestionsResponses()[$index] }}
+          </markdown>
+          }
+        </mat-card-content>
+      </mat-card>
+      } @if (isVisibleAddButton()) {
+      <button class="add-question-btn" (click)="onAddButtonClick()">
+        <mat-icon fontIcon="add" />
+        <span>Dodaj niezależne pytanie</span>
+      </button>
+      }
     </form>
     <div class="buttons-container">
       <div>

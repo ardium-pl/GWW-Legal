@@ -11,6 +11,7 @@ import {
   viewChild,
 } from '@angular/core';
 import {
+  FormArray,
   FormControl,
   FormGroup,
   FormsModule,
@@ -22,6 +23,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
@@ -70,6 +72,7 @@ const DEFAULT_USER_MESSAGES = [
     MarkdownModule,
     MatCheckboxModule,
     SearchFabComponent,
+    MatIconModule,
   ],
   providers: [
     NsaService,
@@ -108,6 +111,7 @@ export class NsaPage implements OnInit, OnDestroy {
     additionalQuestion: new FormControl<string | null>(null, [
       Validators.required,
     ]),
+    unrelatedQuestions: new FormArray<FormControl<string | null>>([]),
   });
 
   readonly caseSigntaureInput =
@@ -371,6 +375,36 @@ export class NsaPage implements OnInit, OnDestroy {
       );
     }
     this.nextPage();
+  }
+  //! adding questions
+  onAddButtonClick() {
+    this.nsaFormPart3.controls.unrelatedQuestions.push(
+      new FormControl<string>(''),
+    );
+  }
+
+  onUnrelatedQuestionButtonClick(index: number, control: FormControl) {
+    this.nsaService.fetchUnrelatedAnswer(
+      this.nsaFormPart2.controls.systemMessage.value!,
+      control.value!,
+      index,
+    );
+  }
+
+  hasClickedFetchUnrelated(index: number) {
+    return this.nsaService.unrelatedQuestionsProgress()[index] != undefined;
+  }
+  isVisibleAddButton() {
+    return (
+      this.nsaService.unrelatedQuestionsProgress().length ==
+      this.nsaFormPart3.controls.unrelatedQuestions.controls.length
+    );
+  }
+  unrelatedLoaded(index: number) {
+    return this.nsaService.unrelatedQuestionsLoaded()[index];
+  }
+  unrelatedLoading(index: number) {
+    return this.nsaService.unrelatedQuestionsLoaded()[index] == true;
   }
 
   //! resetting
