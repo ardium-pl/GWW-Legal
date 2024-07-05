@@ -22,26 +22,6 @@ export class TableComponent {
   gridData: TPR_input[] | null = null;
   tooltipShowDelay = 500;
 
-  constructor(private dataExportService: DataExportService) {}
 
-  getGridData() {
-    let rowData: any = [];
-    this.agGrid.api.forEachNode((node) => rowData.push(node.data));
-    if (rowData.length > 0 && this.isTPRData(rowData[0])) {
-      this.dataExportService.setTprData(rowData as TPR_input[]);
-    }
-  }
 
-  isTPRData(data: TPR_input): data is TPR_input {
-    if (
-      (data as TPR_input).periodFrom !== undefined &&
-      (data as TPR_input).periodFrom !== ''
-    ) {
-      const tprData = data as TPR_input;
-      return !Object.values(tprData).some(
-        (value) => value === null || value === undefined || value === '',
-      );
-    }
-    return false;
-  }
 }

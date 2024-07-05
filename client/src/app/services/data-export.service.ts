@@ -6,10 +6,10 @@ import { TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
   providedIn: 'root'
 })
 export class DataExportService {
-  private tprDataSubject = new BehaviorSubject<TPR_input[] | Transaction[]>([]);
+  private tprDataSubject = new BehaviorSubject<any>([]);
   tprData$ = this.tprDataSubject.asObservable();
 
-  setTprData(data: TPR_input[] | Transaction[]) {
+  setTprData(data: any) {
     this.tprDataSubject.next(data);
   }
 }

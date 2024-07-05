@@ -21,7 +21,7 @@ export type TPR_input = {
   profitMargin: number;
   returnOnAssets: number;
   returnOnEquity: number;
-  transactions: Array<AllTransactionTables>;
+  transactions: Array<any>;
 };
 
 export type Transaction = {

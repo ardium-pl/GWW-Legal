@@ -25,14 +25,14 @@ import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service
 export class XmlGeneratorComponent implements OnInit {
   @Output() public clicked = new EventEmitter();
 
-  tprData: TPR_input[] = [];
+  tprData = [];
   private readonly tprDataServiceService = inject(TprDataServiceService);
 
   constructor(private dataExportService: DataExportService) {}
 
   ngOnInit() {
     this.dataExportService.tprData$.subscribe((data) => {
-      this.tprData = data as TPR_input[];
+      this.tprData = data;
     });
   }
 
@@ -41,6 +41,7 @@ export class XmlGeneratorComponent implements OnInit {
   }
 
   generateXML() {
+    console.log('Dane' + this.tprData);
     if (this.tprData.length > 0) {
       const tpr = translateToTPR(this.tprData[0]);
       const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });

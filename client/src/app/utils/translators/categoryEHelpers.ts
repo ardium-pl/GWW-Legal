@@ -8,9 +8,9 @@ export function mapKorektaCenTransferowych(transaction: any): Partial<KC01 | KC0
                 KorektaCT3: 'KC01',
                 WartKorektyCT3: {
                     _attributes: {
-                        kodWaluty: transaction.korektaCurrency,
+                        kodWaluty: transaction.KodWalutyKorekty,
                     },
-                    _text: transaction.korektaValue,
+                    _text: transaction.WartoscKorekty,
                 },
             };
         case 'KC02':
@@ -23,7 +23,7 @@ export function mapKorektaCenTransferowych(transaction: any): Partial<KC01 | KC0
 }
 
 export function mapZwolnienieArt11n(transaction: any): Partial<ZW01 | ZW02> {
-    switch (transaction.zwolnienieArt11n) {
+    switch (transaction.ZwolnienieArt11n) {
         case 'ZW01':
             return {
                 KodZW1: 'ZW01',
