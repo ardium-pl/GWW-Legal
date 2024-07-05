@@ -83,12 +83,12 @@ export class TprPage implements OnInit, OnDestroy {
 
   collectData() {
     this.tprDataServiceService.clearData();
-    // Działanie przycisku do zbierania danych
     this.children && this.children.forEach((child) => child.sendData());
     const companyData = this.companyData();
     if (companyData) {
       companyData.transactions = this.tprDataServiceService.getData();
     }
+
     console.log(companyData);
   }
 }
