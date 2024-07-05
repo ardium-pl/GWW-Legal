@@ -11,21 +11,10 @@ import {
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { transactionAColDefs } from './column-definitions/type-A-column-definitions.consts';
 import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
 import { columnTypes } from './column-types';
-import {
-  TransactionATable,
-  TransactionBTable,
-  TransactionCTable,
-  TransactionDTable,
-  TransactionETable,
-  TransactionFTable,
-} from 'app/services/tpr/tpr-table.types';
-import { transactionBColDefs } from './column-definitions/type-B-column-definitions.consts';
-import { transactionDColDefs } from './column-definitions/type-D-column-definitions.consts';
-import { transactionFColDefs } from './column-definitions/type-F-column-definitions.consts';
 import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
+import { getColumnDefUtil } from 'app/utils/get-column-def.util';
 
 @Component({
   selector: 'app-transaction-table',
@@ -38,15 +27,8 @@ export class TransactionTableComponent implements OnInit {
   private readonly tprDataServiceService = inject(TprDataServiceService);
   @Input() public transactionType: string = '';
   @Input() public inputData: CategorizedTransaction[] = [];
-  public data = signal<
-    | TransactionATable[]
-    | TransactionBTable[]
-    | TransactionCTable[]
-    | TransactionDTable[]
-    | TransactionETable[]
-    | TransactionFTable[]
-    | CategorizedTransaction[]
-  >([]);
+  public data = signal<CategorizedTransaction[]>([]);
+  public defaultKeys = signal<string[]>([]);
   public colDefs: ColDef[] = [];
   public defaultColDef: ColDef = {
     editable: true,
@@ -54,28 +36,9 @@ export class TransactionTableComponent implements OnInit {
   private gridApi!: GridApi<any>;
 
   public ngOnInit(): void {
-    this.colDefs = this.getColumnDef(this.transactionType);
+    this.colDefs = getColumnDefUtil(this.transactionType, this.defaultKeys);
     if (this.inputData) {
       this.data.set(this.inputData);
-    }
-  }
-
-  getColumnDef(transactionType: string) {
-    switch (transactionType) {
-      case 'A':
-        return transactionAColDefs;
-      case 'B':
-        return transactionBColDefs;
-      case 'C':
-        return transactionBColDefs;
-      case 'D':
-        return transactionDColDefs;
-      case 'E':
-        return transactionBColDefs;
-      case 'F':
-        return transactionFColDefs;
-      default:
-        return transactionAColDefs;
     }
   }
 
@@ -107,7 +70,7 @@ export class TransactionTableComponent implements OnInit {
     let rawData: any[] = [];
     this.gridApi.forEachNode(({ data }) => {
       const result: any = data;
-      this.removeNullUndefined(result);
+      this.checkIfValid(result);
       rawData.push(result);
     });
     return rawData;
@@ -119,6 +82,46 @@ export class TransactionTableComponent implements OnInit {
         delete obj[key];
       }
     }
+  }
+
+  checkIfValid(result: any) {
+    const colDefs = this.gridApi.getColumnDefs();
+    colDefs &&
+      colDefs.forEach((colDef: any) => {
+        const isEditable =
+          typeof colDef.editable === 'function'
+            ? colDef.editable({ data: result })
+            : colDef.editable;
+        if (isEditable) {
+          const keysToCheck = this.defaultKeys();
+          if (result.correction === 'KC01') {
+            keysToCheck.push('WartoscKorekty', 'KodWalutyKorekty');
+          }
+          const objectKeys = Object.keys(result);
+          const isObjectIncomplete = keysToCheck.some((key) => {
+            return !objectKeys.some((objectKey) => {
+              const keyValid = objectKey === key;
+              const hasValue = result[objectKey] !== null;
+              return keyValid && hasValue;
+            });
+          });
+          if (isObjectIncomplete) {
+            this.tprDataServiceService.updateIsError(true);
+          } else {
+            for (const key in keysToCheck) {
+              if (
+                result[keysToCheck[key]] === null ||
+                result[keysToCheck[key]] === undefined ||
+                result[keysToCheck[key]] === ''
+              ) {
+                this.tprDataServiceService.updateIsError(true);
+              }
+            }
+          }
+        } else {
+          this.removeNullUndefined(result);
+        }
+      });
   }
 
   public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;

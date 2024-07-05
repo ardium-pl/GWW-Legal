@@ -88,7 +88,8 @@ export class TprPage implements OnInit, OnDestroy {
     if (companyData) {
       companyData.transactions = this.tprDataServiceService.getData();
     }
-
-    console.log(companyData);
+    this.tprDataServiceService.getIsError()
+      ? console.log('otwórz snackbar z alertem')
+      : console.log('bez errora data do excela!', companyData);
   }
 }
