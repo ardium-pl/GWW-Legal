@@ -218,7 +218,7 @@ export type ZrodloDanychFinansowych =
   | 'ZD03'
   | 'ZD04'
   | 'ZD05';
-type Korekta = 'KP01' | 'KP02';
+export type Korekta = 'KP01' | 'KP02';
 export type RodzajOprocentowania = 'OP01' | 'OP02' | 'OP03' | 'OP04' | 'OP05';
 export type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
 export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';

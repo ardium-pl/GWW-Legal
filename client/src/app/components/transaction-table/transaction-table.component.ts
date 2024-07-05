@@ -12,15 +12,15 @@ import {
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { transactionAColDefs } from './column-definitions/type-A-column-definitions.consts';
-import { DropdownCellComponent } from '../dropdown-cell/dropdown-cell.component';
-import {
-  CategorizedTransaction,
-  Transaction,
-} from 'app/services/tpr/tpr-input.types';
+import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
 import { columnTypes } from './column-types';
 import {
   TransactionATable,
   TransactionBTable,
+  TransactionCTable,
+  TransactionDTable,
+  TransactionETable,
+  TransactionFTable,
 } from 'app/services/tpr/tpr-table.types';
 import { transactionBColDefs } from './column-definitions/type-B-column-definitions.consts';
 import { transactionDColDefs } from './column-definitions/type-D-column-definitions.consts';
@@ -29,21 +29,27 @@ import { transactionFColDefs } from './column-definitions/type-F-column-definiti
 @Component({
   selector: 'app-transaction-table',
   standalone: true,
-  imports: [AgGridAngular, DropdownCellComponent],
+  imports: [AgGridAngular],
   templateUrl: './transaction-table.component.html',
   styleUrls: ['./transaction-table.component.scss'],
 })
 export class TransactionTableComponent implements OnInit {
   @Input() public transactionType: string = '';
-  @Input() public inputData: CategorizedTransaction[] | null = null;
+  @Input() public inputData: CategorizedTransaction[] = [];
   public data = signal<
-    TransactionATable[] | TransactionBTable[] | Transaction[]
+    | TransactionATable[]
+    | TransactionBTable[]
+    | TransactionCTable[]
+    | TransactionDTable[]
+    | TransactionETable[]
+    | TransactionFTable[]
+    | CategorizedTransaction[]
   >([]);
   public colDefs: ColDef[] = [];
-  public gridApi!: GridApi<TransactionATable>;
   public defaultColDef: ColDef = {
     editable: true,
   };
+  private gridApi!: GridApi<any>;
 
   public ngOnInit(): void {
     this.colDefs = this.getColumnDef(this.transactionType);
@@ -82,11 +88,10 @@ export class TransactionTableComponent implements OnInit {
   onCellEditRequest(event: CellEditRequestEvent) {
     const oldData = event.data;
     const field = event.colDef.field;
-    const newValue = event.newValue;
     const newData = { ...oldData };
     newData[field!] = event.newValue;
     const tx = {
-      update: [newData],
+      update: [this.resetValuesForNonEditableColumns(newData)],
     };
     event.api.applyTransaction(tx);
     this.gridApi.redrawRows();
@@ -99,4 +104,19 @@ export class TransactionTableComponent implements OnInit {
   }
 
   public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;
+
+  public resetValuesForNonEditableColumns(oldData: any) {
+    const newRow: any = { ...oldData };
+    const colDefs = this.gridApi.getColumnDefs();
+    colDefs &&
+      colDefs.forEach((colDef: any) => {
+        if (colDef.editable && typeof colDef.editable === 'function') {
+          const isEditable = colDef.editable({ data: oldData });
+          if (!isEditable) {
+            newRow[colDef.field] = null;
+          }
+        }
+      });
+    return newRow;
+  }
 }

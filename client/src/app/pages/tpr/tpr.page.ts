@@ -1,10 +1,6 @@
 import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { TableComponent } from 'app/components/table/table.component';
-import {
-  companyColDefs,
-  transactionColDefs,
-} from 'app/components/table/table.consts';
 import { ClipboardService } from 'app/services/clipboard.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import {
@@ -43,8 +39,6 @@ export class TprPage implements OnInit, OnDestroy {
     categoryF: [],
   });
   readonly itterableTransactionData = signal<any>(null);
-  readonly companyColumnDefs = companyColDefs;
-  readonly transactionColumnDefs = transactionColDefs;
 
   public ngOnInit(): void {
     const observableFrom$ = from(this.clipboardService.readClipboard());

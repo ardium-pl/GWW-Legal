@@ -1,10 +1,7 @@
 <p class="table-header">Tabela informacji o przedsiębiorstwie</p>
 @if(companyData()){
 <mat-card class="table-card">
-  <app-table
-    [colDefs]="companyColumnDefs"
-    [inputData]="companyData()"
-  ></app-table>
+  <app-table [inputData]="companyData()"></app-table>
 </mat-card>
 }
 <p class="table-header">Tabele informacji o transakcjach</p>
