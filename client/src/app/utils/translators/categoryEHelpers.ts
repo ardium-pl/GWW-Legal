@@ -91,7 +91,7 @@ export function mapMetodyBadania(transaction: any): Partial<MW00 | MW01toMW06<Ko
                 SposobWyrCeny: transaction.sposobWyrazeniaCeny,
                 KalkOplaty1: transaction.sposobKalkulacjiOplaty,
                 PoziomOpl1: transaction.poziomOplaty,
-                RodzajPrzedzialu: 'RP01',
+                RodzajPrzedz10: 'RP01',
                 WynikAPKO1D1: transaction.dolnaGranica,
                 WynikAPKO1G1: transaction.gornaGranica,
             };

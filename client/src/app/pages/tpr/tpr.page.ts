@@ -94,20 +94,23 @@ export class TprPage implements OnInit, OnDestroy {
     if (companyData) {
       companyData.transactions = this.tprDataServiceService.getData();
     }
+    const tpr = translateToTPR(companyData);
+    const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
 
     this.tprDataServiceService.getIsError()
       ? console.log('otwórz snackbar z alertem')
-      : console.log('bez errora data do excela!', companyData);
-
-    const tpr = translateToTPR(companyData);
-      const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
-      console.log('Generated XML:', xmlVar);
-      // const blob = new Blob([xmlVar], { type: 'application/xml' });
-      // saveAs(blob, 'tpr_data.xml');
+      : this.generateXML(companyData);
     
 
     console.log(companyData);
 
+  }
+  generateXML(companyData: any){
+    const tpr = translateToTPR(companyData);
+    const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
+    console.log('Generated XML:', xmlVar);
+    // const blob = new Blob([xmlVar], { type: 'application/xml' });
+    // saveAs(blob, 'tpr_data.xml');
   }
   
 }

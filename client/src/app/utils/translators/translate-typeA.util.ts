@@ -15,13 +15,10 @@ export function translateCategoryA(transaction: TransactionATable) {
         }
     };
 
-    // Apply correction mapping
     const korektaCenTransferowych = mapKorektaCenTransferowychA(transaction);
 
-    // Apply exemption mapping
     const zwolnienieArt11n = mapZwolnienieArt11nA(transaction);
 
-    // Combine base transaction with correction and exemption mappings, then add compensation
     const transakcja = {
         ...baseTransakcjaA,
         ...korektaCenTransferowych,
@@ -34,7 +31,7 @@ export function translateCategoryA(transaction: TransactionATable) {
 
 export function translateCategoryA1(transaction: TransactionATable) {
     const baseTransakcjaA1: Partial<TransakcjaKategoriaA> = {
-        KategoriaA: transaction.transactionCategory,
+        KategoriaA1: transaction.transactionCategory,
         // WynRestrukt: transaction.WynagrodzenieZaRestrukturyzacje,
         PrzedmiotA: transaction.subjectMatter,
         WartoscA: {
@@ -45,13 +42,10 @@ export function translateCategoryA1(transaction: TransactionATable) {
         }
     };
 
-    // Apply correction mapping
     const korektaCenTransferowych = mapKorektaCenTransferowychA(transaction);
 
-    // Apply exemption mapping
     const zwolnienieArt11n = mapZwolnienieArt11nA(transaction);
 
-    // Combine base transaction with correction and exemption mappings, then add compensation
     const transakcja = {
         ...baseTransakcjaA1,
         ...korektaCenTransferowych,
@@ -67,8 +61,8 @@ export function translateCategoryA1(transaction: TransactionATable) {
 //     const baseTransakcjaA2 = {
 //         KategoriaA2: '3101',
 //         RodzajUm: transaction.RodzajUmowy,
-//         PrzedmiotA2: transaction.subjectMatter,
-//         WartoscA2: {
+//         PrzedmiotA: transaction.subjectMatter,
+//         WartoscA: {
 //             _attributes: {
 //                 kodWaluty: transaction.currencyCode,
 //             },
@@ -88,13 +82,10 @@ export function translateCategoryA1(transaction: TransactionATable) {
 //         },
 //     };
 
-//     // Apply correction mapping
 //     const korektaCenTransferowych = mapKorektaCenTransferowychA(transaction);
 
-//     // Apply exemption mapping
 //     const zwolnienieArt11n = mapZwolnienieArt11nA(transaction);
 
-//     // Determine the UD type and apply the relevant mapping
 //     let udMapping = {};
 //     if (transaction.Udzial === 'UD01') {
 //         udMapping = {

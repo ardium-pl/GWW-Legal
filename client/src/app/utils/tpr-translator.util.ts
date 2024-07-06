@@ -11,7 +11,7 @@ export function translateToTPR(tprInput: any) {
     const tpr = {
         Deklaracja: {
             _attributes: {
-                xmlns: 'http://example.com',
+                xmlns: 'https://ardium.pl/home',//???????????????????????
             },
             Naglowek: {
                 KodFormularza: {

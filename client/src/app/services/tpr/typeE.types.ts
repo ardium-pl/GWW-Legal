@@ -86,7 +86,7 @@ export type MW01toMW06<KP extends Korekta> = {
   SposobWyrCeny: string;
   KalkOplaty1: SposobKalkulacjiOplaty;
   PoziomOpl1: number; // TOCODE: Podać w procentach
-  RodzajPrzedzialu: 'RP01'; // Powinno być aż do RP04 ale klient nigdy nie używa innych wersji 
+  RodzajPrzedz10: 'RP01'; // Powinno być aż do RP04 ale klient nigdy nie używa innych wersji 
   WynikAPKO1D1: number; // TOCODE: Podać jako liczba tysięcy
   WynikAPKO1G1: number; // TOCODE: Podać jako liczba tysięcy
 } &
