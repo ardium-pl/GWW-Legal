@@ -69,20 +69,6 @@ export const transactionDColDefs: ColDef[] = [
     type: 'correctionType',
   },
   {
-    field: 'BrakKorektyCT5',
-    headerName: 'Brak Korekty',
-    headerTooltip: 'Brak Korekty',
-    cellEditor: 'agTextCellEditor',
-    cellDataType: 'text',
-    type: 'correctionType',
-    editable: false,
-    valueFormatter: () => 'KC02',
-    cellStyle: ({ data }) =>
-      data.correction !== 'KC02'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
-  },
-  {
     field: 'compensation',
     headerName: 'Kompensata',
     headerTooltip: 'Kompensata',
@@ -91,6 +77,16 @@ export const transactionDColDefs: ColDef[] = [
     cellEditorParams: {
       values: ['KS01', 'KS02', 'KS03'],
     } as ISelectCellEditorParams,
+  },
+  {
+    field: 'Kapital',
+    headerName: 'Kapitał',
+    headerTooltip: 'Kapitał',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
   },
   {
     field: 'KodWalutyKapitalu',
@@ -107,11 +103,29 @@ export const transactionDColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
+    field: 'WysokoscOdsetekMiesiecznych',
+    headerName: 'Wysokość odsetek miesięcznych',
+    headerTooltip: 'Wysokość odsetek miesięcznych',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+  },
+  {
     field: 'KodWalutyOdsetekMiesiecznych',
     headerName: 'Kod waluty odsetek miesięcznych',
     headerTooltip: 'Kod waluty odsetek miesięcznych',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+  },
+  {
+    field: 'WysokoscOdsetekKwartalnych',
+    headerName: 'Wysokość odsetek kwartalnych',
+    headerTooltip: 'Wysokość odsetek kwartalnych',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
   },
   {
     field: 'KodWalutyOdsetekKwartalnych',

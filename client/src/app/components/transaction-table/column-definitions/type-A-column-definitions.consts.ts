@@ -333,9 +333,9 @@ export const transactionAColDefs: ColDef[] = [
         data.MetodyBadania === 'MW03' ||
         data.MetodyBadania === 'MW05') &&
       data.Zwolnienie === 'ZW02' &&
-      data.correctionMetodyBadania === 'KP02',
+      data.KorektaMetodyBadania === 'KP02',
     cellStyle: ({ data }) =>
-      data.correctionMetodyBadania !== 'KP02' ||
+      data.KorektaMetodyBadania !== 'KP02' ||
       data.MetodyBadania === 'MW04' ||
       data.MetodyBadania === 'MW06' ||
       data.MetodyBadania === 'MW00' ||
@@ -578,6 +578,8 @@ export const transactionAColDefs: ColDef[] = [
         'WF16',
         'WF17',
       ],
+      valueListMaxHeight: 120,
+      valueListMaxWidth: 120,
     } as ISelectCellEditorParams,
   },
   {

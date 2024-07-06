@@ -33,7 +33,7 @@ export const columnTypes: {
     },
     cellStyle: ({ data }) =>
       getCellStyle(
-        data.transactionType === 'TK02' || data.Zwolnienie === 'ZW01',
+        data.RodzajTransakcji === 'TK02' || data.Zwolnienie === 'ZW01',
       ),
   },
   analysisMethodType: {

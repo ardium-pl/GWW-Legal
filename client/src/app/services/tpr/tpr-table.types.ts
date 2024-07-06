@@ -167,12 +167,14 @@ export type TransactionDTable = {
   correction: KorektaCenTransferowych;
   WartoscKorekty?: number;
   KodWalutyKorekty?: string;
-  BrakKorektyCT5: 'KC02';
   compensation?: Kompensata;
   safeHarbour: string;
-  KodWalutyKapitalu?: string;
+  Kapital: number;
+  KodWalutyKapitalu: string;
   KodWalutyZadluzenia: string;
+  WysokoscOdsetekMiesiecznych: number;
   KodWalutyOdsetekMiesiecznych: string;
+  WysokoscOdsetekKwartalnych: number;
   KodWalutyOdsetekKwartalnych: string;
   TransakcjaZwolniona: 'ZW01';
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
