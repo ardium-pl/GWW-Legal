@@ -1,17 +1,7 @@
-import { AllTransactionTables, TPR_input, Transaction } from 'app/services/tpr/tpr-input.types';
-import { TPR, PozycjeSzczegolowe } from 'app/services/tpr/tpr-output.types';
-// import { TransakcjaKategoriaA } from 'app/services/tpr/typeA.types';
-import { TransakcjaKategoriaA1 } from 'app/services/tpr/typeA1.types';
-import { TransakcjaKategoriaA2 } from 'app/services/tpr/typeA2.types';
-import { TransakcjaKategoriaB } from 'app/services/tpr/typeB.types';
-import { TransakcjaKategoriaC } from 'app/services/tpr/typeC.types';
-import { TransakcjaKategoriaE } from 'app/services/tpr/typeE.types';
-import { TransakcjaKategoriaF } from 'app/services/tpr/typeF.types';
 import { translateCategoryE } from './translators/translate-typeE.utilss';
 // import { translateCategoryC } from './translators/translate-typeC';
-import { TransakcjaKategoriaD } from 'app/services/tpr/typeD.types';
 import { TransactionATable, TransactionBTable, TransactionCTable, TransactionDTable, TransactionETable, TransactionFTable } from 'app/services/tpr/tpr-table.types';
-import { translateCategoryA, translateCategoryA1 } from './translators/translate-typeA.util';
+import { translateCategoryA, translateCategoryA1, } from './translators/translate-typeA.util';
 
 export function translateToTPR(tprInput: any) {
     // Translate transactions
@@ -30,12 +20,12 @@ export function translateToTPR(tprInput: any) {
                         kodSystemowy: 'TPR-C (5)',
                         kodPodatku: 'CIT',
                         rodzajZobowiazania: 'Z',
-                        wersjaSchemy: '1-0E',
+                        wersjaSchemy: '1-1E',
                     },
 
                     _text: 'TPR-C',
                 },
-                WariantFormularza: 1,
+                WariantFormularza: 5,
                 CelZlozenia: 1,
                 OkresOd: tprInput.periodFrom,
                 OkresDo: tprInput.periodUntil,
@@ -59,12 +49,19 @@ export function translateToTPR(tprInput: any) {
                 },
                 Transakcja: translatedTransactions,
             },
+            Oswiadczenie: 'OSW1'
         },
     };
 
     return tpr;
 }
-type AllTables = TransactionATable & TransactionBTable & TransactionCTable & TransactionDTable & TransactionETable & TransactionFTable
+type AllTables = 
+& TransactionATable 
+& TransactionBTable 
+& TransactionCTable
+& TransactionDTable
+& TransactionETable
+& TransactionFTable
 
 
 export function translateTransactions(transactions: any) {
@@ -88,40 +85,10 @@ export function translateTransactions(transactions: any) {
                         case '3011':
                         case '3012':
                         case '3013':
-                          return translateCategoryA(transaction);
+                          return translateCategoryA1(transaction);
                           
-                        // case '3101':
-                        //   return {
-                        //     KategoriaA2: '3101',
-                        //     RodzajUm: 'RT01', // Example value, adjust as needed
-                        //     PrzedmiotA2: transaction.subjectMatter,
-                        //     WartoscA2: [
-                        //       {
-                        //         _attributes: {
-                        //           kodWaluty: transaction.currencyCode,
-                        //         },
-                        //       },
-                        //       transaction.transactionValue,
-                        //     ],
-                        //     Wklad: [
-                        //       {
-                        //         _attributes: {
-                        //           kodWaluty: transaction.currencyCode,
-                        //         },
-                        //       },
-                        //       transaction.transactionValue, // Example value, adjust as needed
-                        //     ],
-                        //     WkladOgolny: [
-                        //       {
-                        //         _attributes: {
-                        //           kodWaluty: transaction.currencyCode,
-                        //         },
-                        //       },
-                        //       transaction.transactionValue, // Example value, adjust as needed
-                        //     ],
-                        //     Kompensata: transaction.compensation,
-                        //     SupportVarMetoda: 'MW00', // Example value, adjust as needed
-                        //   } as TransakcjaKategoriaA2;
+                        case '3101':
+                        //   return translateCategoryA2(transaction);
 
                         case '1101':
                         case '2101': {
@@ -136,7 +103,7 @@ export function translateTransactions(transactions: any) {
                                     },
                                     Kompensata: transaction.compensation,
                                     KodZW1: 'ZW01',
-                                    PodstZW: '11n1',
+                                    PodstZW: transaction.PodstawaZwolnienia,
                                     InformacjaOKrajuB1: {
                                         Kraj: 'PL',
                                         WartoscBKraj1: {
@@ -196,25 +163,25 @@ export function translateTransactions(transactions: any) {
                             },
                             OdsetkiDm: {
                                 _attributes: {
-                                    kodWaluty: transaction.KodWalutyOdsetekMiesiecznych,
+                                    kodWaluty: transaction.KodWalutyOdsetekMiesiecznych,//<-----------
                                 },
-                                _text: transaction.WysokoscOdsetekMemorialowo,
+                                _text: transaction.WysokoscOdsetekMemorialowo,//<-----------
                             },
                             OdsetkiDk: {
                                 _attributes: {
-                                    kodWaluty: transaction.KodWalutyOdsetekKwartalnych,
+                                    kodWaluty: transaction.KodWalutyOdsetekKwartalnych,//<-----------
                                 },
-                                _text: transaction.transactionValue,
+                                _text: transaction.transactionValue,//<-----------
                             },
                             KodZW1: 'ZW01',
-                            PodstZW: '11n1',
-                            Kraj: 'PL',
-                            NazwaKontr1: transaction.subjectMatter,
+                            PodstZW: transaction.PodstawaZwolnienia,
+                            Kraj: transaction.Kraj,
+                            NazwaKontr1: transaction.NazwaKontrahenta,
                             WartTransKontr1: {
                                 _attributes: {
-                                    kodWaluty: transaction.currencyCode,
+                                    kodWaluty: transaction.KodWalutyTransakcjiZKontrahentem,
                                 },
-                                _text: transaction.transactionValue,
+                                _text: transaction.WartoscTransakcjiZKontrahentem,
                             },
                             ...(transaction.correction === 'KC01' ? {
                                 KorektaCT5: 'KC01',
@@ -266,9 +233,9 @@ export function translateTransactions(transactions: any) {
                                 },
                                 Kompensata: transaction.compensation,
                                 KodZW1: 'ZW01',
-                                PodstZW: '11n1',
+                                PodstZW: transaction.PodstawaZwolnienia,
                                 InformacjaOKrajuF1: {
-                                    Kraj: 'PL',
+                                    Kraj: transaction.KodKrajuZwolnienia,
                                     WartoscFKraj1: {
                                         _attributes: {
                                             kodWaluty: transaction.KodKrajuTransakcji,
