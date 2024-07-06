@@ -108,9 +108,9 @@ export function translateTransactions(transactions: any) {
                                         Kraj: 'PL',
                                         WartoscBKraj1: {
                                             _attributes: {
-                                                kodWaluty: transaction.currencyCode,
+                                                kodWaluty: transaction.KodKrajuZwolnienia,
                                             },
-                                            _text: transaction.transactionValue,
+                                            _text: transaction.WartoscTransakcjiZwolnienia,
                                         },
                                     },
                                 };
@@ -121,9 +121,9 @@ export function translateTransactions(transactions: any) {
                                         KorektaCT4: 'KC01',
                                         WartKorektyCT4: {
                                             _attributes: {
-                                                kodWaluty: transaction.currencyCode,
+                                                kodWaluty: transaction.KodWalutyKorekty,
                                             },
-                                            _text: transaction.transactionValue,
+                                            _text: transaction.WartoscKorekty,
                                         },
                                     };
                                 } else {
@@ -153,7 +153,7 @@ export function translateTransactions(transactions: any) {
                                 _attributes: {
                                     kodWaluty: transaction.KodWalutyKapitalu,
                                 },
-                                _text: transaction.Kapital,
+                                _text: transaction.Kapital,//<-----------
                             },
                             ZadluzenieD: {
                                 _attributes: {
@@ -235,12 +235,12 @@ export function translateTransactions(transactions: any) {
                                 KodZW1: 'ZW01',
                                 PodstZW: transaction.PodstawaZwolnienia,
                                 InformacjaOKrajuF1: {
-                                    Kraj: transaction.KodKrajuZwolnienia,
+                                    Kraj: transaction.KodKraju,
                                     WartoscFKraj1: {
                                         _attributes: {
-                                            kodWaluty: transaction.KodKrajuTransakcji,
+                                            kodWaluty: transaction.KodWalutyKraju,
                                         },
-                                        _text: transaction.WartośćTransakcjiKraju,
+                                        _text: transaction.WartoscTransakcjiKraju,
                                     },
                                 },
                             };
