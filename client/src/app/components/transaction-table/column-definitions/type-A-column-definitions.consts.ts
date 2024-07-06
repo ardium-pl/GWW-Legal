@@ -2,6 +2,7 @@ import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
 import {
   INumberCellEditorParams,
   ISelectCellEditorParams,
+  ITooltipParams,
 } from 'ag-grid-community';
 
 export const transactionAColDefs: ColDef[] = [
@@ -31,6 +32,7 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Przedmiot',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+    tooltipValueGetter: (p: ITooltipParams) => p.value,
   },
   {
     field: 'transactionValue',

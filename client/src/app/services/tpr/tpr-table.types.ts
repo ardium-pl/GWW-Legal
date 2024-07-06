@@ -218,8 +218,7 @@ export type TransactionETable = {
   DolnaGranicaPrzedzialu?: number;
   GornaGranicaPrzedzialu?: number;
   KorektaMetodyBadania?: Korekta;
-  KorektyPorWyn4?: 'KP01';
-  KorektyPorWyn8?: 'KP02';
+  KorektaPorownywalnosci?: Korekta;
   KorektaPorownywalnosciProg?: number;
 };
 

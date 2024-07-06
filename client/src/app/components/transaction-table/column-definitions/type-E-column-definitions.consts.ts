@@ -1,6 +1,7 @@
 import {
   INumberCellEditorParams,
   ISelectCellEditorParams,
+  ITooltipParams,
 } from 'ag-grid-community';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
 
@@ -20,6 +21,7 @@ export const transactionEColDefs: ColDef[] = [
     headerTooltip: 'Przedmiot',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+    tooltipValueGetter: (p: ITooltipParams) => p.value,
   },
   {
     field: 'transactionValue',
@@ -265,42 +267,19 @@ export const transactionEColDefs: ColDef[] = [
     } as ISelectCellEditorParams,
   },
   {
-    field: 'KorektyPorWyn4',
-    headerName: 'KorektyPorWyn4',
-    headerTooltip: 'KorektyPorWyn4',
-    type: 'KP02Type',
-    cellEditor: 'agTextCellEditor',
-    cellDataType: 'text',
-    editable: false,
-    valueFormatter: () => 'KP01',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.KorektaMetodyBadania !== 'KP01'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
-  },
-  {
-    field: 'KorektyPorWyn8 ',
-    headerName: 'KorektyPorWyn8 ',
-    headerTooltip: 'KorektyPorWyn8 ',
-    type: 'KP02Type',
-    cellEditor: 'agTextCellEditor',
-    cellDataType: 'text',
-    editable: false,
-    valueFormatter: () => 'KP02',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.KorektaMetodyBadania !== 'KP02'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    field: 'KorektaPorownywalnosci',
+    headerName: 'Korekta porównywalności',
+    headerTooltip: 'Korekta porównywalności',
+    type: 'exemptionSecondType',
+    cellEditor: 'agSelectCellEditor',
+    cellEditorParams: {
+      values: ['KP01', 'KP02'],
+    } as ISelectCellEditorParams,
   },
   {
     field: 'KorektaPorownywalnosciProg',
     headerName: 'Korekta porównywalności próg',
     headerTooltip: 'Korekta porównywalności próg',
-    type: 'MetodyBadaniaType',
     cellEditor: 'agNumberCellEditor',
     cellDataType: 'number',
     cellEditorParams: {
@@ -309,11 +288,11 @@ export const transactionEColDefs: ColDef[] = [
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&
-      data.KorektaMetodyBadania === 'KP02',
+      data.KorektaPorownywalnosci === 'KP02',
     cellStyle: ({ data }) =>
       data.Zwolnienie !== 'ZW02' ||
       data.MetodyBadania === 'MW00' ||
-      data.KorektaMetodyBadania !== 'KP02'
+      data.KorektaPorownywalnosci !== 'KP02'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
