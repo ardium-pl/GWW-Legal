@@ -94,6 +94,11 @@ export class TprPage implements OnInit, OnDestroy {
     if (companyData) {
       companyData.transactions = this.tprDataServiceService.getData();
     }
+
+    this.tprDataServiceService.getIsError()
+      ? console.log('otwórz snackbar z alertem')
+      : console.log('bez errora data do excela!', companyData);
+
     const tpr = translateToTPR(companyData);
     console.log(tpr);
       const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
@@ -103,6 +108,7 @@ export class TprPage implements OnInit, OnDestroy {
     
 
     console.log(companyData);
+
   }
   
 }

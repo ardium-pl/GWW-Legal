@@ -79,14 +79,13 @@ export const transactionBColDefs: ColDef[] = [
     } as ISelectCellEditorParams,
   },
   {
-    field: 'Zwolnienie',
-    headerName: 'Zwolnienie',
-    headerTooltip: 'Zwolnienie',
-    cellEditor: 'agSelectCellEditor',
+    field: 'TransakcjaZwolniona',
+    headerName: 'Transakcja zwolniona na podst. art. 11n pkt 1-2 ustawy',
+    headerTooltip: 'Transakcja zwolniona na podst. art. 11n pkt 1-2 ustawy',
+    cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
-    cellEditorParams: {
-      values: ['ZW01', 'ZW02'],
-    } as ISelectCellEditorParams,
+    editable: false,
+    valueFormatter: () => 'ZW01',
   },
   {
     field: 'PodstawaZwolnienia',
