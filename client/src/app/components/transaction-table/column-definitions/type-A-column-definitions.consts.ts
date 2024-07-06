@@ -14,6 +14,17 @@ export const transactionAColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
+    field: 'WynagrodzenieZaRestrukturyzacje',
+    headerName: 'Wynagrodzenie za restrukturyzację',
+    headerTooltip: 'Wynagrodzenie za restrukturyzację',
+    type: 'RestrukturyzacjaType',
+    cellEditor: 'agSelectCellEditor',
+    cellDataType: 'text',
+    cellEditorParams: {
+      values: ['RM01', 'RM02', 'RM03', 'RM04', 'RM05'],
+    } as ISelectCellEditorParams,
+  },
+  {
     field: 'subjectMatter',
     colId: 'Przedmiot',
     headerName: 'Przedmiot',
@@ -38,6 +49,108 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Kod waluty transakcji',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+  },
+  {
+    field: 'Wklad',
+    headerName: 'Wkład',
+    headerTooltip: 'Wkład',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+    type: 'A2Type',
+  },
+  {
+    field: 'KodWalutyWkladu',
+    headerName: 'Kod waluty wkładu',
+    headerTooltip: 'Kod waluty wkładu',
+    cellEditor: 'agTextCellEditor',
+    cellDataType: 'text',
+    type: 'A2Type',
+  },
+  {
+    field: 'WkladOgolny',
+    headerName: 'Wkład ogólny',
+    headerTooltip: 'Wkład ogólny',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    type: 'A2Type',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+  },
+  {
+    field: 'KodWalutyWkladuOgolnego',
+    headerName: 'Kod waluty wkładu ogólnego',
+    headerTooltip: 'Kod waluty wkładu ogólnego',
+    cellEditor: 'agTextCellEditor',
+    cellDataType: 'text',
+    type: 'A2Type',
+  },
+  {
+    field: 'Udzial',
+    headerName: 'Udział',
+    headerTooltip: 'Udział',
+    type: 'A2Type',
+    cellEditor: 'agSelectCellEditor',
+    cellDataType: 'text',
+    cellEditorParams: {
+      values: ['UD01', 'UD02', 'UD03'],
+    } as ISelectCellEditorParams,
+  },
+  {
+    field: 'ProcentUdzialuWZyskach',
+    headerName: 'Procent udziału w zyskach',
+    headerTooltip: 'Procent udziału w zyskach',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+    editable: ({ data }) => {
+      return data.transactionCategory === '3101' && data.Udzial === 'UD01';
+    },
+    cellStyle: ({ data }) =>
+      data.transactionCategory !== '3101' || data.Udzial !== 'UD01'
+        ? { backgroundColor: 'var(--bg2-light)' }
+        : { backgroundColor: '#fff' },
+  },
+  {
+    field: 'ProcentUdzialuWStracie',
+    headerName: 'Procent udziału w stracie',
+    headerTooltip: 'Procent udziału w stracie',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    type: 'A2Type',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+    editable: ({ data }) => {
+      return data.transactionCategory === '3101' && data.Udzial === 'UD02';
+    },
+    cellStyle: ({ data }) =>
+      data.transactionCategory !== '3101' || data.Udzial !== 'UD02'
+        ? { backgroundColor: 'var(--bg2-light)' }
+        : { backgroundColor: '#fff' },
+  },
+  {
+    field: 'ProcentUdzialuWMajatkuLikwidacyjnym',
+    headerName: 'Procent udziału w majątku likwidacyjnym',
+    headerTooltip: 'Procent udziału w majątku likwidacyjnym',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    type: 'A2Type',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+    editable: ({ data }) => {
+      return data.transactionCategory === '3101' && data.Udzial === 'UD03';
+    },
+    cellStyle: ({ data }) =>
+      data.transactionCategory !== '3101' || data.Udzial !== 'UD03'
+        ? { backgroundColor: 'var(--bg2-light)' }
+        : { backgroundColor: '#fff' },
   },
   {
     field: 'correction',

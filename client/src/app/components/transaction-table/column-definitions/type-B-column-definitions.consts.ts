@@ -91,10 +91,10 @@ export const transactionBColDefs: ColDef[] = [
     field: 'PodstawaZwolnienia',
     headerName: 'Podstawa zwolnienia',
     headerTooltip: 'Podstawa zwolnienia',
-    cellEditor: 'agTextCellEditor',
+    cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['11n1', '11n1a', '11n2'],
+      values: ['', '11n1', '11n1a', '11n2'],
     } as ISelectCellEditorParams,
   },
   {

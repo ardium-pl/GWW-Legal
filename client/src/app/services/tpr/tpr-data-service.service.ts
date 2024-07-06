@@ -11,8 +11,8 @@ export class TprDataServiceService {
     this.allTransactionsData.update((data) => [...data, ...newData]);
   }
 
-  updateIsError(newData: boolean) {
-    this.isError.set(newData);
+  setIsError() {
+    this.isError.set(true);
   }
 
   getData() {
@@ -24,7 +24,7 @@ export class TprDataServiceService {
   }
 
   clearData() {
-    this.allTransactionsData.set([]);
     this.isError.set(false);
+    this.allTransactionsData.set([]);
   }
 }

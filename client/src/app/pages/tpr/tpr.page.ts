@@ -25,6 +25,7 @@ import { translateToTPR } from 'app/utils/tpr-translator.util';
 import { saveAs } from 'file-saver';
 import * as xmljs from 'xml-js';
 
+import { ErrorSnackbarService } from 'app/services/snackbar.service';
 
 @Component({
   selector: 'tpr-nsa',
@@ -36,7 +37,7 @@ import * as xmljs from 'xml-js';
     MatTabsModule,
     XmlGeneratorComponent,
   ],
-  providers: [ClipboardService],
+  providers: [ClipboardService, TprDataServiceService, ErrorSnackbarService],
   templateUrl: './tpr.page.html',
   styleUrl: './tpr.page.scss',
 })
@@ -44,6 +45,7 @@ export class TprPage implements OnInit, OnDestroy {
   @ViewChildren(TransactionTableComponent)
   children: QueryList<TransactionTableComponent> | undefined;
   private readonly tprDataServiceService = inject(TprDataServiceService);
+  private readonly errorSnackbarService = inject(ErrorSnackbarService);
   private readonly clipboardService = inject(ClipboardService);
   private readonly destroy$$ = new Subject<void>();
   readonly companyData = signal<TPR_input | null>(null);
@@ -96,18 +98,15 @@ export class TprPage implements OnInit, OnDestroy {
     }
 
     this.tprDataServiceService.getIsError()
-      ? console.log('otwórz snackbar z alertem')
+      ? this.errorSnackbarService.open(
+          'Przed wygenerowaniem pliku należy uzupełnić wszystkie niezablokowane komórki tablicy',
+        )
       : console.log('bez errora data do excela!', companyData);
 
-    const tpr = translateToTPR(companyData);
-      const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
-      console.log('Generated XML:', xmlVar);
-      // const blob = new Blob([xmlVar], { type: 'application/xml' });
-      // saveAs(blob, 'tpr_data.xml');
-    
-
-    console.log(companyData);
-
+    // const tpr = translateToTPR(companyData);
+    // const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
+    // console.log('Generated XML:', xmlVar);
+    // const blob = new Blob([xmlVar], { type: 'application/xml' });
+    // saveAs(blob, 'tpr_data.xml');
   }
-  
 }

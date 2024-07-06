@@ -161,7 +161,7 @@ export const transactionCColDefs: ColDef[] = [
     cellDataType: 'text',
     type: 'exemptionType',
     cellEditorParams: {
-      values: ['11n1', '11n1a', '11n2'],
+      values: ['', '11n1', '11n1a', '11n2'],
     } as ISelectCellEditorParams,
   },
   {

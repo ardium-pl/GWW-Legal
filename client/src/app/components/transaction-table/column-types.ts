@@ -9,6 +9,12 @@ export const columnTypes: {
     },
     cellStyle: ({ data }) => getCellStyle(data.correction !== 'KC01'),
   },
+  A2Type: {
+    editable: ({ data }) => {
+      return data.transactionCategory === '3101';
+    },
+    cellStyle: ({ data }) => getCellStyle(data.transactionCategory !== '3101'),
+  },
   exemptionType: {
     editable: ({ data }) => {
       return data.Zwolnienie === 'ZW01';
@@ -237,6 +243,38 @@ export const columnTypes: {
           data.MetodyBadania === 'MW00' ||
           data.RodzajOprocentowania !== 'OP03',
       ),
+  },
+  RestrukturyzacjaType: {
+    editable: ({ data }) =>
+      data.transactionCategory === '3001' ||
+      data.transactionCategory === '3002' ||
+      data.transactionCategory === '3003' ||
+      data.transactionCategory === '3004' ||
+      data.transactionCategory === '3005' ||
+      data.transactionCategory === '3006' ||
+      data.transactionCategory === '3007' ||
+      data.transactionCategory === '3008' ||
+      data.transactionCategory === '3009' ||
+      data.transactionCategory === '3010' ||
+      data.transactionCategory === '3011' ||
+      data.transactionCategory === '3012' ||
+      data.transactionCategory === '3013',
+    cellStyle: ({ data }) =>
+      data.transactionCategory === '3001' ||
+      data.transactionCategory === '3002' ||
+      data.transactionCategory === '3003' ||
+      data.transactionCategory === '3004' ||
+      data.transactionCategory === '3005' ||
+      data.transactionCategory === '3006' ||
+      data.transactionCategory === '3007' ||
+      data.transactionCategory === '3008' ||
+      data.transactionCategory === '3009' ||
+      data.transactionCategory === '3010' ||
+      data.transactionCategory === '3011' ||
+      data.transactionCategory === '3012' ||
+      data.transactionCategory === '3013'
+        ? { backgroundColor: '#fff' }
+        : { backgroundColor: 'var(--bg2-light)' },
   },
 };
 

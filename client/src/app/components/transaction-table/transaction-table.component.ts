@@ -69,23 +69,22 @@ export class TransactionTableComponent implements OnInit {
   getRawData(): any[] {
     let rawData: any[] = [];
     this.gridApi.forEachNode(({ data }) => {
-      const result: any = data;
-      this.checkIfValid(result);
-      rawData.push(result);
+      this.checkIfValid(data);
+      rawData.push(data);
     });
     return rawData;
   }
 
-  removeNullUndefined(obj: any) {
-    for (const key in obj) {
-      if (obj[key] === null || obj[key] === undefined) {
-        delete obj[key];
-      }
-    }
-  }
-
   checkIfValid(result: any) {
     const colDefs = this.gridApi.getColumnDefs();
+    const objectKeys = Object.keys(result);
+    let keysToCheck: string[] = [];
+    if (result.correction === 'KC01') {
+      keysToCheck.push('WartoscKorekty', 'KodWalutyKorekty');
+    }
+    keysToCheck = [...keysToCheck, ...this.defaultKeys()];
+    console.log(keysToCheck, this.defaultKeys(), this.transactionType);
+
     colDefs &&
       colDefs.forEach((colDef: any) => {
         const isEditable =
@@ -93,11 +92,7 @@ export class TransactionTableComponent implements OnInit {
             ? colDef.editable({ data: result })
             : colDef.editable;
         if (isEditable) {
-          const keysToCheck = this.defaultKeys();
-          if (result.correction === 'KC01') {
-            keysToCheck.push('WartoscKorekty', 'KodWalutyKorekty');
-          }
-          const objectKeys = Object.keys(result);
+          //sprawdzenie czy są wymagane pola uzupełnione
           const isObjectIncomplete = keysToCheck.some((key) => {
             return !objectKeys.some((objectKey) => {
               const keyValid = objectKey === key;
@@ -105,21 +100,26 @@ export class TransactionTableComponent implements OnInit {
               return keyValid && hasValue;
             });
           });
+          //jeśli nie są wypełnione wymagane
           if (isObjectIncomplete) {
-            this.tprDataServiceService.updateIsError(true);
+            console.log(objectKeys, result);
+            this.tprDataServiceService.setIsError();
           } else {
-            for (const key in keysToCheck) {
+            for (const key in objectKeys) {
               if (
-                result[keysToCheck[key]] === null ||
-                result[keysToCheck[key]] === undefined ||
-                result[keysToCheck[key]] === ''
+                result[objectKeys[key]] === null ||
+                result[objectKeys[key]] === '' ||
+                result[objectKeys[key]] === undefined
               ) {
-                this.tprDataServiceService.updateIsError(true);
+                this.tprDataServiceService.setIsError();
+                console.log(
+                  'Tu jest jakiś null :o',
+                  result[objectKeys[key]],
+                  objectKeys[key],
+                );
               }
             }
           }
-        } else {
-          this.removeNullUndefined(result);
         }
       });
   }
@@ -134,7 +134,7 @@ export class TransactionTableComponent implements OnInit {
         if (colDef.editable && typeof colDef.editable === 'function') {
           const isEditable = colDef.editable({ data: oldData });
           if (!isEditable) {
-            newRow[colDef.field] = null;
+            delete newRow[colDef.field];
           }
         }
       });

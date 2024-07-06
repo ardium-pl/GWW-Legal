@@ -17,19 +17,35 @@ import {
   OkresPrognozy,
   ZrodloDanychZgodnosci,
 } from './typeA.types';
+import { WynagrodzenieZaRestrukturyzację } from './typeA1.types';
+import { Udział } from './typeA2.types';
 import {
   NazwaStopyBazowej,
   RodzajOprocentowania,
   TerminStopyBazowej,
   ZrodloDanychFinansowych,
 } from './typeC.types';
+import {
+  RodzajAnalizy,
+  RodzajeWartosciNiematerialnych,
+  SposobKalkulacjiOplaty,
+} from './typeE.types';
 
 export type TransactionATable = {
   Id: number;
   transactionCategory: string;
+  WynagrodzenieZaRestrukturyzacje?: WynagrodzenieZaRestrukturyzację;
   subjectMatter: string;
   transactionValue: number;
   currencyCode: string;
+  Wklad?: number;
+  KodWalutyWkladu?: string;
+  WkladOgolny?: number;
+  KodWalutyWkladuOgolnego?: string;
+  Udzial?: Udział;
+  ProcentUdzialuWZyskach?: number;
+  ProcentUdzialuWStracie?: number;
+  ProcentUdzialuWMajatkuLikwidacyjnym?: number;
   correction: KorektaCenTransferowych;
   WartoscKorekty?: number;
   KodWalutyKorekty?: string;
@@ -78,6 +94,7 @@ export type TransactionATable = {
   OkresPrognozy?: OkresPrognozy;
   TerminInny?: ZrodloDanychZgodnosci;
   ZrodloDanychZgodnosci?: ZrodloDanychZgodnosci;
+  taxExemptionCode: ZwolnienieArt11n;
 };
 
 export type TransactionBTable = {
@@ -90,11 +107,11 @@ export type TransactionBTable = {
   WartoscKorekty?: number;
   KodWalutyKorekty?: string;
   compensation: Kompensata;
-  safeHarbour: string;
+  safeHarbour?: string;
   TransakcjaZwolniona: ZwolnienieArt11n;
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
-  KodKrajuZwolnienia: string;
-  WartoscTransakcjiZwolnienia: number;
+  KodKraju: string;
+  WartoscTransakcjiKraju: number;
   KodWalutyKraju: string;
 };
 
@@ -170,7 +187,39 @@ export type TransactionDTable = {
   KodKrajuWydania?: string;
 };
 
-export type TransactionETable = {};
+export type TransactionETable = {
+  Id: number;
+  transactionCategory: string;
+  subjectMatter: string;
+  transactionValue: number;
+  currencyCode: string;
+  correction: KorektaCenTransferowych;
+  WartoscKorekty?: number;
+  KodWalutyKorekty?: string;
+  compensation: Kompensata;
+  RodzajWartosciNiematerialnych: RodzajeWartosciNiematerialnych;
+  Zwolnienie: ZwolnienieArt11n;
+  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
+  KodKrajuZwolnienia?: string;
+  WartoscTransakcjiZwolnienia?: number;
+  KodWalutyKraju?: string;
+  RodzajTransakcji?: RodzajTransakcji;
+  KodKrajuTransakcji?: string;
+  WartośćTransakcjiKraju?: number;
+  KodWalutyKrajuTransakcji?: string;
+  MetodyBadania?: MetodyBadania;
+  RodzajAnalizy?: RodzajAnalizy;
+  SposobWyrazeniaCeny?: string;
+  SposobKalkulacjiOplaty?: SposobKalkulacjiOplaty;
+  PoziomOplaty?: number;
+  RodzajPrzedzialu?: RodzajPrzedzialu;
+  DolnaGranicaPrzedzialu?: number;
+  GornaGranicaPrzedzialu?: number;
+  KorektaMetodyBadania?: Korekta;
+  KorektyPorWyn4?: 'KP01';
+  KorektyPorWyn8?: 'KP02';
+  KorektaPorownywalnosciProg?: number;
+};
 
 export type TransactionFTable = {
   Id: number;
@@ -183,9 +232,8 @@ export type TransactionFTable = {
   KodWalutyKorekty?: string;
   safeHarbour: string;
   compensation: Kompensata;
-  Zwolnienie: ZwolnienieArt11n;
   TransakcjaZwolniona: 'ZW01';
-  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2';
+  PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;
   KodKraju: string;
   WartoscTransakcjiKraju: number;
   KodWalutyKraju: string;

@@ -2,30 +2,33 @@ import { WritableSignal } from '@angular/core';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
 import { transactionAColDefs } from 'app/components/transaction-table/column-definitions/type-A-column-definitions.consts';
 import { transactionBColDefs } from 'app/components/transaction-table/column-definitions/type-B-column-definitions.consts';
+import { transactionCColDefs } from 'app/components/transaction-table/column-definitions/type-C-column-definitions.consts';
 import { transactionDColDefs } from 'app/components/transaction-table/column-definitions/type-D-column-definitions.consts';
+import { transactionEColDefs } from 'app/components/transaction-table/column-definitions/type-E-column-definitions.consts';
 import { transactionFColDefs } from 'app/components/transaction-table/column-definitions/type-F-column-definitions.consts';
 import {
   TransactionATable,
   TransactionBTable,
   TransactionCTable,
   TransactionDTable,
+  TransactionETable,
   TransactionFTable,
 } from 'app/services/tpr/tpr-table.types';
+
+export const keysToCheckDefault: (keyof TransactionATable)[] = [
+  'transactionCategory',
+  'subjectMatter',
+  'transactionValue',
+  'currencyCode',
+  'correction',
+  'compensation',
+  'Zwolnienie',
+];
 
 export const getColumnDefUtil = (
   transactionType: string,
   defaultKeys: WritableSignal<string[]>,
 ): ColDef[] => {
-  const keysToCheckDefault: (keyof TransactionATable)[] = [
-    'transactionCategory',
-    'subjectMatter',
-    'transactionValue',
-    'currencyCode',
-    'correction',
-    'compensation',
-    'Zwolnienie',
-  ];
-
   const keysToCheckB: (keyof TransactionBTable)[] = [
     'transactionCategory',
     'subjectMatter',
@@ -33,10 +36,9 @@ export const getColumnDefUtil = (
     'currencyCode',
     'correction',
     'compensation',
-    'TransakcjaZwolniona',
-    'KodKrajuZwolnienia',
+    'KodKraju',
+    'WartoscTransakcjiKraju',
     'KodWalutyKraju',
-    'WartoscTransakcjiZwolnienia',
   ];
 
   const keysToCheckC: (keyof TransactionCTable)[] = [
@@ -68,7 +70,6 @@ export const getColumnDefUtil = (
     'KodWalutyZadluzenia',
     'KodWalutyOdsetekMiesiecznych',
     'KodWalutyOdsetekKwartalnych',
-    'TransakcjaZwolniona',
     'PodstawaZwolnienia',
     'Kraj',
     'NazwaKontrahenta',
@@ -76,6 +77,18 @@ export const getColumnDefUtil = (
     'KodWalutyTransakcjiZKontrahentem',
     'IdentyfikatorKontrahenta',
   ];
+
+  const keysToCheckE: (keyof TransactionETable)[] = [
+    'transactionCategory',
+    'subjectMatter',
+    'transactionValue',
+    'currencyCode',
+    'correction',
+    'compensation',
+    'RodzajWartosciNiematerialnych',
+    'Zwolnienie',
+  ];
+
   const keysToCheckF: (keyof TransactionFTable)[] = [
     'transactionCategory',
     'subjectMatter',
@@ -83,12 +96,8 @@ export const getColumnDefUtil = (
     'currencyCode',
     'correction',
     'compensation',
-    'Zwolnienie',
-    'TransakcjaZwolniona',
     'PodstawaZwolnienia',
     'KodKraju',
-    'TransakcjaZwolniona',
-    'PodstawaZwolnienia',
     'WartoscTransakcjiKraju',
     'KodWalutyKraju',
   ];
@@ -102,13 +111,13 @@ export const getColumnDefUtil = (
       return transactionBColDefs;
     case 'C':
       defaultKeys.set(keysToCheckC);
-      return transactionBColDefs;
+      return transactionCColDefs;
     case 'D':
       defaultKeys.set(keysToCheckD);
       return transactionDColDefs;
     case 'E':
-      defaultKeys.set(keysToCheckDefault);
-      return transactionBColDefs;
+      defaultKeys.set(keysToCheckE);
+      return transactionEColDefs;
     case 'F':
       defaultKeys.set(keysToCheckF);
       return transactionFColDefs;
