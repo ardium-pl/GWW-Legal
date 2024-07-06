@@ -102,8 +102,8 @@ export class TprPage implements OnInit, OnDestroy {
     const tpr = translateToTPR(companyData);
       const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
       console.log('Generated XML:', xmlVar);
-      const blob = new Blob([xmlVar], { type: 'application/xml' });
-      saveAs(blob, 'tpr_data.xml');
+      // const blob = new Blob([xmlVar], { type: 'application/xml' });
+      // saveAs(blob, 'tpr_data.xml');
     
 
     console.log(companyData);
