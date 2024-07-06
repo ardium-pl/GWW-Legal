@@ -363,5 +363,5 @@ type ZrodloDanychZgodnosci =
   | 'AZ08'
   | 'AZ09';
 type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
-type RodzajUmowy = 'RT01' | 'RT02';
+export type RodzajUmowy = 'RT01' | 'RT02';
 export type Udział = 'UD01' | 'UD02' | 'UD03';

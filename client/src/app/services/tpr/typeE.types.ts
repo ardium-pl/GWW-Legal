@@ -26,9 +26,9 @@ export type KC01 = {
   KorektaCT3: 'KC01';
   WartKorektyCT3: {
     _attributes: {
-      kodWaluty: string;
+      kodWaluty?: string;
     };
-    _text: number;
+    _text?: number;
   };
 }
 
@@ -40,12 +40,12 @@ export type ZW01 = {
   KodZW1: 'ZW01';
   PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuE1: {
-    Kraj: string;
+    Kraj?: string;
     WartoscEKraj1: {
       _attributes: {
-        kodWaluty: string;
+        kodWaluty?: string;
       };
-      _text: number;
+      _text?: number;
     };
   };
 }
@@ -141,4 +141,4 @@ export type SposobKalkulacjiOplaty =
   | 'SK04'
   | 'SK05'
   | 'SK06';
-export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2'| null;

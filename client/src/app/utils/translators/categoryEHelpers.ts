@@ -1,7 +1,7 @@
-import { KC01, KC02, ZW01, ZW02, MW00, MW01toMW06, KorektaCenTransferowych, ZwolnienieArt11n, MetodyBadania, Korekta, TK01, TK02 } from 'app/services/tpr/typeE.types';
-import { Transaction } from 'app/services/tpr/tpr-input.types';
+import { KC01, KC02, ZW01, ZW02, MW00, MW01toMW06,  Korekta,  } from 'app/services/tpr/typeE.types';
+import { TransactionETable } from 'app/services/tpr/tpr-table.types';
 
-export function mapKorektaCenTransferowych(transaction: any): Partial<KC01 | KC02> {
+export function mapKorektaCenTransferowych(transaction: TransactionETable): Partial<KC01 | KC02> {
     switch (transaction.correction) {
         case 'KC01':
             return {
@@ -22,19 +22,19 @@ export function mapKorektaCenTransferowych(transaction: any): Partial<KC01 | KC0
     }
 }
 
-export function mapZwolnienieArt11n(transaction: any): Partial<ZW01 | ZW02> {
-    switch (transaction.ZwolnienieArt11n) {
+export function mapZwolnienieArt11n(transaction: TransactionETable): Partial<ZW01 | ZW02> {
+    switch (transaction.Zwolnienie) {
         case 'ZW01':
             return {
                 KodZW1: 'ZW01',
-                PodstZW: transaction.podstawaZwolnienia,
+                PodstZW: transaction.PodstawaZwolnienia,
                 InformacjaOKrajuE1: {
-                    Kraj: transaction.kraj,
+                    Kraj: transaction.KodKrajuZwolnienia,
                     WartoscEKraj1: {
                         _attributes: {
-                            kodWaluty: transaction.zwolnienieCurrency,
+                            kodWaluty: transaction.KodWalutyKraju,
                         },
-                        _text: transaction.zwolnienieValue,
+                        _text: transaction.WartoscTransakcjiZwolnienia,
                     },
                 },
             };
@@ -45,27 +45,27 @@ export function mapZwolnienieArt11n(transaction: any): Partial<ZW01 | ZW02> {
     }
 }
 
-function mapZW02(transaction: any): Partial<ZW02> {
+function mapZW02(transaction: TransactionETable): Partial<ZW02> {
     const zw2: Partial<ZW02> = {
         KodZW2: 'ZW02',
     };
-    if (transaction.rodzajTransakcji === 'TK01') {
+    if (transaction.RodzajTransakcji === 'TK01') {
         Object.assign(zw2, {
             RodzajTrans1: 'TK01',
             InformacjaOKrajuE2: {
-                Kraj: transaction.kraj,
+                Kraj: transaction.KodWalutyKraju,
                 WartoscEKraj2: {
                     _attributes: {
-                        kodWaluty: transaction.zwolnienieCurrency,
+                        kodWaluty: transaction.KodWalutyKrajuTransakcji,
                     },
-                    _text: transaction.zwolnienieValue,
+                    _text: transaction.WartośćTransakcjiKraju,
                 },
             },
         });
-    } else if (transaction.rodzajTransakcji === 'TK02') {
+    } else if (transaction.RodzajTransakcji === 'TK02') {
         Object.assign(zw2, {
             RodzajTrans2: 'TK02',
-            Kraj: transaction.kraj,
+            Kraj: transaction.KodWalutyKraju,
         });
     }
     Object.assign(zw2, mapMetodyBadania(transaction));
@@ -73,8 +73,8 @@ function mapZW02(transaction: any): Partial<ZW02> {
 }
 
 
-export function mapMetodyBadania(transaction: any): Partial<MW00 | MW01toMW06<Korekta>> {
-    switch (transaction.metodaBadania) {
+export function mapMetodyBadania(transaction: TransactionETable): Partial<MW00 | MW01toMW06<Korekta>> {
+    switch (transaction.MetodyBadania) {
         case 'MW00':
             return {
                 MetodaE1: 'MW00',
@@ -86,18 +86,18 @@ export function mapMetodyBadania(transaction: any): Partial<MW00 | MW01toMW06<Ko
         case 'MW05':
         case 'MW06':
             const mw: Partial<MW01toMW06<Korekta>> = {
-                MetodaE: transaction.metodaBadania,
-                RodzajAnalizy: transaction.rodzajAnalizy,
-                SposobWyrCeny: transaction.sposobWyrazeniaCeny,
-                KalkOplaty1: transaction.sposobKalkulacjiOplaty,
-                PoziomOpl1: transaction.poziomOplaty,
+                MetodaE: transaction.MetodyBadania,
+                RodzajAnalizy: transaction.RodzajAnalizy,
+                SposobWyrCeny: transaction.SposobWyrazeniaCeny,
+                KalkOplaty1: transaction.SposobKalkulacjiOplaty,
+                PoziomOpl1: transaction.PoziomOplaty,
                 RodzajPrzedz10: 'RP01',
-                WynikAPKO1D1: transaction.dolnaGranica,
-                WynikAPKO1G1: transaction.gornaGranica,
+                WynikAPKO1D1: transaction.DolnaGranicaPrzedzialu,
+                WynikAPKO1G1: transaction.GornaGranicaPrzedzialu,
             };
-            if (transaction.korektaMetodyBadania === 'KP01') {
+            if (transaction.KorektaMetodyBadania === 'KP01') {
                 Object.assign(mw, { KorektyPorWyn4: 'KP01' });
-            } else if (transaction.korektaMetodyBadania === 'KP02') {
+            } else if (transaction.KorektaMetodyBadania === 'KP02') {
                 Object.assign(mw, { KorektyPorWyn8: 'KP02' });
             }
             return mw;
