@@ -83,7 +83,6 @@ export class TransactionTableComponent implements OnInit {
       keysToCheck.push('WartoscKorekty', 'KodWalutyKorekty');
     }
     keysToCheck = [...keysToCheck, ...this.defaultKeys()];
-    console.log(keysToCheck, this.defaultKeys(), this.transactionType);
 
     colDefs &&
       colDefs.forEach((colDef: any) => {
@@ -100,9 +99,7 @@ export class TransactionTableComponent implements OnInit {
               return keyValid && hasValue;
             });
           });
-          //jeśli nie są wypełnione wymagane
           if (isObjectIncomplete) {
-            console.log(objectKeys, result);
             this.tprDataServiceService.setIsError();
           } else {
             for (const key in objectKeys) {
@@ -112,11 +109,6 @@ export class TransactionTableComponent implements OnInit {
                 result[objectKeys[key]] === undefined
               ) {
                 this.tprDataServiceService.setIsError();
-                console.log(
-                  'Tu jest jakiś null :o',
-                  result[objectKeys[key]],
-                  objectKeys[key],
-                );
               }
             }
           }

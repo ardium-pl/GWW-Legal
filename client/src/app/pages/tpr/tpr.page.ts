@@ -22,7 +22,6 @@ import { DataExportService } from 'app/services/data-export.service';
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
 import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
 import { translateToTPR } from 'app/utils/tpr-translator.util';
-import { saveAs } from 'file-saver';
 import * as xmljs from 'xml-js';
 
 import { ErrorSnackbarService } from 'app/services/snackbar.service';
@@ -101,11 +100,13 @@ export class TprPage implements OnInit, OnDestroy {
       ? this.errorSnackbarService.open(
           'Przed wygenerowaniem pliku należy uzupełnić wszystkie niezablokowane komórki tablicy',
         )
-      : console.log('bez errora data do excela!', companyData);
+      : this.generateXML(companyData);
+  }
 
-    // const tpr = translateToTPR(companyData);
-    // const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
-    // console.log('Generated XML:', xmlVar);
+  generateXML(companyData: any) {
+    const tpr = translateToTPR(companyData);
+    const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
+    console.log('Generated XML:', xmlVar);
     // const blob = new Blob([xmlVar], { type: 'application/xml' });
     // saveAs(blob, 'tpr_data.xml');
   }
