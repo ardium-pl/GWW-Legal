@@ -28,14 +28,12 @@ export type TransakcjaKategoriaA<
 
 export type KC01 = {
   KorektaCT1: 'KC01';
-  WartKorektyCT1: [
-    {
-      _attr: {
-        kodWaluty: string;
-      };
+  WartKorektyCT1: {
+    _attributes: {
+        kodWaluty: string,
     },
-    number
-  ];
+    _text: number,
+},
 };
 
 export type KC02 = {
@@ -47,14 +45,12 @@ export type ZW01 = {
   PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuA1: {
     Kraj: string;
-    WartoscAKraj1: [
-      {
-        _attr: {
-          kodWaluty: string;
-        };
+    WartoscAKraj1: {
+      _attributes: {
+          kodWaluty: string,
       },
-      number
-    ];
+      _text: number,
+  },
   };
 };
 

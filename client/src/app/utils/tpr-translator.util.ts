@@ -8,15 +8,17 @@ import { TransakcjaKategoriaC } from 'app/services/tpr/typeC.types';
 import { TransakcjaKategoriaE } from 'app/services/tpr/typeE.types';
 import { TransakcjaKategoriaF } from 'app/services/tpr/typeF.types';
 import { translateCategoryE } from './translators/translate-typeE.utilss';
-import { translateCategoryC } from './translators/translate-typeC';
+// import { translateCategoryC } from './translators/translate-typeC';
 import { TransakcjaKategoriaD } from 'app/services/tpr/typeD.types';
+import { TransactionATable, TransactionBTable, TransactionCTable, TransactionDTable, TransactionETable, TransactionFTable } from 'app/services/tpr/tpr-table.types';
+import { translateCategoryA, translateCategoryA1 } from './translators/translate-typeA.util';
 
-export function translateToTPR(tprInput: TPR_input): TPR {
+export function translateToTPR(tprInput: any) {
     // Translate transactions
-    const translatedTransactions = translateTransactions(tprInput.transactions) as AllTransactionTables[];
+    const translatedTransactions = translateTransactions(tprInput.transactions);
 
     // Map TPR_input to TPR
-    const tpr: TPR = {
+    const tpr = {
         Deklaracja: {
             _attributes: {
                 xmlns: 'http://example.com',
@@ -48,7 +50,7 @@ export function translateToTPR(tprInput: TPR_input): TPR {
                 KodPKD: tprInput.pkdCode,
             },
             PozycjeSzczegolowe: {
-                PodmiotNZ: tprInput.taxCategory as PozycjeSzczegolowe,
+                PodmiotNZ: tprInput.taxCategory,
                 InnyPodmiot: {
                     MarzaOper: tprInput.operatingMargin,
                     MarzaZysku: tprInput.profitMargin,
@@ -62,53 +64,32 @@ export function translateToTPR(tprInput: TPR_input): TPR {
 
     return tpr;
 }
+type AllTables = TransactionATable & TransactionBTable & TransactionCTable & TransactionDTable & TransactionETable & TransactionFTable
 
-type Transakcja =
-    //   | TransakcjaKategoriaA
-    //   | TransakcjaKategoriaA1
-    //   | TransakcjaKategoriaA2
-      | TransakcjaKategoriaB
-      | TransakcjaKategoriaC
-      |TransakcjaKategoriaD
-    | TransakcjaKategoriaE
-    | TransakcjaKategoriaF;
 
-export function translateTransactions(transactions: AllTransactionTables[]): Transakcja[] {
+export function translateTransactions(transactions: any) {
     if (!transactions) {
         return [];
     }
 
     return transactions
-        .map((transaction) => {
+        .map((transaction: AllTables) => {
             switch (transaction.transactionCategory) {
-                        // case '3001':
-                        // case '3002':
-                        // case '3003':
-                        // case '3004':
-                        // case '3005':
-                        // case '3006':
-                        // case '3007':
-                        // case '3008':
-                        // case '3009':
-                        // case '3010':
-                        // case '3011':
-                        // case '3012':
-                        // case '3013':
-                        //   return {
-                        //     KategoriaA: transaction.transactionCategory,
-                        //     PrzedmiotA: transaction.subjectMatter,
-                        //     WartoscA: [
-                        //       {
-                        //         _attributes: {
-                        //           kodWaluty: transaction.currencyCode,
-                        //         },
-                        //       },
-                        //       transaction.transactionValue,
-                        //     ],
-                        //     Kompensata: transaction.compensation,
-                        //     SupportVarMetoda: 'MW00', // Example value, adjust as needed
-                        //   } as TransakcjaKategoriaA;
-
+                        case '3001':
+                        case '3002':
+                        case '3003':
+                        case '3004':
+                        case '3005':
+                        case '3006':
+                        case '3007':
+                        case '3008':
+                        case '3009':
+                        case '3010':
+                        case '3011':
+                        case '3012':
+                        case '3013':
+                          return translateCategoryA(transaction);
+                          
                         // case '3101':
                         //   return {
                         //     KategoriaA2: '3101',
@@ -177,12 +158,12 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
                                             },
                                             _text: transaction.transactionValue,
                                         },
-                                    } as TransakcjaKategoriaB<'KC01'>;
+                                    };
                                 } else {
                                     return {
                                         ...commonData,
                                         BrakKorektyCT4: 'KC02',
-                                    } as TransakcjaKategoriaB<'KC02'>;
+                                    };
                                 }
             
                                 
@@ -203,25 +184,25 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
                             Kompensata: transaction.compensation,
                             KapitalD: {
                                 _attributes: {
-                                    kodWaluty: transaction.currencyCode,
+                                    kodWaluty: transaction.KodWalutyKapitalu,
                                 },
-                                _text: transaction.transactionValue,
+                                _text: transaction.Kapital,
                             },
                             ZadluzenieD: {
                                 _attributes: {
-                                    kodWaluty: transaction.currencyCode,
+                                    kodWaluty: transaction.KodWalutyZadluzenia,
                                 },
-                                _text: transaction.transactionValue,
+                                _text: transaction.Zadluzenie,
                             },
                             OdsetkiDm: {
                                 _attributes: {
-                                    kodWaluty: transaction.currencyCode,
+                                    kodWaluty: transaction.KodWalutyOdsetekMiesiecznych,
                                 },
-                                _text: transaction.transactionValue,
+                                _text: transaction.WysokoscOdsetekMemorialowo,
                             },
                             OdsetkiDk: {
                                 _attributes: {
-                                    kodWaluty: transaction.currencyCode,
+                                    kodWaluty: transaction.KodWalutyOdsetekKwartalnych,
                                 },
                                 _text: transaction.transactionValue,
                             },
@@ -246,17 +227,18 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
                             } : {
                                 BrakKorektyCT5: 'KC02',
                             }),
-                            // ...(
-                            //     transaction.Nrnip ? { NIPKontr1: transaction.NIPKontr1 } :
-                            //         transaction.PESELKontr1 ? { PESELKontr1: transaction.PESELKontr1 } :
-                            //             transaction.NrIdKontr1 ? {
-                            //                 NrIdKontr1: transaction.NrIdKontr1,
-                            //                 KodKrajuWydania1: transaction.KodKrajuWydania1
-                            //             } : {}
-                            // )
-                        } as TransakcjaKategoriaD;
+                            ...(
+                                transaction.Nip ? { NIPKontr1: transaction.Nip } :
+                                    transaction.Pesel ? { PESELKontr1: transaction.Pesel } :
+                                        transaction.NrId ? {
+                                            NrIdKontr1: transaction.NrId,
+                                            KodKrajuWydania1: transaction.KodKrajuWydania
+                                        } : {}
+                            )
+                        };
                     } 
-                        return translateCategoryC(transaction);
+                        // return translateCategoryC(transaction);
+                        return transaction
                         }
                 
                 case '1203':
@@ -265,7 +247,7 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
                 case '2202':
                 case '2203':
                 case '2204':
-                    return translateCategoryC(transaction);
+                    // return translateCategoryC(transaction);
                         
                 case '1401':
                 case '2401':
@@ -306,21 +288,21 @@ export function translateTransactions(transactions: AllTransactionTables[]): Tra
                                         },
                                         _text: transaction.WartoscKorekty,
                                     },
-                                } as TransakcjaKategoriaF<'KC01'>;
+                                };
                             } else {
                                 return {
                                     ...commonData,
                                     BrakKorektyCT6: 'KC02',
-                                } as TransakcjaKategoriaF<'KC02'>;
+                                };
                             }
         
                         }
                 default:
-                    return undefined;
+                    return translateCategoryA(transaction);
             }
 
         })
-        .filter((transaction): transaction is Transakcja => transaction !== undefined);
+        .filter((transaction: undefined)=> transaction !== undefined);
 
 }
 
