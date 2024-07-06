@@ -48,9 +48,9 @@ export type KC01 = {
   KorektaCT2: 'KC01';
   WartKorektyCT2: {
     _attributes: {
-      kodWaluty: string;
+      kodWaluty?: string;
     };
-    _text: number;
+    _text?: number;
   };
 };
 

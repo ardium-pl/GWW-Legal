@@ -40,20 +40,16 @@
 //         },
 //     };
 
-//     // Apply correction mapping
 //     const korektaCenTransferowych = mapKorektaCenTransferowych(transaction);
 
-//     // Apply exemption mapping
 //     const zwolnienieArt11n = mapZwolnienieArt11n(transaction);
 
-//     // Combine base transaction with correction and exemption mappings
 //     const transakcja = {
 //         ...baseTransakcja,
 //         ...korektaCenTransferowych,
 //         ...zwolnienieArt11n,
 //     };
 
-//     // If zwolnienieArt11n is ZW02, apply the additional logic
 //     if (transaction.Zwolnienie === 'ZW02') {
 //         const metodyBadania = mapMetodyBadania(transaction);
 //         Object.assign(transakcja, metodyBadania);

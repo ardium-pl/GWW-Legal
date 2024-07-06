@@ -5,14 +5,14 @@ export type TransakcjaKategoriaA<
 > = {
   KategoriaA: string;
   PrzedmiotA: string;
-  WartoscA: [
-    {
-      _attr: {
+  WartoscA: {
+    
+      _attributes: {
         kodWaluty: string;
       };
-    },
-    number
-  ];
+    
+    _text: number
+};
   Kompensata: Kompensata;
   SupportVarMetoda: MW;
 } &
@@ -28,11 +28,11 @@ export type TransakcjaKategoriaA<
 
 export type KC01 = {
   KorektaCT1: 'KC01';
-  WartKorektyCT1: {
+  WartKorektyCT1?: {
     _attributes: {
-        kodWaluty: string,
+        kodWaluty?: string,
     },
-    _text: number,
+    _text?: number,
 },
 };
 
@@ -44,12 +44,12 @@ export type ZW01 = {
   KodZW1: 'ZW01';
   PodstZW?: PodstawaZwolnienia;
   InformacjaOKrajuA1: {
-    Kraj: string;
+    Kraj?: string;
     WartoscAKraj1: {
       _attributes: {
-          kodWaluty: string,
+          kodWaluty?: string,
       },
-      _text: number,
+      _text?: number,
   },
   };
 };

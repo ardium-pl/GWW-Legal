@@ -6,6 +6,9 @@ import * as xmljs from 'xml-js';
 import { ButtonComponent } from '../button/button.component';
 import { saveAs } from 'file-saver';
 import { DataExportService } from 'app/services/data-export.service';
+
+import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
+
 @Component({
   selector: 'app-xml-generator',
   templateUrl: './xml-generator.component.html',
@@ -32,15 +35,4 @@ export class XmlGeneratorComponent implements OnInit {
     this.clicked.emit();
   }
 
-  generateXML() {
-    console.log('Dane' + this.tprData);
-    if (this.tprData.length > 0) {
-      const tpr = translateToTPR(this.tprData[0]);
-      console.log(`TPR DATA: ${tpr}`);
-      const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
-      console.log('Generated XML:', xmlVar);
-      const blob = new Blob([xmlVar], { type: 'application/xml' });
-      saveAs(blob, 'tpr_data.xml');
-    }
-  }
 }
