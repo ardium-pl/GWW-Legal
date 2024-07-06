@@ -6,7 +6,9 @@ import * as xmljs from 'xml-js';
 import { ButtonComponent } from '../button/button.component';
 import { saveAs } from 'file-saver';
 import { DataExportService } from 'app/services/data-export.service';
+
 import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
+
 @Component({
   selector: 'app-xml-generator',
   templateUrl: './xml-generator.component.html',
