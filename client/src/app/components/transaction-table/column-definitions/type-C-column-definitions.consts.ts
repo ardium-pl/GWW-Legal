@@ -193,6 +193,43 @@ export const transactionCColDefs: ColDef[] = [
     type: 'exemptionType',
   },
   {
+    field: 'RodzajTransakcji',
+    headerName: 'Rodzaj transakcji',
+    headerTooltip: 'Rodzaj transakcji',
+    cellEditor: 'agSelectCellEditor',
+    type: 'exemptionSecondType',
+    cellEditorParams: {
+      values: ['TK01', 'TK02'],
+    } as ISelectCellEditorParams,
+  },
+  {
+    field: 'KodKrajuTransakcji',
+    headerName: 'Kod kraju',
+    headerTooltip: 'Kod kraju',
+    cellEditor: 'agTextCellEditor',
+    type: 'exemptionSecondType',
+    cellDataType: 'text',
+  },
+  {
+    field: 'WartośćTransakcjiKraju',
+    headerName: 'Wartość transakcji dla kraju',
+    headerTooltip: 'Wartość transakcji dla kraju',
+    type: 'transactionType',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+  },
+  {
+    field: 'KodWalutyKrajuTransakcji',
+    headerName: 'Kod waluty dla kraju',
+    headerTooltip: 'Kod waluty dla kraju',
+    type: 'transactionType',
+    cellEditor: 'agTextCellEditor',
+    cellDataType: 'text',
+  },
+  {
     field: 'MetodyBadania',
     headerName: 'Metoda badania',
     headerTooltip: 'Metoda badania',
@@ -226,11 +263,10 @@ export const transactionCColDefs: ColDef[] = [
     field: 'KorektaPorownywalnosciProg',
     headerName: 'Korekta porównywalności próg',
     headerTooltip: 'Korekta porównywalności próg',
-    cellEditor: 'agNumberCellEditor',
-    cellDataType: 'number',
+    cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      min: 0,
-    } as INumberCellEditorParams,
+      values: ['KP02A', 'KP02B', 'KP02C'],
+    } as ISelectCellEditorParams,
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&

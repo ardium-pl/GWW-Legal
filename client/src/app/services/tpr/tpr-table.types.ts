@@ -18,7 +18,7 @@ import {
   ZrodloDanychZgodnosci,
 } from './typeA.types';
 import { WynagrodzenieZaRestrukturyzację } from './typeA1.types';
-import { Udział } from './typeA2.types';
+import { RodzajUmowy, Udział } from './typeA2.types';
 import {
   NazwaStopyBazowej,
   RodzajOprocentowania,
@@ -35,6 +35,7 @@ export type TransactionATable = {
   Id: number;
   transactionCategory: string;
   WynagrodzenieZaRestrukturyzacje?: WynagrodzenieZaRestrukturyzację;
+  RodzajUmowy?: RodzajUmowy;
   subjectMatter: string;
   transactionValue: number;
   currencyCode: string;
@@ -63,7 +64,7 @@ export type TransactionATable = {
   MetodyBadania?: MetodyBadania;
   SposobWeryfikacji?: SposobWeryfikacjiEynkowegoPoziomuCeny;
   KorektaMetodyBadania?: Korekta;
-  KorektaPorownywalnosciProg?: number;
+  KorektaPorownywalnosciProg?: string;
   SposobUjeciaCeny?: SposobUjeciaCeny;
   Waluta1?: string;
   CenaMinimalna?: number;
@@ -139,10 +140,14 @@ export type TransactionCTable = {
   KodKrajuZwolnienia: string;
   WartoscTransakcjiZwolnienia: number;
   KodWalutyKraju: string;
+  RodzajTransakcji?: RodzajTransakcji;
+  KodKrajuTransakcji?: string;
+  WartośćTransakcjiKraju?: number;
+  KodWalutyKrajuTransakcji?: string;
   MetodyBadania?: MetodyBadania;
   ZrodloDanychFinansowych?: ZrodloDanychFinansowych;
   KorektaMetodyBadania?: Korekta;
-  KorektaPorownywalnosciProg?: number;
+  KorektaPorownywalnosciProg?: string;
   RodzajOprocentowania?: RodzajOprocentowania;
   Marza?: number;
   NazwaStopyBazowej?: NazwaStopyBazowej;
@@ -219,7 +224,7 @@ export type TransactionETable = {
   GornaGranicaPrzedzialu?: number;
   KorektaMetodyBadania?: Korekta;
   KorektaPorownywalnosci?: Korekta;
-  KorektaPorownywalnosciProg?: number;
+  KorektaPorownywalnosciProg?: string;
 };
 
 export type TransactionFTable = {

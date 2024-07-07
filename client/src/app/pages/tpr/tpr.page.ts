@@ -23,7 +23,7 @@ import { TransactionTableComponent } from 'app/components/transaction-table/tran
 import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
 import { translateToTPR } from 'app/utils/tpr-translator.util';
 import * as xmljs from 'xml-js';
-// import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver';
 import { ErrorSnackbarService } from 'app/services/snackbar.service';
 
 @Component({
@@ -107,7 +107,7 @@ export class TprPage implements OnInit, OnDestroy {
     const tpr = translateToTPR(companyData);
     const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
     console.log('Generated XML:', xmlVar);
-    // const blob = new Blob([xmlVar], { type: 'application/xml' });
-    // saveAs(blob, 'tpr_data.xml');
+    const blob = new Blob([xmlVar], { type: 'application/xml' });
+    saveAs(blob, 'TPR-C(5)_v_35.xml');
   }
 }

@@ -53,7 +53,7 @@ function mapZW02(transaction: TransactionETable): Partial<ZW02> {
         Object.assign(zw2, {
             RodzajTrans1: 'TK01',
             InformacjaOKrajuE2: {
-                Kraj: transaction.KodWalutyKraju,
+                Kraj: transaction.KodKrajuTransakcji,
                 WartoscEKraj2: {
                     _attributes: {
                         kodWaluty: transaction.KodWalutyKrajuTransakcji,
@@ -65,7 +65,7 @@ function mapZW02(transaction: TransactionETable): Partial<ZW02> {
     } else if (transaction.RodzajTransakcji === 'TK02') {
         Object.assign(zw2, {
             RodzajTrans2: 'TK02',
-            Kraj: transaction.KodWalutyKraju,
+            Kraj: transaction.KodKrajuTransakcji,
         });
     }
     Object.assign(zw2, mapMetodyBadania(transaction));
@@ -95,10 +95,10 @@ export function mapMetodyBadania(transaction: TransactionETable): Partial<MW00 |
                 WynikAPKO1D1: transaction.DolnaGranicaPrzedzialu,
                 WynikAPKO1G1: transaction.GornaGranicaPrzedzialu,
             };
-            if (transaction.KorektaMetodyBadania === 'KP01') {
+            if (transaction.KorektaPorownywalnosci === 'KP01') {
                 Object.assign(mw, { KorektyPorWyn4: 'KP01' });
-            } else if (transaction.KorektaMetodyBadania === 'KP02') {
-                Object.assign(mw, { KorektyPorWyn8: 'KP02' });
+            } else if (transaction.KorektaPorownywalnosci === 'KP02') {
+                Object.assign(mw, { KorektyPorWyn8: 'KP02', KorektyPorWynProg: transaction.KorektaPorownywalnosciProg });
             }
             return mw;
         default:

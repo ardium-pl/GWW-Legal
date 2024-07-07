@@ -26,6 +26,17 @@ export const transactionAColDefs: ColDef[] = [
     } as ISelectCellEditorParams,
   },
   {
+    field:'RodzajUmowy',
+    headerName: 'Rodzaj Umowy',
+    headerTooltip: 'Rodzaj Umowy',
+    type: 'A2Type',
+    cellEditor: 'agSelectCellEditor',
+    cellDataType: 'text',
+    cellEditorParams: {
+      values: ['RT01', 'RT02'],
+    } as ISelectCellEditorParams,
+  },
+  {
     field: 'subjectMatter',
     colId: 'Przedmiot',
     headerName: 'Przedmiot',
@@ -324,11 +335,10 @@ export const transactionAColDefs: ColDef[] = [
     field: 'KorektaPorownywalnosciProg',
     headerName: 'Korekta porównywalności próg',
     headerTooltip: 'Korekta porównywalności próg',
-    cellEditor: 'agNumberCellEditor',
-    cellDataType: 'number',
+    cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      min: 0,
-    } as INumberCellEditorParams,
+      values: ['KP02A', 'KP02B', 'KP02C'],
+    } as ISelectCellEditorParams,
     editable: ({ data }) =>
       (data.MetodyBadania === 'MW01' ||
         data.MetodyBadania === 'MW02' ||

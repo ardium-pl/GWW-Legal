@@ -257,16 +257,6 @@ export const transactionEColDefs: ColDef[] = [
     } as INumberCellEditorParams,
   },
   {
-    field: 'KorektaMetodyBadania',
-    headerName: 'Korekta dla metody badania',
-    headerTooltip: 'Korekta dla metody badania',
-    type: 'exemptionSecondType',
-    cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-      values: ['KP01', 'KP02'],
-    } as ISelectCellEditorParams,
-  },
-  {
     field: 'KorektaPorownywalnosci',
     headerName: 'Korekta porównywalności',
     headerTooltip: 'Korekta porównywalności',
@@ -280,11 +270,10 @@ export const transactionEColDefs: ColDef[] = [
     field: 'KorektaPorownywalnosciProg',
     headerName: 'Korekta porównywalności próg',
     headerTooltip: 'Korekta porównywalności próg',
-    cellEditor: 'agNumberCellEditor',
-    cellDataType: 'number',
+    cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      min: 0,
-    } as INumberCellEditorParams,
+      values: ['KP02A', 'KP02B', 'KP02C'],
+    } as ISelectCellEditorParams,
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&

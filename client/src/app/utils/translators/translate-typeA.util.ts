@@ -1,6 +1,5 @@
 import { TransakcjaKategoriaA } from 'app/services/tpr/typeA.types';
-import { AllTransactionTables } from 'app/services/tpr/tpr-input.types';
-import { mapKorektaCenTransferowychA, mapZwolnienieArt11nA, mapMetodyBadaniaA } from './categoryA';
+import { mapKorektaCenTransferowychA, mapZwolnienieArt11nA, } from './categoryA';
 import { TransactionATable } from 'app/services/tpr/tpr-table.types';
 
 export function translateCategoryA(transaction: TransactionATable) {
@@ -60,7 +59,7 @@ export function translateCategoryA1(transaction: TransactionATable) {
 export function translateCategoryA2(transaction: TransactionATable) {
     const baseTransakcjaA2 = {
         KategoriaA2: '3101',
-        // RodzajUm: transaction.RodzajUmowy,
+        RodzajUm: transaction.RodzajUmowy,
         PrzedmiotA: transaction.subjectMatter,
         WartoscA: {
             _attributes: {

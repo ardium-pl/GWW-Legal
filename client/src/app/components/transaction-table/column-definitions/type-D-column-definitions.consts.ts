@@ -106,8 +106,8 @@ export const transactionDColDefs: ColDef[] = [
   },
   {
     field: 'WysokoscOdsetekMiesiecznych',
-    headerName: 'Wysokość odsetek miesięcznych',
-    headerTooltip: 'Wysokość odsetek miesięcznych',
+    headerName: 'Wysokość odsetek memoriałowych',
+    headerTooltip: 'Wysokość odsetek memoriałowych',
     cellDataType: 'number',
     cellEditorParams: {
       min: 0,
@@ -115,15 +115,15 @@ export const transactionDColDefs: ColDef[] = [
   },
   {
     field: 'KodWalutyOdsetekMiesiecznych',
-    headerName: 'Kod waluty odsetek miesięcznych',
-    headerTooltip: 'Kod waluty odsetek miesięcznych',
+    headerName: 'Kod waluty odsetek memoriałowych',
+    headerTooltip: 'Kod waluty odsetek memoriałowych',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
   },
   {
     field: 'WysokoscOdsetekKwartalnych',
-    headerName: 'Wysokość odsetek kwartalnych',
-    headerTooltip: 'Wysokość odsetek kwartalnych',
+    headerName: 'Wysokość odsetek kasowych',
+    headerTooltip: 'Wysokość odsetek kasowych',
     cellDataType: 'number',
     cellEditorParams: {
       min: 0,
@@ -131,8 +131,8 @@ export const transactionDColDefs: ColDef[] = [
   },
   {
     field: 'KodWalutyOdsetekKwartalnych',
-    headerName: 'Kod waluty odsetek kwartalnych',
-    headerTooltip: 'Kod waluty odsetek kwartalnych',
+    headerName: 'Kod waluty odsetek kasowych',
+    headerTooltip: 'Kod waluty odsetek kasowych',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
   },

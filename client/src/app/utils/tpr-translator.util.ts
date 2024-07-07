@@ -1,13 +1,11 @@
 import { translateCategoryE } from './translators/translate-typeE.utilss';
-// import { translateCategoryC } from './translators/translate-typeC';
+import { translateCategoryC } from './translators/translate-typeC';
 import { TransactionATable, TransactionBTable, TransactionCTable, TransactionDTable, TransactionETable, TransactionFTable } from 'app/services/tpr/tpr-table.types';
-import { translateCategoryA, translateCategoryA1, } from './translators/translate-typeA.util';
+import { translateCategoryA, translateCategoryA1, translateCategoryA2, } from './translators/translate-typeA.util';
 
 export function translateToTPR(tprInput: any) {
-    // Translate transactions
     const translatedTransactions = translateTransactions(tprInput.transactions);
 
-    // Map TPR_input to TPR
     const tpr = {
         Deklaracja: {
             _attributes: {
@@ -40,7 +38,11 @@ export function translateToTPR(tprInput: any) {
                 KodPKD: tprInput.pkdCode,
             },
             PozycjeSzczegolowe: {
-                PodmiotNZ: tprInput.taxCategory,
+                ...(
+                    tprInput.taxCategory === 'ZK01'
+                        ? { PodmiotNZ: tprInput.taxCategory }
+                        : { PodmiotKZ: tprInput.taxCategory }
+                ),
                 InnyPodmiot: {
                     MarzaOper: tprInput.operatingMargin,
                     MarzaZysku: tprInput.profitMargin,
@@ -88,7 +90,7 @@ export function translateTransactions(transactions: any) {
                           return translateCategoryA1(transaction);
                           
                         case '3101':
-                        //   return translateCategoryA2(transaction);
+                          return translateCategoryA2(transaction);
 
                         case '1101':
                         case '2101': {
@@ -153,7 +155,7 @@ export function translateTransactions(transactions: any) {
                                 _attributes: {
                                     kodWaluty: transaction.KodWalutyKapitalu,
                                 },
-                                _text: transaction.Kapital,//<-----------
+                                _text: transaction.Kapital,
                             },
                             ZadluzenieD: {
                                 _attributes: {
@@ -163,15 +165,15 @@ export function translateTransactions(transactions: any) {
                             },
                             OdsetkiDm: {
                                 _attributes: {
-                                    kodWaluty: transaction.KodWalutyOdsetekMiesiecznych,//<-----------
+                                    kodWaluty: transaction.KodWalutyOdsetekMiesiecznych,
                                 },
-                                _text: transaction.WysokoscOdsetekMemorialowo,//<-----------
+                                _text: transaction.WysokoscOdsetekMiesiecznych,
                             },
                             OdsetkiDk: {
                                 _attributes: {
-                                    kodWaluty: transaction.KodWalutyOdsetekKwartalnych,//<-----------
+                                    kodWaluty: transaction.KodWalutyOdsetekKwartalnych,
                                 },
-                                _text: transaction.transactionValue,//<-----------
+                                _text: transaction.WysokoscOdsetekKwartalnych,
                             },
                             KodZW1: 'ZW01',
                             PodstZW: transaction.PodstawaZwolnienia,
@@ -204,8 +206,7 @@ export function translateTransactions(transactions: any) {
                             )
                         };
                     } 
-                        // return translateCategoryC(transaction);
-                        return transaction
+                        return translateCategoryC(transaction);
                         }
                 
                 case '1203':
@@ -214,7 +215,7 @@ export function translateTransactions(transactions: any) {
                 case '2202':
                 case '2203':
                 case '2204':
-                    // return translateCategoryC(transaction);
+                    return translateCategoryC(transaction);
                         
                 case '1401':
                 case '2401':

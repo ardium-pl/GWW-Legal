@@ -99,6 +99,7 @@ export type KP01 = {
 
 export type KP02 = {
   KorektyPorWyn8: 'KP02';
+  KorektyPorWynProg: 'KP02A'| 'KP02B'|'KP02C';
 }
 
 // Common types
