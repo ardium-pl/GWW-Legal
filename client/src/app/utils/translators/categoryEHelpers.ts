@@ -92,7 +92,7 @@ export function mapMetodyBadania(transaction: TransactionETable): Partial<MW00 |
             if (transaction.SposobKalkulacjiOplaty === 'SK04' || transaction.SposobKalkulacjiOplaty === 'SK05' || transaction.SposobKalkulacjiOplaty === 'SK06') {
                 Object.assign(mw, {
                     KalkOplaty4: transaction.SposobKalkulacjiOplaty,
-                    Waluta2: transaction.KodWalutyKraju,
+                    Waluta2: transaction.currencyCode,
                     PoziomOpl4: transaction.PoziomOplaty,
                     RodzajPrzedz12: 'RP01',
                     WynikAPKO4D1: transaction.DolnaGranicaPrzedzialu,

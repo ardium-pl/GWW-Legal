@@ -4,6 +4,7 @@ import {
   ISelectCellEditorParams,
   ITooltipParams,
 } from 'ag-grid-community';
+import { min } from 'rxjs';
 
 export const transactionCColDefs: ColDef[] = [
   {
@@ -273,8 +274,8 @@ export const transactionCColDefs: ColDef[] = [
       data.KorektaMetodyBadania === 'KP02',
     cellStyle: ({ data }) =>
       data.MetodyBadania === 'MW00' ||
-      data.Zwolnienie !== 'ZW02' ||
-      data.KorektaMetodyBadania !== 'KP02'
+        data.Zwolnienie !== 'ZW02' ||
+        data.KorektaMetodyBadania !== 'KP02'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
@@ -332,9 +333,9 @@ export const transactionCColDefs: ColDef[] = [
       data.NazwaStopyBazowej === 'SB09',
     cellStyle: ({ data }) =>
       data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajOprocentowania !== 'OP01' ||
-      data.NazwaStopyBazowej !== 'SB09'
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajOprocentowania !== 'OP01' ||
+        data.NazwaStopyBazowej !== 'SB09'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
@@ -361,9 +362,9 @@ export const transactionCColDefs: ColDef[] = [
       data.TerminStopyBazowej === 'TB07',
     cellStyle: ({ data }) =>
       data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajOprocentowania !== 'OP01' ||
-      data.TerminStopyBazowej !== 'TB07'
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajOprocentowania !== 'OP01' ||
+        data.TerminStopyBazowej !== 'TB07'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
@@ -382,8 +383,8 @@ export const transactionCColDefs: ColDef[] = [
       data.RodzajOprocentowania === 'OP02',
     cellStyle: ({ data }) =>
       data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajOprocentowania !== 'OP02'
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajOprocentowania !== 'OP02'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
@@ -416,7 +417,7 @@ export const transactionCColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: ['RP01', 'RP02', 'RP03'],
+      values: ['RP01', 'RP02', 'RP03', 'RP04'],
     } as ISelectCellEditorParams,
   },
   {
@@ -431,10 +432,12 @@ export const transactionCColDefs: ColDef[] = [
     } as INumberCellEditorParams,
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02',
+      data.Zwolnienie === 'ZW02'&&
+      data.RodzajPrzedzialu !== 'RP04',
     cellStyle: ({ data }) =>
       data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00'
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajPrzedzialu === 'RP04'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
@@ -442,9 +445,38 @@ export const transactionCColDefs: ColDef[] = [
     field: 'GornaGranicaPrzedzialu',
     headerName: 'Górna granica przedziału',
     headerTooltip: 'Górna granica przedziału',
-    type: 'MetodyBadaniaType',
+    editable: ({ data }) =>
+      data.MetodyBadania !== 'MW00' &&
+      data.Zwolnienie === 'ZW02'&&
+      data.RodzajPrzedzialu !== 'RP04',
+    cellStyle: ({ data }) =>
+      data.Zwolnienie !== 'ZW02' ||
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajPrzedzialu === 'RP04'
+        ? { backgroundColor: 'var(--bg2-light)' }
+        : { backgroundColor: '#fff' },
     cellEditor: 'agNumberCellEditor',
     cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
+  },
+  {
+    field: 'WysokoscWskaznikaFinansowego',
+    headerName: 'Wysokość wskaźnika finansowego %',
+    headerTooltip: 'Wysokość wskaźnika finansowego %',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    editable: ({ data }) =>
+      data.MetodyBadania !== 'MW00' &&
+      data.Zwolnienie === 'ZW02' &&
+      data.RodzajPrzedzialu === 'RP04',
+    cellStyle: ({ data }) =>
+      data.Zwolnienie !== 'ZW02' ||
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajPrzedzialu !== 'RP04'
+        ? { backgroundColor: 'var(--bg2-light)' }
+        : { backgroundColor: '#fff' },
     cellEditorParams: {
       min: 0,
     } as INumberCellEditorParams,
@@ -461,8 +493,8 @@ export const transactionCColDefs: ColDef[] = [
       data.RodzajPrzedzialu === 'RP03',
     cellStyle: ({ data }) =>
       data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajPrzedzialu !== 'RP03'
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajPrzedzialu !== 'RP03'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },

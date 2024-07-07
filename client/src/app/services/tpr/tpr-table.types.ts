@@ -160,6 +160,7 @@ export type TransactionCTable = {
   RodzajPrzedzialu?: RodzajPrzedzialu;
   DolnaGranicaPrzedzialu?: number;
   GornaGranicaPrzedzialu?: number;
+  WysokoscWskaznikaFinansowego?: number;
   OpisPrzedzialu?: string;
 };
 

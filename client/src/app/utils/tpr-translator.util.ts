@@ -51,7 +51,7 @@ export function translateToTPR(tprInput: any) {
                 },
                 Transakcja: translatedTransactions,
             },
-            Oswiadczenie: 'OSW1'
+            Oswiadczenie: tprInput.statement
         },
     };
 

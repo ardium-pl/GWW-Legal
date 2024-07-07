@@ -183,7 +183,7 @@ export type OP04_OP05 = {
 };
 
 export type RP01 = {
-  RodzajPrzedz7: 'RP01';
+  RodzajPrzedz7?: 'RP01';
   WynikAPC1: number;
   WynikAPC2: number;
 };

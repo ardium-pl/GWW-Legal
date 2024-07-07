@@ -131,18 +131,14 @@ export function mapRodzajOprocentowania(transaction: TransactionCTable): Partial
     }
 }
 
-export function mapRodzajPrzedzialu(transaction: TransactionCTable): Partial<RP01 | RP02 | RP03> {
+export function mapRodzajPrzedzialu(transaction: TransactionCTable) {
     switch (transaction.RodzajPrzedzialu) {
+        case 'RP02':
         case 'RP01':
             return {
-                RodzajPrzedz7: 'RP01',
+                RodzajPrzedz7: transaction.RodzajPrzedzialu,
                 WynikAPC1: transaction.DolnaGranicaPrzedzialu,
                 WynikAPC2: transaction.GornaGranicaPrzedzialu,
-            };
-        case 'RP02':
-            return {
-                RodzajPrzedz8: 'RP02',
-                WynikAPC: transaction.GornaGranicaPrzedzialu,
             };
         case 'RP03':
             return {
@@ -151,6 +147,11 @@ export function mapRodzajPrzedzialu(transaction: TransactionCTable): Partial<RP0
                 WynikAPC4: transaction.GornaGranicaPrzedzialu,
                 OpisPrzedz: transaction.OpisPrzedzialu,
             };
+        case 'RP04':
+            return{
+                RodzajPrzedz8: 'RP04',
+                WynikAPC: transaction.WysokoscWskaznikaFinansowego
+            }
         default:
             return {};
     }

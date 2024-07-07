@@ -21,6 +21,7 @@ export type TPR_input = {
   profitMargin: number;
   returnOnAssets: number;
   returnOnEquity: number;
+  statement: string;
   transactions: Array<any>;
 };
 
