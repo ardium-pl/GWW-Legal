@@ -251,12 +251,12 @@ function mapMW04(transaction: TransactionATable): Partial<MW04> {
     };
     if (transaction.Strata) {
         Object.assign(mw04, {
-            StrataPodm1: true,
+            StrataPodm1: 1,
             ZaklZyskPodm1: transaction.ZakladanyZysk,
         });
     } else {
         Object.assign(mw04, {
-            StrataPodm2: false,
+            StrataPodm2: 2,
             ZaklZyskPodm2: transaction.ZakladanyZysk,
             ZrealZyskPodm: transaction.ZrealizowanyZysk,
         });

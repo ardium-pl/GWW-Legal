@@ -270,11 +270,11 @@ export const transactionCColDefs: ColDef[] = [
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&
-      data.correctionMetodyBadania === 'KP02',
+      data.KorektaMetodyBadania === 'KP02',
     cellStyle: ({ data }) =>
       data.MetodyBadania === 'MW00' ||
       data.Zwolnienie !== 'ZW02' ||
-      data.correctionMetodyBadania !== 'KP02'
+      data.KorektaMetodyBadania !== 'KP02'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },
@@ -431,12 +431,10 @@ export const transactionCColDefs: ColDef[] = [
     } as INumberCellEditorParams,
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.RodzajPrzedzialu !== 'RP02',
+      data.Zwolnienie === 'ZW02',
     cellStyle: ({ data }) =>
       data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajPrzedzialu === 'RP02'
+      data.MetodyBadania === 'MW00'
         ? { backgroundColor: 'var(--bg2-light)' }
         : { backgroundColor: '#fff' },
   },

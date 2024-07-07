@@ -1,4 +1,4 @@
-import { KC01, KC02, ZW01, ZW02, MW00, MW01toMW06,  Korekta,  } from 'app/services/tpr/typeE.types';
+import { KC01, KC02, ZW01, ZW02, MW00, MW01toMW06, Korekta, } from 'app/services/tpr/typeE.types';
 import { TransactionETable } from 'app/services/tpr/tpr-table.types';
 
 export function mapKorektaCenTransferowych(transaction: TransactionETable): Partial<KC01 | KC02> {
@@ -72,7 +72,6 @@ function mapZW02(transaction: TransactionETable): Partial<ZW02> {
     return zw2;
 }
 
-
 export function mapMetodyBadania(transaction: TransactionETable): Partial<MW00 | MW01toMW06<Korekta>> {
     switch (transaction.MetodyBadania) {
         case 'MW00':
@@ -89,12 +88,25 @@ export function mapMetodyBadania(transaction: TransactionETable): Partial<MW00 |
                 MetodaE: transaction.MetodyBadania,
                 RodzajAnalizy: transaction.RodzajAnalizy,
                 SposobWyrCeny: transaction.SposobWyrazeniaCeny,
-                KalkOplaty1: transaction.SposobKalkulacjiOplaty,
-                PoziomOpl1: transaction.PoziomOplaty,
-                RodzajPrzedz10: 'RP01',
-                WynikAPKO1D1: transaction.DolnaGranicaPrzedzialu,
-                WynikAPKO1G1: transaction.GornaGranicaPrzedzialu,
             };
+            if (transaction.SposobKalkulacjiOplaty === 'SK04' || transaction.SposobKalkulacjiOplaty === 'SK05' || transaction.SposobKalkulacjiOplaty === 'SK06') {
+                Object.assign(mw, {
+                    KalkOplaty4: transaction.SposobKalkulacjiOplaty,
+                    Waluta2: transaction.KodWalutyKraju,
+                    PoziomOpl4: transaction.PoziomOplaty,
+                    RodzajPrzedz12: 'RP01',
+                    WynikAPKO4D1: transaction.DolnaGranicaPrzedzialu,
+                    WynikAPKO4G1: transaction.GornaGranicaPrzedzialu,
+                });
+            } else {
+                Object.assign(mw, {
+                    KalkOplaty1: transaction.SposobKalkulacjiOplaty,
+                    PoziomOpl1: transaction.PoziomOplaty,
+                    RodzajPrzedz10: 'RP01',
+                    WynikAPKO1D1: transaction.DolnaGranicaPrzedzialu,
+                    WynikAPKO1G1: transaction.GornaGranicaPrzedzialu,
+                });
+            }
             if (transaction.KorektaPorownywalnosci === 'KP01') {
                 Object.assign(mw, { KorektyPorWyn4: 'KP01' });
             } else if (transaction.KorektaPorownywalnosci === 'KP02') {
