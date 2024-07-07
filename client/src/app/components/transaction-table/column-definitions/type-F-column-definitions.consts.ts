@@ -5,6 +5,38 @@ import {
   ITooltipParams,
 } from 'ag-grid-community';
 
+// Define mappings from codes to user-friendly strings and vice versa
+const correctionCodeMapping: Record<string, string> = {
+  KC01: 'Correction Type 1',
+  KC02: 'Correction Type 2',
+};
+
+const compensationCodeMapping: Record<string, string> = {
+  KS01: 'Compensation Type 1',
+  KS02: 'Compensation Type 2',
+  KS03: 'Compensation Type 3',
+};
+
+const exemptionCodeMapping: Record<string, string> = {
+  ZW01: 'Exempt based on article 11n points 1-2',
+};
+
+// Reverse mappings
+const correctionCodeReverseMapping: Record<string, string> = {
+  'Correction Type 1': 'KC01',
+  'Correction Type 2': 'KC02',
+};
+
+const compensationCodeReverseMapping: Record<string, string> = {
+  'Compensation Type 1': 'KS01',
+  'Compensation Type 2': 'KS02',
+  'Compensation Type 3': 'KS03',
+};
+
+const exemptionCodeReverseMapping: Record<string, string> = {
+  'Exempt based on article 11n points 1-2': 'ZW01',
+};
+
 export const transactionFColDefs: ColDef[] = [
   {
     field: 'transactionCategory',
@@ -48,8 +80,10 @@ export const transactionFColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KC01', 'KC02'],
+      values: Object.values(correctionCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => correctionCodeMapping[params.value],
+    valueParser: params => correctionCodeReverseMapping[params.newValue],
   },
   {
     field: 'WartoscKorekty',
@@ -77,8 +111,10 @@ export const transactionFColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KS01', 'KS02', 'KS03'],
+      values: Object.values(compensationCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => compensationCodeMapping[params.value],
+    valueParser: params => compensationCodeReverseMapping[params.newValue],
   },
   {
     field: 'TransakcjaZwolniona',
@@ -87,7 +123,7 @@ export const transactionFColDefs: ColDef[] = [
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
     editable: false,
-    valueFormatter: () => 'ZW01',
+    valueFormatter: () => exemptionCodeMapping['ZW01'],
   },
   {
     field: 'PodstawaZwolnienia',
