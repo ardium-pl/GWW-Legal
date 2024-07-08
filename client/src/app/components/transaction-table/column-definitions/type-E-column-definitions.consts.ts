@@ -1,9 +1,148 @@
+import { Parser } from '@angular/compiler';
 import {
   INumberCellEditorParams,
   ISelectCellEditorParams,
   ITooltipParams,
 } from 'ag-grid-community';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
+
+// User friendly code mappings
+const correctionCodeMapping: Record<string, string> = {
+  KC01: 'Podatnik dokonał korekty cen transferowych',
+  KC02: 'Podatnik nie dokonał korekty cen transferowych',
+};
+
+const compensationCodeMapping: Record<string, string> = {
+  KS01: 'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP',
+  KS02: 'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP',
+  KS03: 'Brak kompensaty',
+};
+
+const ZwolnienieCodeMapping: Record<string, string> = {
+  ZW01: 'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2',
+  ZW02: 'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2',
+}
+
+const RodzajWartosciNiematerialnychCodeMapping: Record<string, string> = {
+  DN01: 'Marka / znak towarowy',
+  DN02: 'Patent',
+  DN03: 'Wiedza techniczna lub organizacyjna (know-how) w zakresie produkcji',
+  DN04: 'Wiedza techniczna lub organizacyjna (know-how) w zakresie innym niż produkcja',
+  DN05: 'Franczyza (pakiet wartości niematerialnych obejmujący w szczególności DN01 oraz DN03 lub DN04)',
+  DN06: 'Oprogramowanie',
+  DN07: 'Inne wartości niematerialne',
+  DN08: 'Zbiór wartości niematerialnych, dla których ustalono jednolitą wspólną cenę transferową',
+}
+
+const RodzajTransakcjiCodeMapping: Record<string, string> = {
+  TK01: 'Transakcja kontrolowana (art. 11k ust. 2 i 2a ustawy)',
+  TK02: 'Transakcja inna niż transakcja kontrolowana (art. 11o ust. 1 ustawy)',
+}
+
+const MetodyBadaniaCodeMapping: Record<string, string> = {
+  MW00: 'Nie dotyczy',
+  MW01: 'Metoda porównywalnej ceny niekontrolowanej',
+  MW02: 'Metoda ceny odprzedaży',
+  MW03: 'Metoda koszt plus',
+  MW04: 'Metoda podziału zysku',
+  MW05: 'Metoda marży transakcyjnej netto',
+  MW06: 'Inna metoda',
+}
+
+const RodzajAnalizyCodeMapping: Record<string, string> = {
+  RA01: 'Analiza danych transakcyjnych wewnętrznych – porównywalne transakcje z podmiotami niepowiązanymi',
+  RA02: 'Analiza danych transakcyjnych zewnętrznych – bazy danych',
+  RA03: 'Wycena za pomocą techniki DCF',
+  RA04: 'Wycena za pomocą podejścia dochodowego innego niż DCF',
+  RA05: 'Wycena za pomocą techniki hipotetycznych opłat licencyjnych (Relief from Royalty)',
+  RA06: 'Wycena z użyciem podejścia porównawczego',
+  RA07: 'Wycena z użyciem podejścia kosztowego',
+  RA08: 'Wycena z użyciem kombinacji dwu lub więcej podejść wskazanych powyżej',
+  RA09: 'Inna analiza niż wskazane powyżej',
+}
+
+const SposobKalkulacjiOplatyCodeMapping:  Record<string, string> = {
+  SK01: 'Procent od sprzedaży do podmiotów niepowiązanych towarów lub produktów, których dotyczy wartość niematerialna',
+  SK02: 'Procent od sprzedaży całkowitej towarów lub produktów, których dotyczy wartość niematerialna',
+  SK03: 'Procent od innej bazy',
+  SK04: 'Kwota w ujęciu rocznym',
+  SK05: 'Kwota na jednostkę towaru lub produktu',
+  SK06: 'Inny sposób kalkulacji opłaty',
+}
+
+const KorektaPorownywalnosciCodeMapping:  Record<string, string> = {
+  KP01: 'Nie dokonano korekty porównywalności',
+  KP02: 'Dokonano jednej lub większej liczby korekt porównywalności',
+}
+
+// Reverse user frendly code mappings
+const correctionCodeReverseMapping: Record<string, string> = {
+  'Podatnik dokonał korekty cen transferowych': 'KC01',
+  'Podatnik nie dokonał korekty cen transferowych': 'KC02',
+};
+
+const compensationCodeReverseMapping: Record<string, string> = {
+  'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP': 'KS01',
+  'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP': 'KS02',
+  'Brak kompensaty': 'KS03',
+};
+
+const ZwolnienieCodeReverseMapping: Record<string, string> = {
+ 'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2': 'ZW01' ,
+ 'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2': 'ZW02'
+}
+
+const RodzajWartosciNiematerialnychReverseCodeMapping: Record<string, string> = {
+  'Marka / znak towarowy': ' DN01',
+  'Patent': 'DN02',
+  'Wiedza techniczna lub organizacyjna (know-how) w zakresie produkcji': 'DN03',
+  'Wiedza techniczna lub organizacyjna (know-how) w zakresie innym niż produkcja': 'DN04',
+  'Franczyza (pakiet wartości niematerialnych obejmujący w szczególności DN01 oraz DN03 lub DN04)': 'DN05',
+  'Oprogramowanie': 'DN06',
+  'Inne wartości niematerialne': 'DN07',
+  'Zbiór wartości niematerialnych, dla których ustalono jednolitą wspólną cenę transferową': 'DN08' 
+}
+
+const RodzajTransakcjiReverseCodeMapping: Record<string, string> = {
+  'Transakcja kontrolowana (art. 11k ust. 2 i 2a ustawy)': 'TK01',
+  'Transakcja inna niż transakcja kontrolowana (art. 11o ust. 1 ustawy)': 'TK02',
+}
+
+const MetodyBadaniaReverseCodeMapping: Record<string, string> = {
+  'Nie dotyczy': 'MW00',
+  'Metoda porównywalnej ceny niekontrolowanej':'MW01',
+  'Metoda ceny odprzedaży' :'MW02',
+  'Metoda koszt plus':'MW03',
+  'Metoda podziału zysku':'MW04',
+  'Metoda marży transakcyjnej netto':'MW05',
+  'Inna metoda':'MW06',
+}
+
+const RodzajAnalizyReverseCodeMapping: Record<string, string> = {
+  'Analiza danych transakcyjnych wewnętrznych – porównywalne transakcje z podmiotami niepowiązanymi' : 'RA01',
+  'Analiza danych transakcyjnych zewnętrznych – bazy danych': 'RA02',
+  'Wycena za pomocą techniki DCF': 'RA03',
+  'Wycena za pomocą podejścia dochodowego innego niż DCF': 'RA04',
+  'Wycena za pomocą techniki hipotetycznych opłat licencyjnych (Relief from Royalty)':'RA05',
+  'Wycena z użyciem podejścia porównawczego':'RA06',
+  'Wycena z użyciem podejścia kosztowego':'RA07',
+  'Wycena z użyciem kombinacji dwu lub więcej podejść wskazanych powyżej':'RA08',
+  'Inna analiza niż wskazane powyżej':'RA09',
+}
+
+const SposobKalkulacjiOplatyReverseCodeMapping:  Record<string, string> = {
+  'Procent od sprzedaży do podmiotów niepowiązanych towarów lub produktów, których dotyczy wartość niematerialna': 'SK01',
+  'Procent od sprzedaży całkowitej towarów lub produktów, których dotyczy wartość niematerialna':'SK02',
+  'Procent od innej bazy':'SK03',
+  'Kwota w ujęciu rocznym':'SK04',
+  'Kwota na jednostkę towaru lub produktu':'SK05',
+  'Inny sposób kalkulacji opłaty':'SK06',
+}
+
+const KorektaPorownywalnosciReverseCodeMapping:  Record<string, string> = {
+  'Nie dokonano korekty porównywalności': 'KP01',
+  'Dokonano jednej lub większej liczby korekt porównywalności': 'KP02',
+}
 
 export const transactionEColDefs: ColDef[] = [
   {
@@ -48,8 +187,10 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KC01', 'KC02'],
+      values: Object.values(correctionCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => correctionCodeMapping[params.value],
+    valueParser: params => correctionCodeReverseMapping[params.newValue],
   },
   {
     field: 'WartoscKorekty',
@@ -77,8 +218,10 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KS01', 'KS02', 'KS03'],
+      values: Object.values(compensationCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => compensationCodeMapping[params.value],
+    valueParser: params => compensationCodeReverseMapping[params.newValue],
   },
   {
     field: 'RodzajWartosciNiematerialnych',
@@ -87,8 +230,10 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['DN01', 'DN02', 'DN03', 'DN04', 'DN05', 'DN06', 'DN07', 'DN08'],
+      values: Object.values(RodzajWartosciNiematerialnychCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => RodzajWartosciNiematerialnychCodeMapping[params.value],
+    valueParser: params => RodzajWartosciNiematerialnychReverseCodeMapping[params.newValue],
   },
   {
     field: 'Zwolnienie',
@@ -97,8 +242,10 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['ZW01', 'ZW02'],
+      values: Object.values(ZwolnienieCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => ZwolnienieCodeMapping[params.value],
+    valueParser: params => ZwolnienieCodeReverseMapping[params.newValue]
   },
   {
     field: 'PodstawaZwolnienia',
@@ -145,8 +292,10 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'exemptionSecondType',
     cellEditorParams: {
-      values: ['TK01', 'TK02'],
+      values: Object.values(RodzajTransakcjiCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => RodzajTransakcjiCodeMapping[params.value],
+    valueParser: params => RodzajTransakcjiReverseCodeMapping[params.newValue],
   },
   {
     field: 'KodKrajuTransakcji',
@@ -181,9 +330,11 @@ export const transactionEColDefs: ColDef[] = [
     headerTooltip: 'Metoda badania',
     type: 'exemptionSecondType',
     cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-      values: ['MW00', 'MW01', 'MW02', 'MW03', 'MW04', 'MW05', 'MW06'],
+    cellEditorParams:{
+      values: Object.values(MetodyBadaniaCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => MetodyBadaniaCodeMapping[params.value],
+    valueParser: params => MetodyBadaniaReverseCodeMapping[params.newValue],
   },
   {
     field: 'RodzajAnalizy',
@@ -192,18 +343,10 @@ export const transactionEColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: [
-        'RA01',
-        'RA02',
-        'RA03',
-        'RA04',
-        'RA05',
-        'RA06',
-        'RA07',
-        'RA08',
-        'RA09',
-      ],
+      values: Object.values(RodzajAnalizyCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => RodzajAnalizyCodeMapping[params.value],
+    valueParser: params => RodzajAnalizyReverseCodeMapping[params.newValue],
   },
   {
     field: 'SposobWyrazeniaCeny',
@@ -219,9 +362,14 @@ export const transactionEColDefs: ColDef[] = [
     headerTooltip: 'Sposób kalkulacji opłaty',
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-      values: ['SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06'],
+    // cellEditorParams: {
+    //   values: ['SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06'],
+    // } as ISelectCellEditorParams,
+    cellEditorParams:{
+      values: Object.values(SposobKalkulacjiOplatyCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => SposobKalkulacjiOplatyCodeMapping[params.value],
+    valueParser: params => SposobKalkulacjiOplatyReverseCodeMapping[params.newValue],
   },
   {
     field: 'PoziomOplaty',
@@ -263,8 +411,10 @@ export const transactionEColDefs: ColDef[] = [
     type: 'exemptionSecondType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: ['KP01', 'KP02'],
+      values: Object.values(KorektaPorownywalnosciCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => KorektaPorownywalnosciCodeMapping[params.value],
+    valueParser: params => KorektaPorownywalnosciReverseCodeMapping[params.newValue],
   },
   {
     field: 'KorektaPorownywalnosciProg',

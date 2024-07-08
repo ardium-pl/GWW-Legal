@@ -5,6 +5,40 @@ import {
   ITooltipParams,
 } from 'ag-grid-community';
 
+// User friendly code mappings
+const correctionCodeMapping: Record<string, string> = {
+  KC01: 'Podatnik dokonał korekty cen transferowych',
+  KC02: 'Podatnik nie dokonał korekty cen transferowych',
+};
+
+const compensationCodeMapping: Record<string, string> = {
+  KS01: 'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP',
+  KS02: 'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP',
+  KS03: 'Brak kompensaty',
+};
+
+const ZwolnienieCodeMapping: Record<string, string> = {
+  ZW01: 'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2',
+  ZW02: 'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2',
+}
+
+//Reverse code mappings 
+const correctionCodeReverseMapping: Record<string, string> = {
+  'Podatnik dokonał korekty cen transferowych': 'KC01',
+  'Podatnik nie dokonał korekty cen transferowych': 'KC02',
+};
+
+const compensationCodeReverseMapping: Record<string, string> = {
+  'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP': 'KS01',
+  'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP': 'KS02',
+  'Brak kompensaty': 'KS03',
+};
+
+const ZwolnienieCodeReverseMapping: Record<string, string> = {
+  'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2': 'ZW01' ,
+  'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2': 'ZW02'
+ }
+
 export const transactionDColDefs: ColDef[] = [
   {
     field: 'transactionCategory',
@@ -48,8 +82,10 @@ export const transactionDColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KC01', 'KC02'],
+      values: Object.values(correctionCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => correctionCodeMapping[params.value],
+    valueParser: params => correctionCodeReverseMapping[params.newValue],
   },
   {
     field: 'WartoscKorekty',
@@ -77,8 +113,10 @@ export const transactionDColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KS01', 'KS02', 'KS03'],
+      values: Object.values(compensationCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => compensationCodeMapping[params.value],
+    valueParser: params => compensationCodeReverseMapping[params.newValue],
   },
   {
     field: 'Kapital',
@@ -143,7 +181,7 @@ export const transactionDColDefs: ColDef[] = [
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
     editable: false,
-    valueFormatter: () => 'ZW01',
+    valueFormatter: () => ZwolnienieCodeMapping['ZW01'],
   },
   {
     field: 'PodstawaZwolnienia',

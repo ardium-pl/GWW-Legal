@@ -5,36 +5,36 @@ import {
   ITooltipParams,
 } from 'ag-grid-community';
 
-// Define mappings from codes to user-friendly strings and vice versa
+// User friendly code mappings
 const correctionCodeMapping: Record<string, string> = {
-  KC01: 'Correction Type 1',
-  KC02: 'Correction Type 2',
+  KC01: 'Podatnik dokonał korekty cen transferowych',
+  KC02: 'Podatnik nie dokonał korekty cen transferowych',
 };
 
 const compensationCodeMapping: Record<string, string> = {
-  KS01: 'Compensation Type 1',
-  KS02: 'Compensation Type 2',
-  KS03: 'Compensation Type 3',
+  KS01: 'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP',
+  KS02: 'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP',
+  KS03: 'Brak kompensaty',
 };
 
 const exemptionCodeMapping: Record<string, string> = {
-  ZW01: 'Exempt based on article 11n points 1-2',
+  ZW01: 'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2',
 };
 
-// Reverse mappings
+// Reverse user frendly code mappings
 const correctionCodeReverseMapping: Record<string, string> = {
-  'Correction Type 1': 'KC01',
-  'Correction Type 2': 'KC02',
+  'Podatnik dokonał korekty cen transferowych': 'KC01',
+  'Podatnik nie dokonał korekty cen transferowych': 'KC02',
 };
 
 const compensationCodeReverseMapping: Record<string, string> = {
-  'Compensation Type 1': 'KS01',
-  'Compensation Type 2': 'KS02',
-  'Compensation Type 3': 'KS03',
+  'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP': 'KS01',
+  'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP': 'KS02',
+  'Brak kompensaty': 'KS03',
 };
 
 const exemptionCodeReverseMapping: Record<string, string> = {
-  'Exempt based on article 11n points 1-2': 'ZW01',
+  'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2': 'ZW01',
 };
 
 export const transactionFColDefs: ColDef[] = [

@@ -5,6 +5,173 @@ import {
   ITooltipParams,
 } from 'ag-grid-community';
 import { min } from 'rxjs';
+import { __param } from 'tslib';
+import { Parser } from '@angular/compiler';
+
+// User friendly code mappings
+const correctionCodeMapping: Record<string, string> = {
+  KC01: 'Podatnik dokonał korekty cen transferowych',
+  KC02: 'Podatnik nie dokonał korekty cen transferowych',
+};
+
+const compensationCodeMapping: Record<string, string> = {
+  KS01: 'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP',
+  KS02: 'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP',
+  KS03: 'Brak kompensaty',
+};
+
+const ZwolnienieCodeMapping: Record<string, string> = {
+  ZW01: 'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2',
+  ZW02: 'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2',
+}
+
+const RodzajTransakcjiCodeMapping: Record<string, string> = {
+  TK01: 'Transakcja kontrolowana (art. 11k ust. 2 i 2a ustawy)',
+  TK02: 'Transakcja inna niż transakcja kontrolowana (art. 11o ust. 1 ustawy)',
+}
+
+const MetodyBadaniaCodeMapping: Record<string, string> = {
+  MW00: 'Nie dotyczy',
+  MW01: 'Metoda porównywalnej ceny niekontrolowanej',
+  MW02: 'Metoda ceny odprzedaży',
+  MW03: 'Metoda koszt plus',
+  MW04: 'Metoda podziału zysku',
+  MW05: 'Metoda marży transakcyjnej netto',
+  MW06: 'Inna metoda',
+}
+
+const KorektaMetodyBadaniaCodeMapping:  Record<string, string> = {
+  KP01: 'Nie dokonano korekty porównywalności',
+  KP02: 'Dokonano jednej lub większej liczby korekt porównywalności',
+}
+
+const ZrodloDanychFinansowychCodeMapping: Record<string, string> = {
+  ZD01: 'Dane transakcyjne wewnętrzne – porównywalne transakcje z podmiotami niepowiązanymi',
+  ZD02: 'Dane transakcyjne zewnętrzne – bazy danych transakcyjnych',
+  ZD03: 'Statystyki bankowe',
+  ZD04: 'Oferty otrzymane od instytucji finansowych',
+  ZD05: 'Pozostałe źródła danych',
+}
+
+const RodzajOprocentowaniaCodeMapping: Record<string, string> = {
+  OP01:'Oprocentowanie zmienne',
+  OP02:'Oprocentowanie stałe',
+  OP03:'Oprocentowanie stałe podlegające zmianom w okresie sprawozdawczym',
+  OP04:'Inny sposób kalkulacji oprocentowania',
+  OP05:'Brak oprocentowania',
+}
+
+const NazwaStopyBazowejCodeMapping: Record<string, string> = {
+  SB01: 'WIBOR',
+  SB02: 'EURIBOR',
+  SB03: 'LIBOR EUR',
+  SB04: 'LIBOR USD',
+  SB05: 'LIBOR CHF',
+  SB06: 'LIBOR GBP',
+  SB07: 'LIBOR JPY',
+  SB08: 'SARON',
+  SB09: 'Inna stopa bazowa',
+}
+
+const TerminStopyBazowejCodeMapping: Record<string, string> = {
+  TB01: '1 dzień (O/N)',
+  TB02: '1 miesiąc',
+  TB03: '3 miesiące',
+  TB04: '6 miesięcy',
+  TB05: '9 miesięcy',
+  TB06: '1 rok',
+  TB07: 'Inny',
+}
+
+const RodzajPrzedzialuCodeMapping:  Record<string, string> = {
+  RP01:'Przedział międzykwartylowy',
+  RP02:'Przedział pełny',
+  RP03:'Inny przedział',
+  RP04: 'Jedna wartość',
+}
+
+//Reverse code mappings 
+const correctionCodeReverseMapping: Record<string, string> = {
+  'Podatnik dokonał korekty cen transferowych': 'KC01',
+  'Podatnik nie dokonał korekty cen transferowych': 'KC02',
+};
+
+const compensationCodeReverseMapping: Record<string, string> = {
+  'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP': 'KS01',
+  'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP': 'KS02',
+  'Brak kompensaty': 'KS03',
+};
+
+const ZwolnienieCodeReverseMapping: Record<string, string> = {
+  'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2': 'ZW01' ,
+  'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2': 'ZW02'
+ }
+
+ const RodzajTransakcjiReverseCodeMapping: Record<string, string> = {
+  'Transakcja kontrolowana (art. 11k ust. 2 i 2a ustawy)': 'TK01',
+  'Transakcja inna niż transakcja kontrolowana (art. 11o ust. 1 ustawy)': 'TK02',
+}
+
+const MetodyBadaniaReverseCodeMapping: Record<string, string> = {
+  'Nie dotyczy': 'MW00',
+  'Metoda porównywalnej ceny niekontrolowanej':'MW01',
+  'Metoda ceny odprzedaży' :'MW02',
+  'Metoda koszt plus':'MW03',
+  'Metoda podziału zysku':'MW04',
+  'Metoda marży transakcyjnej netto':'MW05',
+  'Inna metoda':'MW06',
+}
+
+const KorektaMetodyBadaniaReverseCodeMapping:  Record<string, string> = {
+  'Nie dokonano korekty porównywalności': 'KP01',
+  'Dokonano jednej lub większej liczby korekt porównywalności': 'KP02',
+}
+
+const ZrodloDanychFinansowychReverseCodeMapping: Record<string, string> = {
+  'Dane transakcyjne wewnętrzne – porównywalne transakcje z podmiotami niepowiązanymi':'ZD01',
+  'Dane transakcyjne zewnętrzne – bazy danych transakcyjnych': 'ZD02',
+  'Statystyki bankowe': 'ZD03',
+  'Oferty otrzymane od instytucji finansowych': 'ZD04',
+  'Pozostałe źródła danych': 'ZD05',
+}
+
+const RodzajOprocentowaniaReverseCodeMapping: Record<string, string> = {
+  'Oprocentowanie zmienne':'OP01',
+  'Oprocentowanie stałe':'OP02',
+  'Oprocentowanie stałe podlegające zmianom w okresie sprawozdawczym':'OP03',
+  'Inny sposób kalkulacji oprocentowania':'OP04',
+  'Brak oprocentowania':'OP05',
+}
+
+const NazwaStopyBazowejReverseCodeMapping: Record<string, string> = {
+  'WIBOR':'SB01',
+  'EURIBOR':'SB02',
+  'LIBOR EUR':'SB03',
+  'LIBOR USD':'SB04',
+  'LIBOR CHF':'SB05',
+  'LIBOR GBP':'SB06',
+  'LIBOR JPY' : 'SB07',
+  'SARON': 'SB08',
+  'Inna stopa bazowa' : 'SB09',
+}
+
+const TerminStopyBazowejReverseCodeMapping:  Record<string, string> = {
+  '1 dzień (O/N)':'TB01',
+  '1 miesiąc':'TB02',
+  '3 miesiące':'TB03',
+  '6 miesięcy':'TB04',
+  '9 miesięcy':'TB05',
+  '1 rok':'TB06',
+  'Inny':'TB07',
+}
+
+const RodzajPrzedzialuReverseCodeMapping:  Record<string, string> = {
+  RP01:'Przedział międzykwartylowy',
+  RP02:'Przedział pełny',
+  RP03:'Inny przedział',
+  RP04: 'Jedna wartość',
+}
+
 
 export const transactionCColDefs: ColDef[] = [
   {
@@ -49,8 +216,10 @@ export const transactionCColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KC01', 'KC02'],
+      values: Object.values(correctionCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => correctionCodeMapping[params.value],
+    valueParser: params => correctionCodeReverseMapping[params.newValue],
   },
   {
     field: 'WartoscKorekty',
@@ -78,8 +247,10 @@ export const transactionCColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KS01', 'KS02', 'KS03'],
+      values: Object.values(compensationCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => compensationCodeMapping[params.value],
+    valueParser: params => compensationCodeReverseMapping[params.newValue],
   },
   {
     field: 'Kapital',
@@ -153,8 +324,10 @@ export const transactionCColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['ZW01', 'ZW02'],
+      values: Object.values(ZwolnienieCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => ZwolnienieCodeMapping[params.value],
+    valueParser: params => ZwolnienieCodeReverseMapping[params.newValue]
   },
   {
     field: 'PodstawaZwolnienia',
@@ -200,8 +373,10 @@ export const transactionCColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'exemptionSecondType',
     cellEditorParams: {
-      values: ['TK01', 'TK02'],
+      values: Object.values(RodzajTransakcjiCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => RodzajTransakcjiCodeMapping[params.value],
+    valueParser: params => RodzajTransakcjiReverseCodeMapping[params.newValue],
   },
   {
     field: 'KodKrajuTransakcji',
@@ -236,9 +411,11 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Metoda badania',
     type: 'exemptionSecondType',
     cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-      values: ['MW00', 'MW01', 'MW02', 'MW03', 'MW04', 'MW05', 'MW06'],
+    cellEditorParams:{
+      values: Object.values(MetodyBadaniaCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => MetodyBadaniaCodeMapping[params.value],
+    valueParser: params => MetodyBadaniaReverseCodeMapping[params.newValue],
   },
   {
     field: 'ZrodloDanychFinansowych',
@@ -246,9 +423,11 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Źródło danych finansowych',
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-      values: ['ZD01', 'ZD02', 'ZD03', 'ZD04', 'ZD05'],
+    cellEditorParams:{
+      values: Object.values(ZrodloDanychFinansowychCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => ZrodloDanychFinansowychCodeMapping[params.value],
+    valueParser: params => ZrodloDanychFinansowychReverseCodeMapping[params.newValue],
   },
   {
     field: 'KorektaMetodyBadania',
@@ -256,8 +435,10 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Korekta dla metody badania',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: ['KP01', 'KP02'],
+      values: Object.values(KorektaMetodyBadaniaCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => KorektaMetodyBadaniaCodeMapping[params.value],
+    valueParser: params => KorektaMetodyBadaniaReverseCodeMapping[params.newValue],
     type: 'MetodyBadaniaType',
   },
   {
@@ -285,9 +466,11 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Rodzaj oprocentowania',
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-      values: ['OP01', 'OP02', 'OP03', 'OP04', 'OP05'],
+    cellEditorParams:{
+      values: Object.values(RodzajOprocentowaniaCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => RodzajOprocentowaniaCodeMapping[params.value],
+    valueParser: params => RodzajOprocentowaniaReverseCodeMapping[params.newValue]
   },
   {
     field: 'Marza',
@@ -307,18 +490,10 @@ export const transactionCColDefs: ColDef[] = [
     type: 'RodzajOprocentowania1Type',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: [
-        'SB01',
-        'SB02',
-        'SB03',
-        'SB04',
-        'SB05',
-        'SB06',
-        'SB07',
-        'SB08',
-        'SB09',
-      ],
+      values: Object.values(NazwaStopyBazowejCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => NazwaStopyBazowejCodeMapping[params.value],
+    valueParser: params => NazwaStopyBazowejReverseCodeMapping[params.newValue]
   },
   {
     field: 'InnaSB',
@@ -346,8 +521,10 @@ export const transactionCColDefs: ColDef[] = [
     type: 'RodzajOprocentowania1Type',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: ['TB01', 'TB02', 'TB03', 'TB04', 'TB05', 'TB06', 'TB07'],
+      values: Object.values(TerminStopyBazowejCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => TerminStopyBazowejCodeMapping[params.value],
+    valueParser: params => TerminStopyBazowejReverseCodeMapping[params.newValue],
   },
   {
     field: 'Okres',
@@ -417,8 +594,10 @@ export const transactionCColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: ['RP01', 'RP02', 'RP03', 'RP04'],
+      values: Object.values(RodzajOprocentowaniaCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => RodzajOprocentowaniaCodeMapping[params.value],
+    valueParser: params => RodzajPrzedzialuReverseCodeMapping[params.newValue],
   },
   {
     field: 'DolnaGranicaPrzedzialu',
