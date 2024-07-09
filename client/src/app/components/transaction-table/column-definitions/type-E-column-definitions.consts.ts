@@ -99,7 +99,7 @@ const ZwolnienieCodeReverseMapping: Record<string, string> = {
 }
 
 const RodzajWartosciNiematerialnychReverseCodeMapping: Record<string, string> = {
-  'Marka / znak towarowy': ' DN01',
+  'Marka / znak towarowy': 'DN01',
   'Patent': 'DN02',
   'Wiedza techniczna lub organizacyjna (know-how) w zakresie produkcji': 'DN03',
   'Wiedza techniczna lub organizacyjna (know-how) w zakresie innym niż produkcja': 'DN04',
