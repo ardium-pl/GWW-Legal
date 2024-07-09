@@ -60,6 +60,9 @@ export class TransactionTableComponent implements OnInit {
     };
     event.api.applyTransaction(tx);
     this.gridApi.redrawRows();
+    console.log(tx);
+    console.log("Stare dane" + JSON.stringify(oldData));
+    console.log("Nowe dane dane" + JSON.stringify(newData));
   }
 
   public sendData() {

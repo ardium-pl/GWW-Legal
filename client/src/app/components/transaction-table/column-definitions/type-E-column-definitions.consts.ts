@@ -75,6 +75,12 @@ const KorektaPorownywalnosciCodeMapping:  Record<string, string> = {
   KP02: 'Dokonano jednej lub większej liczby korekt porównywalności',
 }
 
+const KorektaPorownywalnosciProgCodeMapping: Record<string, string> = {
+  KP02A: 'Korekta porównywalności zmieniająca wynik o mniej niż 30%',
+  KP02B: 'Korekta porównywalności zmieniająca wynik o 30% lub więcej',
+  KP02C: 'Brak możliwości ustalenia wpływu korekty na wynik',
+}
+
 // Reverse user frendly code mappings
 const correctionCodeReverseMapping: Record<string, string> = {
   'Podatnik dokonał korekty cen transferowych': 'KC01',
@@ -144,6 +150,12 @@ const KorektaPorownywalnosciReverseCodeMapping:  Record<string, string> = {
   'Dokonano jednej lub większej liczby korekt porównywalności': 'KP02',
 }
 
+const KorektaPorownywalnosciProgReverseCodeMapping: Record<string, string> = {
+  'Korekta porównywalności zmieniająca wynik o mniej niż 30%': 'KP02A',
+  'Korekta porównywalności zmieniająca wynik o 30% lub więcej': 'KP02B',
+  'Brak możliwości ustalenia wpływu korekty na wynik': 'KP02C'
+}
+
 export const transactionEColDefs: ColDef[] = [
   {
     field: 'transactionCategory',
@@ -187,10 +199,9 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(correctionCodeMapping),
+      values: Object.values(correctionCodeReverseMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => correctionCodeMapping[params.value],
-    valueParser: params => correctionCodeReverseMapping[params.newValue],
   },
   {
     field: 'WartoscKorekty',
@@ -218,10 +229,9 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(compensationCodeMapping),
+      values: Object.values(compensationCodeReverseMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => compensationCodeMapping[params.value],
-    valueParser: params => compensationCodeReverseMapping[params.newValue],
   },
   {
     field: 'RodzajWartosciNiematerialnych',
@@ -230,10 +240,9 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(RodzajWartosciNiematerialnychCodeMapping),
+      values: Object.values(RodzajWartosciNiematerialnychReverseCodeMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajWartosciNiematerialnychCodeMapping[params.value],
-    valueParser: params => RodzajWartosciNiematerialnychReverseCodeMapping[params.newValue],
   },
   {
     field: 'Zwolnienie',
@@ -242,10 +251,9 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(ZwolnienieCodeMapping),
+      values: Object.values(ZwolnienieCodeReverseMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => ZwolnienieCodeMapping[params.value],
-    valueParser: params => ZwolnienieCodeReverseMapping[params.newValue]
   },
   {
     field: 'PodstawaZwolnienia',
@@ -292,10 +300,9 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'exemptionSecondType',
     cellEditorParams: {
-      values: Object.values(RodzajTransakcjiCodeMapping),
+      values: Object.values(RodzajTransakcjiReverseCodeMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajTransakcjiCodeMapping[params.value],
-    valueParser: params => RodzajTransakcjiReverseCodeMapping[params.newValue],
   },
   {
     field: 'KodKrajuTransakcji',
@@ -331,10 +338,9 @@ export const transactionEColDefs: ColDef[] = [
     type: 'exemptionSecondType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams:{
-      values: Object.values(MetodyBadaniaCodeMapping),
+      values: Object.values(MetodyBadaniaReverseCodeMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => MetodyBadaniaCodeMapping[params.value],
-    valueParser: params => MetodyBadaniaReverseCodeMapping[params.newValue],
   },
   {
     field: 'RodzajAnalizy',
@@ -343,10 +349,9 @@ export const transactionEColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(RodzajAnalizyCodeMapping),
+      values: Object.values(RodzajAnalizyReverseCodeMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajAnalizyCodeMapping[params.value],
-    valueParser: params => RodzajAnalizyReverseCodeMapping[params.newValue],
   },
   {
     field: 'SposobWyrazeniaCeny',
@@ -362,14 +367,10 @@ export const transactionEColDefs: ColDef[] = [
     headerTooltip: 'Sposób kalkulacji opłaty',
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
-    // cellEditorParams: {
-    //   values: ['SK01', 'SK02', 'SK03', 'SK04', 'SK05', 'SK06'],
-    // } as ISelectCellEditorParams,
     cellEditorParams:{
-      values: Object.values(SposobKalkulacjiOplatyCodeMapping),
+      values: Object.values(SposobKalkulacjiOplatyReverseCodeMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => SposobKalkulacjiOplatyCodeMapping[params.value],
-    valueParser: params => SposobKalkulacjiOplatyReverseCodeMapping[params.newValue],
   },
   {
     field: 'PoziomOplaty',
@@ -411,10 +412,9 @@ export const transactionEColDefs: ColDef[] = [
     type: 'exemptionSecondType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(KorektaPorownywalnosciCodeMapping),
+      values: Object.values(KorektaPorownywalnosciReverseCodeMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => KorektaPorownywalnosciCodeMapping[params.value],
-    valueParser: params => KorektaPorownywalnosciReverseCodeMapping[params.newValue],
   },
   {
     field: 'KorektaPorownywalnosciProg',
@@ -422,8 +422,9 @@ export const transactionEColDefs: ColDef[] = [
     headerTooltip: 'Korekta porównywalności próg',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: ['KP02A', 'KP02B', 'KP02C'],
+      values: Object.values(KorektaPorownywalnosciProgReverseCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => KorektaPorownywalnosciProgCodeMapping[params.value],
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&

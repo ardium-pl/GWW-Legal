@@ -107,12 +107,12 @@ export function translateTransactions(transactions: any) {
                                     KodZW1: 'ZW01',
                                     PodstZW: transaction.PodstawaZwolnienia,
                                     InformacjaOKrajuB1: {
-                                        Kraj: 'PL',
+                                        Kraj: transaction.KodKraju,
                                         WartoscBKraj1: {
                                             _attributes: {
-                                                kodWaluty: transaction.KodKrajuZwolnienia,
+                                                kodWaluty:transaction.KodWalutyKraju,
                                             },
-                                            _text: transaction.WartoscTransakcjiZwolnienia,
+                                            _text: transaction.WartoscTransakcjiKraju,
                                         },
                                     },
                                 };

@@ -83,10 +83,9 @@ export const transactionBColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(correctionCodeMapping),
+      values: Object.values(correctionCodeReverseMapping),
     } as ISelectCellEditorParams,
     valueFormatter: params => correctionCodeMapping[params.value],
-    valueParser: params => correctionCodeReverseMapping[params.newValue],
   },
   {
     field: 'WartoscKorekty',
@@ -114,8 +113,9 @@ export const transactionBColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['KS01', 'KS02', 'KS03'],
+      values: Object.values(compensationCodeReverseMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => compensationCodeMapping[params.value],
   },
   {
     field: 'TransakcjaZwolniona',
