@@ -102,7 +102,6 @@ html {
 
 body {
   background-color: var(--bg);
-  counter-reset: section-counter 0;
   padding: $bodyPaddingVertical 4rem;
   min-width: 100%;
   max-width: 100%;
@@ -161,6 +160,10 @@ main {
   align-items: center;
 }
 
+button {
+  cursor: pointer;
+}
+
 a[href],
 a[routerLink],
 .link {
@@ -190,5 +193,14 @@ markdown {
   }
   li:not(:last-of-type) > p {
     margin-bottom: 3px;
+  }
+}
+
+mark {
+  background-color: #fdd835;
+
+  &.current {
+    background-color: #f57c00;
+    color: white;
   }
 }

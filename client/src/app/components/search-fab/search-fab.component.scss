@@ -1,0 +1,116 @@
+$close-button-offset: 4px;
+$panel-padding: 12px;
+$border-radius: 4px;
+
+app-search-fab {
+  .search-fab-container {
+    position: relative;
+    width: max-content;
+    height: max-content;
+    z-index: 99;
+  }
+  .search-fab-panel {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    height: max-content;
+    transform: translateY(-50%);
+    max-width: 0px;
+    background: var(--mdc-fab-container-color);
+    transition: max-width 0.1s ease;
+    border-radius: 6px;
+    z-index: 99;
+    overflow: hidden;
+    box-shadow: var(--simple-shadow);
+
+    &.active {
+      width: 384px;
+      max-width: 384px;
+
+      ~ .search-fab {
+        transform: scale(0);
+        transition-delay: 0.05s;
+      }
+    }
+  }
+  .search-fab-panel-inner {
+    height: 100%;
+    padding: $panel-padding;
+    display: grid;
+    grid-template-columns: 1fr max-content max-content;
+    align-items: center;
+    gap: 2px 8px;
+
+    label {
+      grid-column: 1 / -1;
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+  .input-container {
+    position: relative;
+
+    app-icon {
+      position: absolute;
+      left: 0;
+      top: calc(50% + 1px);
+      transform: translateY(-50%) scale(75%);
+    }
+  }
+  input {
+    border: 1px solid var(--detail);
+    border-radius: $border-radius;
+    height: 24px;
+    width: 100%;
+    outline: none;
+    padding: 6px;
+    transition: border-color 0.1s ease;
+    margin-right: 4px;
+    padding-left: 24px;
+
+    &:focus {
+      border-color: var(--indigo500);
+    }
+  }
+  .search-results {
+    min-width: 8ch;
+  }
+  .buttons-container {
+    display: flex;
+    gap: 3px;
+  }
+  .search-icon-btn {
+    height: 24px;
+    width: 24px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    border-radius: $border-radius;
+    outline: none;
+
+    &:focus-visible {
+      outline: 1px solid var(--indigo500);
+      outline-offset: -1px;
+    }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+
+    app-icon {
+      transform: scale(75%);
+    }
+  }
+  .search-fab {
+    transition: transform 0.1s ease;
+    transition-delay: 0.1s;
+  }
+  [disabled], .disabled, [disabled] + app-icon {
+    pointer-events: none;
+    opacity: 50%;
+    user-select: none;
+  }
+}
