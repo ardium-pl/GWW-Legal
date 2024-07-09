@@ -25,6 +25,8 @@ import { translateToTPR } from 'app/utils/tpr-translator.util';
 import * as xmljs from 'xml-js';
 import { saveAs } from 'file-saver';
 import { ErrorSnackbarService } from 'app/services/snackbar.service';
+import mixpanel from 'mixpanel-browser';
+import { MixpanelService } from 'app/services/mixpanel.service';
 
 @Component({
   selector: 'tpr-nsa',
@@ -48,7 +50,8 @@ export class TprPage implements OnInit, OnDestroy {
   private readonly clipboardService = inject(ClipboardService);
   private readonly destroy$$ = new Subject<void>();
   readonly companyData = signal<TPR_input | null>(null);
-  constructor(private dataExportService: DataExportService) {}
+  
+  constructor(private mixpanelService: MixpanelService) {}
 
   readonly transactionData = signal<TransactionCategories>({
     categoryA: [],
@@ -107,6 +110,7 @@ export class TprPage implements OnInit, OnDestroy {
     const tpr = translateToTPR(companyData);
     const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
     console.log('Generated XML:', xmlVar);
+    this.mixpanelService.track('XML')
     const blob = new Blob([xmlVar], { type: 'application/xml' });
     saveAs(blob, 'TPR-C(5)_v_35.xml');
   }
