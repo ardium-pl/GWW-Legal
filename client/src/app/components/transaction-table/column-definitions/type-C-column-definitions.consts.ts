@@ -343,7 +343,7 @@ export const transactionCColDefs: ColDef[] = [
     field: 'PodstawaZwolnienia',
     headerName: 'Podstawa zwolnienia',
     headerTooltip: 'Podstawa zwolnienia',
-    cellEditor: 'agTextCellEditor',
+    cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     type: 'exemptionType',
     cellEditorParams: {
