@@ -18,7 +18,6 @@ import {
 import { Subject, from, takeUntil, tap } from 'rxjs';
 import { GetTransactionDataUtil } from 'app/utils/get-transaction-data.util';
 import { XmlGeneratorComponent } from 'app/components/xml-generator/xml-generator.component';
-import { DataExportService } from 'app/services/data-export.service';
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
 import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
 import { translateToTPR } from 'app/utils/tpr-translator.util';
@@ -48,7 +47,7 @@ export class TprPage implements OnInit, OnDestroy {
   private readonly clipboardService = inject(ClipboardService);
   private readonly destroy$$ = new Subject<void>();
   readonly companyData = signal<TPR_input | null>(null);
-  constructor(private dataExportService: DataExportService) {}
+  constructor() {}
 
   readonly transactionData = signal<TransactionCategories>({
     categoryA: [],

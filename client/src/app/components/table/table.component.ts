@@ -4,7 +4,6 @@ import { ColDef } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { TPR_input } from 'app/services/tpr/tpr-input.types';
-import { DataExportService } from 'app/services/data-export.service';
 import { companyColDefs } from './table.consts';
 
 @Component({

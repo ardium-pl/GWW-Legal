@@ -12,6 +12,26 @@ const correctionCodeMapping: Record<string, string> = {
   KC02: 'Podatnik nie dokonał korekty cen transferowych',
 };
 
+const WynagrodzenieZaRestrukturyzacjeCodeMapping: Record<string, string> = {
+  RM01: 'Podmiot otrzymał wynagrodzenie pieniężne za przeniesione na rzecz podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa',
+  RM02: 'Podmiot otrzymał wynagrodzenie w formie innej niż pieniężna za przeniesione na rzecz podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa',
+  RM03: 'Podmiot wypłacił wynagrodzenie pieniężne za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa',
+  RM04: 'Podmiot wypłacił wynagrodzenie w formie innej niż pieniężna za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa',
+  RM05: 'Podmiot nie wypłacił ani nie otrzymał wynagrodzenia w jakiejkolwiek formie w związku z przeniesieniem funkcji, aktywów, ryzyk lub praw',
+
+}
+
+const RodzajUmowyCodeMapping: Record<string, string> = {
+  RT01: 'Umowa spółki niebędącej osobą prawną',
+  RT02: 'Umowa wspólnego przedsięwzięcia lub umowa o podobnym charakterze',
+}
+
+const UdzialCodeMapping: Record<string, string> = {
+  UD01: 'Udział w zysku',
+  UD02: 'Udział w stracie',
+  UD03: 'Udział w majątku likwidacyjnym',
+}
+
 const compensationCodeMapping: Record<string, string> = {
   KS01: 'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP',
   KS02: 'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP',
@@ -105,7 +125,6 @@ const KryteriumGeograficzneCodeMapping: Record<string, string> = {
   KG03: 'Europa',
   KG04: 'Świat',
   KG05: 'Inne',
-  KG06: 'KG06', // odnaleźć nazwę
 };
 
 const RodzajMetodyPodzialuZyskuCodeMapping: Record<string, string> = {
@@ -153,6 +172,25 @@ const correctionCodeReverseMapping: Record<string, string> = {
   'Podatnik dokonał korekty cen transferowych': 'KC01',
   'Podatnik nie dokonał korekty cen transferowych': 'KC02',
 };
+
+const WynagrodzenieZaRestrukturyzacjeReverseCodeMapping: Record<string, string> = {
+  'Podmiot otrzymał wynagrodzenie pieniężne za przeniesione na rzecz podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM01',
+  'Podmiot otrzymał wynagrodzenie w formie innej niż pieniężna za przeniesione na rzecz podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM02',
+  'Podmiot wypłacił wynagrodzenie pieniężne za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM03',
+  'Podmiot wypłacił wynagrodzenie w formie innej niż pieniężna za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM04',
+  'Podmiot nie wypłacił ani nie otrzymał wynagrodzenia w jakiejkolwiek formie w związku z przeniesieniem funkcji, aktywów, ryzyk lub praw': 'RM05',
+}
+
+const RodzajUmowyReverseCodeMapping: Record<string, string> = {
+  'Umowa spółki niebędącej osobą prawną': 'RT01',
+  'Umowa wspólnego przedsięwzięcia lub umowa o podobnym charakterze': 'RT02',
+}
+
+const UdzialReverseCodeMapping: Record<string, string> = {
+  'Udział w zysku': 'UD01',
+  'Udział w stracie': 'UD02',
+  'Udział w majątku likwidacyjnym': 'UD03',
+}
 
 const compensationCodeReverseMapping: Record<string, string> = {
   'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP': 'KS01',
@@ -246,8 +284,7 @@ const KryteriumGeograficzneReverseCodeMapping: Record<string, string> = {
   'Region': 'KG02',
   'Europa': 'KG03',
   'Świat': 'KG04',
-  'Inne': 'KG05',
-  'KG06': 'KG06' // odnaleźć nazwę
+  'Inne': 'KG05'
 }
 
 const RodzajMetodyPodzialuZyskuReverseCodeMapping: Record<string, string> = {
@@ -308,8 +345,9 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['RM01', 'RM02', 'RM03', 'RM04', 'RM05'],
+      values: Object.values(WynagrodzenieZaRestrukturyzacjeReverseCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => WynagrodzenieZaRestrukturyzacjeCodeMapping[params.value],
   },
   {
     field:'RodzajUmowy',
@@ -319,8 +357,9 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['RT01', 'RT02'],
+      values: Object.values(RodzajUmowyReverseCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => RodzajUmowyCodeMapping[params.value],
   },
   {
     field: 'subjectMatter',
@@ -395,8 +434,9 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: ['UD01', 'UD02', 'UD03'],
+      values: Object.values(UdzialReverseCodeMapping),
     } as ISelectCellEditorParams,
+    valueFormatter: params => UdzialCodeMapping[params.value],
   },
   {
     field: 'ProcentUdzialuWZyskach',
