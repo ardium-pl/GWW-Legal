@@ -41,7 +41,6 @@ import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
-import { TableComponent } from 'app/components/table/table.component';
 import { isNull } from 'simple-bool';
 
 const DEFAULT_SYSTEM_MESSAGE =
@@ -79,14 +78,6 @@ const DEFAULT_USER_MESSAGES = [
     MatCheckboxModule,
     SearchFabComponent,
   ],
-  providers: [
-    NsaService,
-    SearchService,
-    provideMarkdown(),
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
-  ],
-  templateUrl: './nsa.page.html',
-  styleUrl: './nsa.page.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class NsaPage implements OnInit, OnDestroy {
