@@ -1,4 +1,12 @@
-@import './variables';
+@import "./variables";
+@import "./assets/theme/standard-backdrop";
+@import "./assets/theme/custom-select.custom";
+
+.material-customized {
+  &.custom-select {
+    @include custom-select;
+  }
+}
 
 html,
 body {
@@ -31,22 +39,23 @@ body {
   --bg-dark: #f5f5f5;
 
   --red: rgb(239, 53, 29);
+  --warning: rgb(235, 85, 15);
   --green: rgb(68, 162, 72);
 
   --main: #3f51b5;
   --on-main: white;
   --shadow-main: gray;
 
-  --indigo50: #E8EAF6;
-  --indigo100: #C5CAE9;
-  --indigo200: #9FA8DA;
-  --indigo300: #7986CB;
-  --indigo400: #5C6BC0;
-  --indigo500: #3F51B5;
-  --indigo600: #3949AB;
-  --indigo700: #303F9F;
+  --indigo50: #e8eaf6;
+  --indigo100: #c5cae9;
+  --indigo200: #9fa8da;
+  --indigo300: #7986cb;
+  --indigo400: #5c6bc0;
+  --indigo500: #3f51b5;
+  --indigo600: #3949ab;
+  --indigo700: #303f9f;
   --indigo800: #283593;
-  --indigo900: #1A237E;
+  --indigo900: #1a237e;
 
   --simple-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
     0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
@@ -93,7 +102,6 @@ html {
 
 body {
   background-color: var(--bg);
-  counter-reset: section-counter 0;
   padding: $bodyPaddingVertical 4rem;
   min-width: 100%;
   max-width: 100%;
@@ -152,6 +160,10 @@ main {
   align-items: center;
 }
 
+button {
+  cursor: pointer;
+}
+
 a[href],
 a[routerLink],
 .link {
@@ -175,10 +187,20 @@ mat-radio-group {
 
 //! markdown styling
 markdown {
-  ol, ul {
+  ol,
+  ul {
     padding-left: 2em;
   }
   li:not(:last-of-type) > p {
     margin-bottom: 3px;
+  }
+}
+
+mark {
+  background-color: #fdd835;
+
+  &.current {
+    background-color: #f57c00;
+    color: white;
   }
 }

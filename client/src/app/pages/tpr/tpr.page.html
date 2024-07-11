@@ -1,0 +1,29 @@
+<p class="table-header">Tabela informacji o przedsiębiorstwie</p>
+@if(companyData()){
+<mat-card class="table-card">
+  <app-table
+    [colDefs]="companyColumnDefs"
+    [inputData]="companyData()"
+  ></app-table>
+</mat-card>
+}
+<p class="table-header">Tabele informacji o transakcjach</p>
+@if(companyData()){
+<mat-card class="table-card">
+  <mat-tab-group
+    mat-stretch-tabs="true"
+    mat-align-tabs="start"
+    animationDuration="0ms"
+  >
+    @for (category of itterableTransactionData(); track $index) { @if
+    (category[1].length) {
+    <mat-tab [label]="getLabel(category[0])">
+      <app-table
+        [colDefs]="transactionColumnDefs"
+        [inputData]="category[1]"
+      ></app-table
+    ></mat-tab>
+    }}
+  </mat-tab-group>
+</mat-card>
+}
