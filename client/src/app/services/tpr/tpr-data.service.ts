@@ -3,7 +3,7 @@ import { Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class TprDataServiceService {
+export class TprDataService {
   readonly allTransactionsData = signal<any[]>([]);
   readonly isError = signal<boolean>(false);
 

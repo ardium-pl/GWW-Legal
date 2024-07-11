@@ -13,7 +13,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
 import { columnTypes } from './column-types';
-import { TprDataServiceService } from 'app/services/tpr/tpr-data-service.service';
+import { TprDataService } from 'app/services/tpr/tpr-data.service';
 import { getColumnDefUtil } from 'app/utils/get-column-def.util';
 
 @Component({
@@ -24,7 +24,7 @@ import { getColumnDefUtil } from 'app/utils/get-column-def.util';
   styleUrls: ['./transaction-table.component.scss'],
 })
 export class TransactionTableComponent implements OnInit {
-  private readonly tprDataServiceService = inject(TprDataServiceService);
+  private readonly tprDataServiceService = inject(TprDataService);
   @Input() public transactionType: string = '';
   @Input() public inputData: CategorizedTransaction[] = [];
   public data = signal<CategorizedTransaction[]>([]);
@@ -60,9 +60,6 @@ export class TransactionTableComponent implements OnInit {
     };
     event.api.applyTransaction(tx);
     this.gridApi.redrawRows();
-    console.log(tx);
-    console.log("Stare dane" + JSON.stringify(oldData));
-    console.log("Nowe dane dane" + JSON.stringify(newData));
   }
 
   public sendData() {
