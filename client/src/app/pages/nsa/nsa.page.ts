@@ -404,7 +404,7 @@ export class NsaPage implements OnInit, OnDestroy {
     return this.nsaService.independentQuestionsLoaded()[index];
   }
   independentLoading(index: number) {
-    return this.nsaService.independentQuestionsLoaded()[index] == true;
+    return this.nsaService.independentQuestionsLoaded()[index] == false;
   }
 
   //! resetting
