@@ -3,7 +3,7 @@ export const nsaRouter = express.Router();
 import { askGptAboutNSA } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
-import { getCourtRulingID, getRulingBySignature, getSignatureByContent } from "../sql/courtRulingQuerry.js";
+import { getCourtRulingID, getRulingBySignature } from "../sql/courtRulingQuerry.js";
 import { getGptResponse } from "../sql/gptAnswQuerry.js";
 import { getSystemMessageId, getUserMessageId } from "../sql/messagesQuerry.js";
 

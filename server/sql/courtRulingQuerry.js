@@ -1,11 +1,5 @@
 import { createTCPConnection } from './sqlConnect.js';
 
-export async function getSignatureByContent(caseContent) {
-    const connection = await createTCPConnection();
-    const [result] = await connection.query(`SELECT signature FROM rulings WHERE ruling = ?`, [caseContent]);
-    return result.length > 0 ? result[0].signature : null;
-}
-
 export async function getRulingBySignature(caseSignature) {
     const connection = await createTCPConnection();
     const [results] = await connection.query(`SELECT * FROM rulings WHERE signature = ?`, [caseSignature]);
