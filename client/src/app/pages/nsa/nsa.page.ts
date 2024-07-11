@@ -57,6 +57,13 @@ const DEFAULT_USER_MESSAGES = [
 @Component({
   selector: 'app-nsa',
   standalone: true,
+  providers: [
+    NsaService,
+    provideMarkdown(),
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
+  ],
+  templateUrl: './nsa.page.html',
+  styleUrl: './nsa.page.scss',
   imports: [
     MatCardModule,
     MatFormFieldModule,
@@ -74,14 +81,6 @@ const DEFAULT_USER_MESSAGES = [
     SearchFabComponent,
     MatIconModule,
   ],
-  providers: [
-    NsaService,
-    SearchService,
-    provideMarkdown(),
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
-  ],
-  templateUrl: './nsa.page.html',
-  styleUrl: './nsa.page.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class NsaPage implements OnInit, OnDestroy {

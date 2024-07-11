@@ -1,0 +1,10 @@
+@if (inputData) {
+  <ag-grid-angular
+    class="ag-theme-quartz"
+    domLayout="autoHeight"
+    [rowData]="inputData"
+    [columnDefs]="colDefs"
+    [tooltipShowDelay]="tooltipShowDelay"
+    (gridSizeChanged)="onGridSizeChanged($event)"
+  />
+}

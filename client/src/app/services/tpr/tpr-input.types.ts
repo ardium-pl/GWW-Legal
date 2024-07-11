@@ -10,14 +10,23 @@ export type TPR_input = {
   profitMargin: number;
   returnOnAssets: number;
   returnOnEquity: number;
-  transactions: Array<transaction>;
+  transactions: Array<Transaction>;
 };
 
-type transaction = {
+export type Transaction = {
   transactionCategory: string;
   subjectMatter: string;
   transactionValue: number;
   currencyCode: string;
   correction: 'KC01' | 'KC02';
   compensation: 'KS01' | 'KS02' | 'KS03';
+};
+
+export type TransactionCategories = {
+  categoryA: Transaction[];
+  categoryB: Transaction[];
+  categoryC: Transaction[];
+  categoryD: Transaction[];
+  categoryE: Transaction[];
+  categoryF: Transaction[];
 };
