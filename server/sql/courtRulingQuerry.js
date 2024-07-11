@@ -8,7 +8,8 @@ export async function getRulingBySignature(caseSignature) {
 
 export async function insertRuling(caseSignature, caseContent) {
     const connection = await createTCPConnection();
-    await connection.query(`INSERT INTO rulings (signature, ruling) VALUES (?, ?)`, [caseSignature, caseContent]);
+    const [insertResult] = await connection.query(`INSERT INTO rulings (signature, ruling) VALUES (?, ?)`, [caseSignature, caseContent]);
+    return insertResult.insertId;
 }
 
 export async function getCourtRulingID(caseSignature) {
