@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import mixpanel from 'mixpanel-browser';
+import { environment } from 'environments/environment';
 
 
 @Injectable({
@@ -7,7 +8,7 @@ import mixpanel from 'mixpanel-browser';
 })
 export class MixpanelService {
   constructor() {
-    const GWWToken: any = process.env['GWW_Token'];
+    const GWWToken: any = environment.dataToken;
     mixpanel.init(GWWToken, {
       debug: false,
       track_pageview: true,

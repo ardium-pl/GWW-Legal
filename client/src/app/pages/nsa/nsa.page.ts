@@ -33,6 +33,7 @@ import {
   RequiredStarComponent,
 } from 'app/components';
 import { NsaService } from 'app/services';
+import { MixpanelService } from 'app/services/mixpanel.service';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
@@ -75,6 +76,7 @@ const DEFAULT_USER_MESSAGES = [
 export class NsaPage implements OnInit {
   readonly nsaService = inject(NsaService);
   readonly dialog = inject(MatDialog);
+  readonly mixpanelService = inject(MixpanelService);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -149,6 +151,7 @@ export class NsaPage implements OnInit {
     if (!this.nsaFormPart1.controls.caseSignature.valid) {
       return;
     }
+    this.mixpanelService.track('Orzeczenia');
     this.nsaService.fetchCourtRuling(
       this.nsaFormPart1.controls.caseSignature.value!,
     );
@@ -157,7 +160,7 @@ export class NsaPage implements OnInit {
 
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
-
+    this.mixpanelService.track('Odpowiedzi chatu');
     const values = this.nsaFormPart2.value;
     this.nsaService.fetchGptAnswers(values as NsaFormPart2);
     this.nsaFormPart3.reset();
@@ -166,6 +169,7 @@ export class NsaPage implements OnInit {
 
   fetchAdditionalAnswer(): void {
     if (!this.nsaFormPart3.valid) return;
+    this.mixpanelService.track('Odpowiedzi chatu dodatkowe');
 
     this.nsaFormPart3.markAsPristine();
 

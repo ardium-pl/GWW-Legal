@@ -276,7 +276,7 @@ function mapMW06(transaction: TransactionATable): Partial<MW06> {
         if (transaction.OkresPrognozy === 'TB07') {
             Object.assign(mw06, {
                 OkresProg2: 'TW07',
-                TerminInny: transaction.ZrodloDanychZgodnosci,
+                TerminInny: transaction.TerminInny,
             });
         }
     } else if (transaction.TechWyceny === 'TW07') {

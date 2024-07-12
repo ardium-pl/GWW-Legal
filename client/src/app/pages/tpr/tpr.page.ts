@@ -43,10 +43,10 @@ import { MixpanelService } from 'app/services/mixpanel.service';
 export class TprPage implements OnInit, OnDestroy {
   @ViewChildren(TransactionTableComponent)
   children: QueryList<TransactionTableComponent> | undefined;
-  private readonly tprDataServiceService = inject(TprDataService);
+  private readonly tprDataService = inject(TprDataService);
   private readonly errorSnackbarService = inject(ErrorSnackbarService);
   private readonly clipboardService = inject(ClipboardService);
-  // private readonly mixpanelService = inject(MixpanelService);
+  private readonly mixpanelService = inject(MixpanelService);
   private readonly destroy$$ = new Subject<void>();
   readonly companyData = signal<TPR_input | null>(null);
   constructor() {}
@@ -90,14 +90,14 @@ export class TprPage implements OnInit, OnDestroy {
   }
 
   collectData() {
-    this.tprDataServiceService.clearData();
+    this.tprDataService.clearData();
     this.children && this.children.forEach((child) => child.sendData());
     const companyData = this.companyData();
     if (companyData) {
-      companyData.transactions = this.tprDataServiceService.getData();
+      companyData.transactions = this.tprDataService.getData();
     }
 
-    this.tprDataServiceService.getIsError()
+    this.tprDataService.getIsError()
       ? this.errorSnackbarService.open(
           'Przed wygenerowaniem pliku należy uzupełnić wszystkie niezablokowane komórki tablicy',
         )
@@ -105,7 +105,7 @@ export class TprPage implements OnInit, OnDestroy {
   }
 
   generateXML(companyData: any) {
-    // this.mixpanelService.track('XML');
+    this.mixpanelService.track('XML');
     const tpr = translateToTPR(companyData);
     const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
     const blob = new Blob([xmlVar], { type: 'application/xml' });

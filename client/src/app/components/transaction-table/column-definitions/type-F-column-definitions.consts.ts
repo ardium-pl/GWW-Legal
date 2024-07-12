@@ -5,6 +5,13 @@ import {
   ITooltipParams,
 } from 'ag-grid-community';
 
+function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
+  return Object.keys(mapping).reduce((reverseMapping, key) => {
+    reverseMapping[mapping[key]] = key;
+    return reverseMapping;
+  }, {} as Record<string, string>);
+}
+
 // User friendly code mappings
 const correctionCodeMapping: Record<string, string> = {
   KC01: 'Podatnik dokonał korekty cen transferowych',
@@ -19,22 +26,6 @@ const compensationCodeMapping: Record<string, string> = {
 
 const exemptionCodeMapping: Record<string, string> = {
   ZW01: 'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2',
-};
-
-// Reverse user frendly code mappings
-const correctionCodeReverseMapping: Record<string, string> = {
-  'Podatnik dokonał korekty cen transferowych': 'KC01',
-  'Podatnik nie dokonał korekty cen transferowych': 'KC02',
-};
-
-const compensationCodeReverseMapping: Record<string, string> = {
-  'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP': 'KS01',
-  'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP': 'KS02',
-  'Brak kompensaty': 'KS03',
-};
-
-const exemptionCodeReverseMapping: Record<string, string> = {
-  'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2': 'ZW01',
 };
 
 export const transactionFColDefs: ColDef[] = [
@@ -80,7 +71,7 @@ export const transactionFColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(correctionCodeReverseMapping),
+      values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => correctionCodeMapping[params.value],
   },
@@ -110,7 +101,7 @@ export const transactionFColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(compensationCodeReverseMapping),
+      values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => compensationCodeMapping[params.value],
   },

@@ -24,7 +24,7 @@ import { getColumnDefUtil } from 'app/utils/get-column-def.util';
   styleUrls: ['./transaction-table.component.scss'],
 })
 export class TransactionTableComponent implements OnInit {
-  private readonly tprDataServiceService = inject(TprDataService);
+  private readonly tprDataService = inject(TprDataService);
   @Input() public transactionType: string = '';
   @Input() public inputData: CategorizedTransaction[] = [];
   public data = signal<CategorizedTransaction[]>([]);
@@ -63,7 +63,7 @@ export class TransactionTableComponent implements OnInit {
   }
 
   public sendData() {
-    this.tprDataServiceService.updateData(this.getRawData());
+    this.tprDataService.updateData(this.getRawData());
   }
 
   getRawData(): any[] {
@@ -100,7 +100,7 @@ export class TransactionTableComponent implements OnInit {
             });
           });
           if (isObjectIncomplete) {
-            this.tprDataServiceService.setIsError();
+            this.tprDataService.setIsError();
           } else {
             for (const key in objectKeys) {
               if (
@@ -108,7 +108,7 @@ export class TransactionTableComponent implements OnInit {
                 result[objectKeys[key]] === '' ||
                 result[objectKeys[key]] === undefined
               ) {
-                this.tprDataServiceService.setIsError();
+                this.tprDataService.setIsError();
               }
             }
           }

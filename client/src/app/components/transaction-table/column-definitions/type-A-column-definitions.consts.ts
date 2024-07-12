@@ -5,8 +5,15 @@ import {
   ITooltipParams,
 } from 'ag-grid-community';
 
-//User friejdly code mappings
+// Utility function to generate reverse mappings
+function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
+  return Object.keys(mapping).reduce((reverseMapping, key) => {
+    reverseMapping[mapping[key]] = key;
+    return reverseMapping;
+  }, {} as Record<string, string>);
+}
 
+// User friendly code mappings
 const correctionCodeMapping: Record<string, string> = {
   KC01: 'Podatnik dokonał korekty cen transferowych',
   KC02: 'Podatnik nie dokonał korekty cen transferowych',
@@ -18,19 +25,18 @@ const WynagrodzenieZaRestrukturyzacjeCodeMapping: Record<string, string> = {
   RM03: 'Podmiot wypłacił wynagrodzenie pieniężne za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa',
   RM04: 'Podmiot wypłacił wynagrodzenie w formie innej niż pieniężna za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa',
   RM05: 'Podmiot nie wypłacił ani nie otrzymał wynagrodzenia w jakiejkolwiek formie w związku z przeniesieniem funkcji, aktywów, ryzyk lub praw',
-
-}
+};
 
 const RodzajUmowyCodeMapping: Record<string, string> = {
   RT01: 'Umowa spółki niebędącej osobą prawną',
   RT02: 'Umowa wspólnego przedsięwzięcia lub umowa o podobnym charakterze',
-}
+};
 
 const UdzialCodeMapping: Record<string, string> = {
   UD01: 'Udział w zysku',
   UD02: 'Udział w stracie',
   UD03: 'Udział w majątku likwidacyjnym',
-}
+};
 
 const compensationCodeMapping: Record<string, string> = {
   KS01: 'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP',
@@ -41,12 +47,12 @@ const compensationCodeMapping: Record<string, string> = {
 const ZwolnienieCodeMapping: Record<string, string> = {
   ZW01: 'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2',
   ZW02: 'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2',
-}
+};
 
 const RodzajTransakcjiCodeMapping: Record<string, string> = {
   TK01: 'Transakcja kontrolowana (art. 11k ust. 2 i 2a ustawy)',
   TK02: 'Transakcja inna niż transakcja kontrolowana (art. 11o ust. 1 ustawy)',
-}
+};
 
 const MetodyBadaniaCodeMapping: Record<string, string> = {
   MW00: 'Nie dotyczy',
@@ -56,30 +62,30 @@ const MetodyBadaniaCodeMapping: Record<string, string> = {
   MW04: 'Metoda podziału zysku',
   MW05: 'Metoda marży transakcyjnej netto',
   MW06: 'Inna metoda',
-}
+};
 
-const KorektaMetodyBadaniaCodeMapping:  Record<string, string> = {
+const KorektaMetodyBadaniaCodeMapping: Record<string, string> = {
   KP01: 'Nie dokonano korekty porównywalności',
   KP02: 'Dokonano jednej lub większej liczby korekt porównywalności',
-}
+};
 
 const KorektaPorownywalnosciProgCodeMapping: Record<string, string> = {
   KP02A: 'Korekta porównywalności zmieniająca wynik o mniej niż 30%',
   KP02B: 'Korekta porównywalności zmieniająca wynik o 30% lub więcej',
   KP02C: 'Brak możliwości ustalenia wpływu korekty na wynik',
-}
+};
 
 const SposobWeryfikacjiCodeMapping: Record<string, string> = {
   SW01: 'Porównanie wewnętrzne cen (porównywalny przedmiot transakcji jest kupowany/sprzedawany jednocześnie od/do podmiotów powiązanych i niepowiązanych)',
   SW02: 'Porównanie zewnętrzne cen (istnieją dostępne dane o cenach porównywalnych przedmiotów transakcji, których stronami są podmioty niepowiązane)',
   SW03: 'Porównanie wewnętrzne cen kontrahenta (kontrahent kupuje/sprzedaje porównywalny przedmiot transakcji jednocześnie od/do podatnika i podmiotu niepowiązanego)',
-  SW04: 'Inny sposób weryfikacji rynkowego charakteru ceny'
-}
+  SW04: 'Inny sposób weryfikacji rynkowego charakteru ceny',
+};
 
 const SposobUjeciaCenyCodeMapping: Record<string, string> = {
-CK01:'Cena wyrażona kwotowo',
-CK02:'Cena wyrażona procentowo',
-}
+  CK01: 'Cena wyrażona kwotowo',
+  CK02: 'Cena wyrażona procentowo',
+};
 
 const RodzajPrzedzialuCodeMapping: Record<string, string> = {
   RP01: 'Przedział międzykwartylowy',
@@ -166,168 +172,6 @@ const ZrodloDanychZgodnosciCodeMapping: Record<string, string> = {
   AZ09: 'Inne źródła danych niewymienione powyżej',
 };
 
-
-//Reverse code mappings 
-const correctionCodeReverseMapping: Record<string, string> = {
-  'Podatnik dokonał korekty cen transferowych': 'KC01',
-  'Podatnik nie dokonał korekty cen transferowych': 'KC02',
-};
-
-const WynagrodzenieZaRestrukturyzacjeReverseCodeMapping: Record<string, string> = {
-  'Podmiot otrzymał wynagrodzenie pieniężne za przeniesione na rzecz podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM01',
-  'Podmiot otrzymał wynagrodzenie w formie innej niż pieniężna za przeniesione na rzecz podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM02',
-  'Podmiot wypłacił wynagrodzenie pieniężne za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM03',
-  'Podmiot wypłacił wynagrodzenie w formie innej niż pieniężna za przejęte od podmiotu powiązanego funkcje, aktywa, ryzyka lub prawa': 'RM04',
-  'Podmiot nie wypłacił ani nie otrzymał wynagrodzenia w jakiejkolwiek formie w związku z przeniesieniem funkcji, aktywów, ryzyk lub praw': 'RM05',
-}
-
-const RodzajUmowyReverseCodeMapping: Record<string, string> = {
-  'Umowa spółki niebędącej osobą prawną': 'RT01',
-  'Umowa wspólnego przedsięwzięcia lub umowa o podobnym charakterze': 'RT02',
-}
-
-const UdzialReverseCodeMapping: Record<string, string> = {
-  'Udział w zysku': 'UD01',
-  'Udział w stracie': 'UD02',
-  'Udział w majątku likwidacyjnym': 'UD03',
-}
-
-const compensationCodeReverseMapping: Record<string, string> = {
-  'Korzyści podlegały kompensacie na podstawie § 9 ust. 1 Rozporządzenia TP': 'KS01',
-  'Dochód podlegał kompensacie na podstawie § 9 ust. 2 Rozporządzenia TP': 'KS02',
-  'Brak kompensaty': 'KS03',
-};
-
-const ZwolnienieCodeReverseMapping: Record<string, string> = {
-  'Transakcja KORZYSTA ze zwolnienia na podstawie art 11-n pkt 1-2': 'ZW01' ,
-  'Transakcja NIE KORZYSTA ze zwolenia na podstawie art 11-n pkt 1-2': 'ZW02'
- }
-
- const RodzajTransakcjiReverseCodeMapping: Record<string, string> = {
-  'Transakcja kontrolowana (art. 11k ust. 2 i 2a ustawy)': 'TK01',
-  'Transakcja inna niż transakcja kontrolowana (art. 11o ust. 1 ustawy)': 'TK02',
-}
-
-const MetodyBadaniaReverseCodeMapping: Record<string, string> = {
-  'Nie dotyczy': 'MW00',
-  'Metoda porównywalnej ceny niekontrolowanej':'MW01',
-  'Metoda ceny odprzedaży' :'MW02',
-  'Metoda koszt plus':'MW03',
-  'Metoda podziału zysku':'MW04',
-  'Metoda marży transakcyjnej netto':'MW05',
-  'Inna metoda':'MW06',
-}
-
-const KorektaMetodyBadaniaReverseCodeMapping:  Record<string, string> = {
-  'Nie dokonano korekty porównywalności': 'KP01',
-  'Dokonano jednej lub większej liczby korekt porównywalności': 'KP02',
-}
-
-const KorektaPorownywalnosciProgReverseCodeMapping: Record<string, string> = {
-  'Korekta porównywalności zmieniająca wynik o mniej niż 30%': 'KP02A',
-  'Korekta porównywalności zmieniająca wynik o 30% lub więcej': 'KP02B',
-  'Brak możliwości ustalenia wpływu korekty na wynik': 'KP02C'
-}
-
-const SposobWeryfikacjiReverseCodeMapping: Record<string, string> = {
-  'Porównanie wewnętrzne cen (porównywalny przedmiot transakcji jest kupowany/sprzedawany jednocześnie od/do podmiotów powiązanych i niepowiązanych)': 'SW01',
-  'Porównanie zewnętrzne cen (istnieją dostępne dane o cenach porównywalnych przedmiotów transakcji, których stronami są podmioty niepowiązane)': 'SW02',
-  'Porównanie wewnętrzne cen kontrahenta (kontrahent kupuje/sprzedaje porównywalny przedmiot transakcji jednocześnie od/do podatnika i podmiotu niepowiązanego)': 'SW03',
-  'Inny sposób weryfikacji rynkowego charakteru ceny': 'SW04'
-}
-
-const SposobUjeciaCenyReverseCodeMapping: Record<string, string> = {
-  'Cena wyrażona kwotowo': 'CK01',
-  'Cena wyrażona procentowo': 'CK02'
-}
-
-const RodzajPrzedzialuReverseCodeMapping: Record<string, string> = {
-  'Przedział międzykwartylowy': 'RP01',
-  'Przedział pełny': 'RP02',
-  'Inny przedział': 'RP03',
-  'Jedna wartość': 'RP04'
-}
-
-const WskaznikFinansowyReverseCodeMapping: Record<string, string> = {
-  'Marża brutto ze sprzedaży': 'WF01',
-  'Marża brutto z odprzedaży': 'WF02',
-  'Narzut brutto ze sprzedaży': 'WF03',
-  'Marża netto ze sprzedaży': 'WF04',
-  'Narzut netto ze sprzedaży': 'WF05',
-  'Marża operacyjna': 'WF06',
-  'Narzut operacyjny': 'WF07',
-  'Marża zysku brutto': 'WF08',
-  'Narzut zysku brutto': 'WF09',
-  'Rentowność aktywów': 'WF10',
-  'Rentowność kapitału własnego': 'WF11',
-  'Wskaźnik Berry’ego': 'WF12',
-  'Inny wskaźnik oparty o dane polskie': 'WF13',
-  'Narzut EBIT': 'WF14',
-  'Marża EBIT': 'WF15',
-  'Rentowność kapitału własnego (dane międzynarodowe)': 'WF16',
-  'Inny wskaźnik oparty o dane międzynarodowe': 'WF17'
-}
-
-const RodzajPorownaniaReverseCodeMapping: Record<string, string> = {
-  'Wewnętrzne': 'PR01',
-  'Zewnętrzne': 'PR02',
-  'Wewnętrzne przygotowane przez kontrahenta': 'PR03'
-}
-
-const PodmiotBadanyReverseCodeMapping: Record<string, string> = {
-  'Podmiot, którego dotyczy informacja o cenach transferowych': 'PB01',
-  'Kontrahent': 'PB02'
-}
-
-const KryteriumGeograficzneReverseCodeMapping: Record<string, string> = {
-  'Polska': 'KG01',
-  'Region': 'KG02',
-  'Europa': 'KG03',
-  'Świat': 'KG04',
-  'Inne': 'KG05'
-}
-
-const RodzajMetodyPodzialuZyskuReverseCodeMapping: Record<string, string> = {
-  'Podział zysku (straty) za pomocą analizy rezydualnej, w przypadku gdy uprawniony do otrzymania zysku rutynowego jest podmiot, którego dotyczy Informacja TPR': 'PZ01',
-  'Podział zysku (straty) za pomocą analizy rezydualnej, w przypadku gdy uprawniony do otrzymania zysku rutynowego jest kontrahent (kontrahenci) podmiotu, którego dotyczy Informacja TPR': 'PZ02',
-  'Podział zysku (straty) za pomocą analizy rezydualnej, w przypadku gdy uprawniony do otrzymania zysku rutynowego jest zarówno podmiot, którego dotyczy Informacja TPR, jak i jego kontrahent (kontrahenci)': 'PZ03',
-  'Podział zysku (straty) za pomocą analizy udziału': 'PZ04'
-}
-
-const TechWycenyReverseCodeMapping: Record<string, string> = {
-  'Metoda dochodowa (DCF)': 'TW01',
-  'Metoda dochodowa inna niż DCF': 'TW02',
-  'Metoda porównawcza': 'TW03',
-  'Metoda majątkowa': 'TW04',
-  'Metoda statystyczna': 'TW05',
-  'Kombinacja dwu lub więcej metod wskazanych powyżej': 'TW06',
-  'Analiza zgodności – w pozostałych przypadkach': 'TW07'
-}
-
-const OkresPrognozyReverseCodeMapping: Record<string, string> = {
-  '1 dzień (O/N)': 'TB01',
-  '1 miesiąc': 'TB02',
-  '3 miesiące': 'TB03',
-  '6 miesięcy': 'TB04',
-  '9 miesięcy': 'TB05',
-  '1 rok': 'TB06',
-  'Inny': 'TB07'
-}
-
-const ZrodloDanychZgodnosciReverseCodeMapping: Record<string, string> = {
-  'Statystki publiczne': 'AZ01',
-  'Dane ofertowe': 'AZ02',
-  'Ogólnodostępne raporty z analiz rynkowych lub branżowych': 'AZ03',
-  'Raporty z innych analiz (w tym cyklu życia produktu, opcji realistycznie dostępnych, korzyści stron transakcji)': 'AZ04',
-  'Notowania giełdowe': 'AZ05',
-  'Notowanie pozagiełdowe': 'AZ06',
-  'Procedury wewnętrzne (np. metodyki ustalania cen)': 'AZ07',
-  'Praktyka rynkowa': 'AZ08',
-  'Inne źródła danych niewymienione powyżej': 'AZ09'
-}
-
-
-
 export const transactionAColDefs: ColDef[] = [
   {
     field: 'transactionCategory',
@@ -345,19 +189,19 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(WynagrodzenieZaRestrukturyzacjeReverseCodeMapping),
+      values: Object.values(createReverseMapping(WynagrodzenieZaRestrukturyzacjeCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => WynagrodzenieZaRestrukturyzacjeCodeMapping[params.value],
   },
   {
-    field:'RodzajUmowy',
+    field: 'RodzajUmowy',
     headerName: 'Rodzaj Umowy',
     headerTooltip: 'Rodzaj Umowy',
     type: 'A2Type',
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(RodzajUmowyReverseCodeMapping),
+      values: Object.values(createReverseMapping(RodzajUmowyCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajUmowyCodeMapping[params.value],
   },
@@ -434,7 +278,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(UdzialReverseCodeMapping),
+      values: Object.values(createReverseMapping(UdzialCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => UdzialCodeMapping[params.value],
   },
@@ -498,7 +342,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(correctionCodeReverseMapping),
+      values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => correctionCodeMapping[params.value],
   },
@@ -528,7 +372,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(compensationCodeReverseMapping),
+      values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => compensationCodeMapping[params.value],
   },
@@ -539,7 +383,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(ZwolnienieCodeReverseMapping),
+      values: Object.values(createReverseMapping(ZwolnienieCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => ZwolnienieCodeMapping[params.value],
   },
@@ -588,7 +432,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'exemptionSecondType',
     cellEditorParams: {
-      values: Object.values(RodzajTransakcjiReverseCodeMapping),
+      values: Object.values(createReverseMapping(RodzajTransakcjiCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajTransakcjiCodeMapping[params.value],
   },
@@ -625,8 +469,8 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Metoda badania',
     type: 'exemptionSecondType',
     cellEditor: 'agSelectCellEditor',
-    cellEditorParams:{
-      values: Object.values(MetodyBadaniaReverseCodeMapping),
+    cellEditorParams: {
+      values: Object.values(createReverseMapping(MetodyBadaniaCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => MetodyBadaniaCodeMapping[params.value],
   },
@@ -637,7 +481,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'analysisMethodType',
     cellEditorParams: {
-      values: Object.values(SposobWeryfikacjiReverseCodeMapping),
+      values: Object.values(createReverseMapping(SposobWeryfikacjiCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => SposobWeryfikacjiCodeMapping[params.value],
   },
@@ -647,7 +491,7 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Korekta dla metody badania',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(KorektaMetodyBadaniaReverseCodeMapping),
+      values: Object.values(createReverseMapping(KorektaMetodyBadaniaCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => KorektaMetodyBadaniaCodeMapping[params.value],
     editable: ({ data }) =>
@@ -670,7 +514,7 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Korekta porównywalności próg',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(KorektaPorownywalnosciProgReverseCodeMapping),
+      values: Object.values(createReverseMapping(KorektaPorownywalnosciProgCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => KorektaPorownywalnosciProgCodeMapping[params.value],
     editable: ({ data }) =>
@@ -696,9 +540,9 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'analysisMethodType',
     cellEditorParams: {
-      values: Object.values(SposobUjeciaCenyReverseCodeMapping),
+      values: Object.values(createReverseMapping(SposobUjeciaCenyCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => SposobUjeciaCenyCodeMapping[params.value]
+    valueFormatter: params => SposobUjeciaCenyCodeMapping[params.value],
   },
   {
     field: 'Waluta1',
@@ -745,7 +589,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'PrzedzialType',
     cellEditorParams: {
-      values: Object.values(RodzajPrzedzialuReverseCodeMapping),
+      values: Object.values(createReverseMapping(RodzajPrzedzialuCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajPrzedzialuCodeMapping[params.value],
   },
@@ -907,13 +751,12 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'MW235Type',
     cellEditorParams: {
-      values: Object.values(WskaznikFinansowyReverseCodeMapping),
+      values: Object.values(createReverseMapping(WskaznikFinansowyCodeMapping)),
       valueListMaxHeight: 120,
       valueListMaxWidth: 120,
     } as ISelectCellEditorParams,
     valueFormatter: params => WskaznikFinansowyCodeMapping[params.value],
-  }
-  ,
+  },
   {
     field: 'WynikTransakcji',
     headerName: 'Wynik transakcji',
@@ -932,7 +775,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'MW235Type',
     cellEditorParams: {
-      values: Object.values(RodzajPorownaniaReverseCodeMapping),
+      values: Object.values(createReverseMapping(RodzajPorownaniaCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajPorownaniaCodeMapping[params.value],
   },
@@ -943,7 +786,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'PR02Type',
     cellEditorParams: {
-      values: Object.values(PodmiotBadanyReverseCodeMapping),
+      values: Object.values(createReverseMapping(PodmiotBadanyCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => PodmiotBadanyCodeMapping[params.value],
   },
@@ -954,7 +797,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'PR02Type',
     cellEditorParams: {
-      values: Object.values(KryteriumGeograficzneReverseCodeMapping),
+      values: Object.values(createReverseMapping(KryteriumGeograficzneCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => KryteriumGeograficzneCodeMapping[params.value],
   },
@@ -965,7 +808,7 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     type: 'MW04Type',
     cellEditorParams: {
-      values: Object.values(RodzajMetodyPodzialuZyskuReverseCodeMapping),
+      values: Object.values(createReverseMapping(RodzajMetodyPodzialuZyskuCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => RodzajMetodyPodzialuZyskuCodeMapping[params.value],
   },
@@ -1012,7 +855,7 @@ export const transactionAColDefs: ColDef[] = [
     type: 'MW06Type',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(TechWycenyReverseCodeMapping),
+      values: Object.values(createReverseMapping(TechWycenyCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => TechWycenyCodeMapping[params.value],
   },
@@ -1034,7 +877,7 @@ export const transactionAColDefs: ColDef[] = [
     type: 'TechWycenyType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(OkresPrognozyReverseCodeMapping),
+      values: Object.values(createReverseMapping(OkresPrognozyCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => OkresPrognozyCodeMapping[params.value],
   },
@@ -1043,11 +886,8 @@ export const transactionAColDefs: ColDef[] = [
     headerName: 'Termin inny',
     headerTooltip: 'Termin inny',
     type: 'InnyTerminType',
-    cellEditor: 'agSelectCellEditor',
-    cellEditorParams: {
-      values: Object.values(RodzajPrzedzialuReverseCodeMapping),
-    } as ISelectCellEditorParams,
-    valueFormatter: params => RodzajPrzedzialuCodeMapping[params.value],
+    cellEditor: 'agTextCellEditor',
+    cellDataType: 'text'
   },
   {
     field: 'ZrodloDanychZgodnosci',
@@ -1055,7 +895,7 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Źródło danych zgodności',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(ZrodloDanychZgodnosciReverseCodeMapping),
+      values: Object.values(createReverseMapping(ZrodloDanychZgodnosciCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => ZrodloDanychZgodnosciCodeMapping[params.value],
     editable: ({ data }) =>
