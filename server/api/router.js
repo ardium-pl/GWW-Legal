@@ -3,7 +3,9 @@ export const nsaRouter = express.Router();
 import { askGptAboutNSA } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
-
+import { getCourtRulingID, getRulingBySignature } from "../sql/courtRulingQuerry.js";
+import { getGptResponse } from "../sql/gptAnswQuerry.js";
+import { getSystemMessageId, getUserMessageId } from "../sql/messagesQuerry.js";
 
 nsaRouter.post("/api/nsa/query", async (req, res) => {
   try {
@@ -19,7 +21,11 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
         return;
       }
     }
-
+    const dbCourtRuling = await getRulingBySignature(caseSignature);
+    if (dbCourtRuling) {
+      res.json([dbCourtRuling]);
+      return;
+    }
     const result = await getCourtRuling(caseSignature);
     res.json(result);
   } catch (error) {
@@ -37,7 +43,7 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
 
 nsaRouter.post("/api/nsa/question", async (req, res) => {
   try {
-    const { courtRuling, systemMessage, userMessage } = req.body;
+    const { caseSignature, courtRuling, systemMessage, userMessage } = req.body;
     if (!courtRuling) {
       return res.status(400).send({ error: "Court ruling is required." });
     }
@@ -50,7 +56,13 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
       }
     }
 
-    const response = await askGptAboutNSA(systemMessage, userMessage, courtRuling);
+    const courtRulingID = await getCourtRulingID(caseSignature);
+    const systemMessageID = await getSystemMessageId(systemMessage);
+    const userMessageID = await getUserMessageId(userMessage);
+
+    const response = await getGptResponse(courtRulingID, systemMessageID, userMessageID) ||
+      await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature);
+
     res.status(200).json(response);
   } catch (error) {
     console.error(error);

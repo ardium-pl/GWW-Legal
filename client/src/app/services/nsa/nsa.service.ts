@@ -26,8 +26,11 @@ export class NsaService implements OnDestroy {
   private readonly _rulingError = signal<string[] | null>(null);
   public readonly rulingError = this._rulingError.asReadonly();
 
+  private _caseSignature: string = ''; 
+
   public fetchCourtRuling(caseSignature: string): void {
     this._rulingRequestState.set(RequestState.Pending);
+    this._caseSignature = caseSignature;
     const sub = this.http
       .post(apiUrl('/nsa/query'), { caseSignature })
       .pipe(
@@ -81,6 +84,7 @@ export class NsaService implements OnDestroy {
     this.resetAdditionalAnswer();
 
     const courtRuling = this.getCleanCourtRuling();
+    const caseSignature = this._caseSignature;
 
     const streams = [
       formOutput.userMessage1,
@@ -88,6 +92,7 @@ export class NsaService implements OnDestroy {
       formOutput.userMessage3,
     ].map((userMessage) =>
       this.http.post(apiUrl('/nsa/question'), {
+        caseSignature,
         courtRuling,
         systemMessage: formOutput.systemMessage,
         userMessage,

@@ -40,8 +40,8 @@
           @if (nsaService.rulingRequestState() === 'error') {
           <strong>Wystąpił błąd!</strong>
           <div>
-            @for (paragraph of nsaService.rulingError(); track $index) {
-            <div [innerHTML]="paragraph"></div>
+            @for (paragraph of nsaService.rulingResponse(); track $index) {
+            <div [innerText]="paragraph"></div>
             }
             <div class="ruling-text">
               <mat-form-field class="full-size">
