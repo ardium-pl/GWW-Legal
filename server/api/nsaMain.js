@@ -37,18 +37,15 @@ async function fetchIDs(caseSignature, userMessage, systemMessage, courtRuling) 
 
 
   if (!rulingID) {
-    const insertId = await insertRuling(caseSignature, courtRuling);
-    rulingID = insertId;
+    rulingID = await insertRuling(caseSignature, courtRuling);;
   }
 
-  if (!userMessage) {
-    const insertId = await insertUserMessage(userMessage);
-    userMessageID = insertId;
+  if (!userMessageID) {
+    userMessageID = await insertUserMessage(userMessage);;
   }
 
   if (!systemMessageID) {
-    const insertId = await insertSystemMessage(systemMessage);
-    systemMessageID = insertId;
+    systemMessageID = await insertSystemMessage(systemMessage);
   }
 
 
