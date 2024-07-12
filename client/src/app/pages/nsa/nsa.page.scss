@@ -253,3 +253,14 @@ mat-checkbox {
   flex-direction: column;
   gap: 1.5rem;
 }
+//! conversations
+.pager-container {
+  mat-card-header {
+    position: relative;
+  }
+  .conversation-button {
+    position: absolute;
+    right: -8px;
+    top: 8px;
+  }
+}

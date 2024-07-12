@@ -1,0 +1,53 @@
+$border-radius: 9px;
+
+.message-bubble {
+  --_current-bg: whitesmoke;
+  position: relative;
+  margin-bottom: 20px;
+  padding: 16px;
+  color: var(--text);
+  background: var(--_current-bg);
+  border-radius: $border-radius;
+  border-bottom-right-radius: 0;
+  margin-left: auto;
+  margin-right: 8px + $border-radius;
+  max-width: calc(min(100%, 600px) - $border-radius);
+
+  .bubble-arrow {
+    position: absolute;
+    width: $border-radius * 2;
+    height: $border-radius * 2;
+    overflow: hidden;
+    bottom: 0;
+    right: -#{$border-radius * 2};
+
+    &::before {
+      content: "";
+      background: transparent;
+      position: absolute;
+      width: $border-radius * 2;
+      height: calc(2 * #{$border-radius * 2});
+      border-bottom-left-radius: $border-radius * 2;
+      bottom: 0;
+      box-shadow: 0 $border-radius * 2 0 0 var(--_current-bg);
+    }
+  }
+
+  &.bubble-left {
+    --_current-bg: var(--indigo50);
+    border-radius: $border-radius;
+    border-bottom-left-radius: 0;
+    margin-left: 8px + $border-radius;
+    margin-right: auto;
+
+    .bubble-arrow {
+      right: unset;
+      left: -#{$border-radius * 2};
+
+      &::before {
+        border-radius: 0;
+        border-bottom-right-radius: $border-radius * 2;
+      }
+    }
+  }
+}

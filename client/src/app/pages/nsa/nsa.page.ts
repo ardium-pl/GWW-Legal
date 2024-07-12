@@ -22,6 +22,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
@@ -35,8 +36,10 @@ import {
   IconComponent,
   RequiredStarComponent,
 } from 'app/components';
+import { GptConversationDialogComponent, GptConversationDialogData } from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
+import { GptConversation } from 'app/services/nsa/gpt-conversation';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
@@ -67,6 +70,7 @@ const DEFAULT_USER_MESSAGES = [
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
     MatProgressSpinnerModule,
     RequiredStarComponent,
     FormsModule,
@@ -300,14 +304,26 @@ export class NsaPage implements OnInit, OnDestroy {
     signal<boolean>(false);
 
   onShowImmediatelyChange(value: boolean): void {
-    if (value || this.nsaService.isAtLeastOneGptAnswerReady()) {
+    if (!value) return;
+
+    if (this.nsaService.isAtLeastOneGptAnswerReady()) {
       this.showGptResultsImmediately.set(value);
     }
-    if (value) {
-      this.wasShowGptResultsImmediatelyChangedDuringPending.set(
-        this.nsaService.isAtLeastOneGptAnswerReady(),
-      );
-    }
+    this.wasShowGptResultsImmediatelyChangedDuringPending.set(
+      this.nsaService.isAtLeastOneGptAnswerReady(),
+    );
+  }
+
+  //! additional conversation
+  readonly currentConversation = signal<GptConversation | undefined>(undefined);
+  onClickOpenConversation(index: number) {
+    this.currentConversation.set(this.nsaService.conversations().at(index));
+    this.dialog.open(GptConversationDialogComponent, {
+      data: {
+        conversationIndex: index,
+        nsaServiceInstance: this.nsaService,
+      } as GptConversationDialogData,
+    });
   }
 
   //! button tooltips

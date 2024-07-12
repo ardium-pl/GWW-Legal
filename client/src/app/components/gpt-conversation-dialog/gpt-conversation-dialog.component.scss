@@ -1,0 +1,14 @@
+
+$close-btn-size: 48px;
+
+h2 {
+  position: relative;
+  margin-right: $close-btn-size;
+  margin-bottom: 0;
+}
+
+.close-btn {
+  position: absolute;
+  top: 4px;
+  right: calc(4px - #{$close-btn-size});
+}

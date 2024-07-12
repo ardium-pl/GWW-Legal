@@ -225,6 +225,14 @@
       <mat-card>
         <mat-card-header>
           Odpowiedź na pytanie {{ $index + 1 }}
+          <button
+            class="conversation-button"
+            mat-icon-button
+            matTooltip="Zadaj dodatkowe pytanie"
+            (click)="onClickOpenConversation($index)"
+          >
+            <mat-icon fontIcon="forum" />
+          </button>
         </mat-card-header>
         <mat-card-content>
           @if (nsaService.gptAnswersProgress()[$index]) {
@@ -248,12 +256,12 @@
             aria-label="Wybierz opcję"
             formControlName="additionalQuestion"
           >
-            <mat-radio-button [value]="additionalQuestions[0].value"
-              >{{ additionalQuestions[0].label }}</mat-radio-button
-            >
-            <mat-radio-button [value]="additionalQuestions[1].value"
-              >{{ additionalQuestions[1].label }}</mat-radio-button
-            >
+            <mat-radio-button [value]="additionalQuestions[0].value">
+              {{ additionalQuestions[0].label }}
+            </mat-radio-button>
+            <mat-radio-button [value]="additionalQuestions[1].value">
+              {{ additionalQuestions[1].label }}
+            </mat-radio-button>
           </mat-radio-group>
           <mat-card-actions>
             <div [matTooltip]="getAdditionalAnswerButtonTooltip()">

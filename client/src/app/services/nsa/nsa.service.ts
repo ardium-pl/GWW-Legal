@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
-import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
-import { RequestState } from '../types';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
+import { RequestState } from '../types';
+import { GptConversation } from './gpt-conversation';
+import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -82,11 +83,13 @@ export class NsaService implements OnDestroy {
 
     const courtRuling = this.getCleanCourtRuling();
 
-    const streams = [
+    const userMessages = [
       formOutput.userMessage1,
       formOutput.userMessage2,
       formOutput.userMessage3,
-    ].map((userMessage) =>
+    ];
+
+    const streams = userMessages.map((userMessage) =>
       this.http.post(apiUrl('/nsa/question'), {
         courtRuling,
         systemMessage: formOutput.systemMessage,
@@ -96,6 +99,7 @@ export class NsaService implements OnDestroy {
 
     this._gptAnswersProgress.set(new Array(streams.length).fill(false));
     this._gptAnswersResponse.set(new Array(streams.length).fill(''));
+    this.resetAndInitializeConversations(streams.length);
 
     streams.forEach((stream, i) => {
       const sub = stream
@@ -130,6 +134,12 @@ export class NsaService implements OnDestroy {
             newArr[i] = response as string;
             return newArr;
           });
+          this.createConversation(
+            i,
+            formOutput.systemMessage!,
+            userMessages[i]!,
+            response as string,
+          );
         });
     });
   }
@@ -163,6 +173,47 @@ export class NsaService implements OnDestroy {
       .subscribe((res) => {
         this._additionalAnswerResponse.set(res as string);
         this._isAdditionalAnswerLoading.set(false);
+      });
+  }
+
+  //! conversations
+  private readonly _conversations = signal<GptConversation[]>([]);
+  public readonly conversations = this._conversations.asReadonly();
+
+  resetAndInitializeConversations(amount: number) {
+    this._conversations.set(new Array(amount));
+  }
+  createConversation(
+    index: number,
+    systemMessage: string,
+    userMessage: string,
+    response: string,
+  ) {
+    console.log('this.createConversation', response);
+    this._conversations.update((arr) => {
+      const newArr = [...arr];
+      newArr[index] = new GptConversation(systemMessage, userMessage, response);
+      return newArr;
+    });
+    console.log(this._conversations());
+  }
+  fetchConversationAnswer(index: number, userMessage: string): void {
+    const convo = this.conversations()[index];
+
+    convo.addUserMessage(userMessage);
+    convo.addEmptyResponse();
+
+    this.http
+      .post(apiUrl('/nsa/conversation'), {
+        courtRuling: this.getCleanCourtRuling(),
+        messageHistory: convo.items.map((v) => ({
+          content: v.content,
+          type: v.type,
+        })),
+      })
+      .pipe(takeUntil(this.cancel$))
+      .subscribe((response) => {
+        convo.setLatestResponseContent(response as string);
       });
   }
 
