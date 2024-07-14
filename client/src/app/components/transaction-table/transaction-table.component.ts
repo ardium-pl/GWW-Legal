@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  computed,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   CellEditRequestEvent,
@@ -14,7 +22,10 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
 import { columnTypes } from './column-types';
 import { TprDataService } from 'app/services/tpr/tpr-data.service';
-import { getColumnDefUtil } from 'app/utils/get-column-def.util';
+import {
+  getColumnDefUtil,
+  getKeysToCheck,
+} from 'app/utils/get-column-def.util';
 
 @Component({
   selector: 'app-transaction-table',
@@ -23,24 +34,20 @@ import { getColumnDefUtil } from 'app/utils/get-column-def.util';
   templateUrl: './transaction-table.component.html',
   styleUrls: ['./transaction-table.component.scss'],
 })
-export class TransactionTableComponent implements OnInit {
+export class TransactionTableComponent {
   private readonly tprDataService = inject(TprDataService);
-  @Input() public transactionType: string = '';
-  @Input() public inputData: CategorizedTransaction[] = [];
-  public data = signal<CategorizedTransaction[]>([]);
-  public defaultKeys = signal<string[]>([]);
-  public colDefs: ColDef[] = [];
-  public defaultColDef: ColDef = {
+  public readonly transactionType = input<string>('');
+  public readonly inputData = input.required<CategorizedTransaction[]>();
+  public readonly defaultKeys = computed(() =>
+    getKeysToCheck(this.transactionType()),
+  );
+  public readonly colDefs = computed(() =>
+    getColumnDefUtil(this.transactionType()),
+  );
+  public readonly defaultColDef: ColDef = {
     editable: true,
   };
   private gridApi!: GridApi<any>;
-
-  public ngOnInit(): void {
-    this.colDefs = getColumnDefUtil(this.transactionType, this.defaultKeys);
-    if (this.inputData) {
-      this.data.set(this.inputData);
-    }
-  }
 
   onGridReady(params: GridReadyEvent<any>) {
     this.gridApi = params.api;
@@ -116,7 +123,8 @@ export class TransactionTableComponent implements OnInit {
       });
   }
 
-  public getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;
+  public readonly getRowId: GetRowIdFunc = (params: GetRowIdParams) =>
+    params.data.Id;
 
   public resetValuesForNonEditableColumns(oldData: any) {
     const newRow: any = { ...oldData };

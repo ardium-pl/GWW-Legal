@@ -23,7 +23,7 @@ export async function getCourtRuling(signature) {
   const browser = await puppeteer.connect({
     browserWSEndpoint: process.env.BROWSER_WS_ENDPOINT,
     headless: false,
-    args: [`--user-agent=${getRandomUserAgent()}`]
+    args: [`--user-agent=${getRandomUserAgent()}`],
   });
 
   const page = await browser.newPage();
@@ -40,25 +40,31 @@ export async function getCourtRuling(signature) {
     const links = await page.$$("a");
 
     if (links.length < 3 || links.length === 33) {
-      throw { message: "No ruling found for the provided signature", code: "NOT_FOUND_ERR" };
+      throw {
+        message: "No ruling found for the provided signature",
+        code: "NOT_FOUND_ERR",
+      };
     }
 
     await links[2].click();
-    await page.waitForSelector("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
+    await page.waitForSelector(
+      "td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie",
+    );
 
     await delay(3000); //Pptr needs more time for the content to load
 
     const extractedText = await page.evaluate(() => {
-      const elements = document.querySelectorAll("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
-      return Array.from(elements).map(element => element.innerHTML.trim());
+      const elements = document.querySelectorAll(
+        "td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie",
+      );
+      return Array.from(elements).map((element) => element.innerHTML.trim());
     });
 
-    if (extractedText.length > 0) {      
+    if (extractedText.length > 0) {
       return extractedText;
     } else {
       throw { message: "No text found for the ruling.", code: "NO_TEXT_ERR" };
     }
-
   } catch (error) {
     if (error.code === "NOT_FOUND_ERR" || error.code === "NO_TEXT_ERR") {
       throw error;
@@ -71,7 +77,7 @@ export async function getCourtRuling(signature) {
 }
 
 function delay(time) {
-  return new Promise(function(resolve) { 
-      setTimeout(resolve, time)
+  return new Promise(function (resolve) {
+    setTimeout(resolve, time);
   });
 }

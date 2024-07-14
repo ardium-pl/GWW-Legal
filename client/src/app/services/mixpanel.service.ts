@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import mixpanel from 'mixpanel-browser';
 import { environment } from 'environments/environment';
 
-
 @Injectable({
   providedIn: 'root',
 })

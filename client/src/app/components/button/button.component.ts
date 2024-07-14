@@ -3,20 +3,22 @@ import { coerceBooleanProperty } from '@ardium-ui/devkit';
 import { ButtonAppearance } from './button.types';
 
 @Component({
-    selector: 'app-button',
-    standalone: true,
-    imports: [],
-    templateUrl: './button.component.html',
-    styleUrl: './button.component.scss',
+  selector: 'app-button',
+  standalone: true,
+  imports: [],
+  templateUrl: './button.component.html',
+  styleUrl: './button.component.scss',
 })
 export class ButtonComponent {
-    readonly disabled = input<boolean, any>(false, { transform: v => coerceBooleanProperty(v) });
+  readonly disabled = input<boolean, any>(false, {
+    transform: (v) => coerceBooleanProperty(v),
+  });
 
-    readonly htmlId = input<string | null | undefined>(null);
+  readonly htmlId = input<string | null | undefined>(null);
 
-    readonly appearance = input<ButtonAppearance>(ButtonAppearance.Raised);
+  readonly appearance = input<ButtonAppearance>(ButtonAppearance.Raised);
 
-    readonly classes = computed<string>(() => {
-        return [`appearance-${this.appearance()}`].join(' ');
-    });
+  readonly classes = computed<string>(() => {
+    return [`appearance-${this.appearance()}`].join(' ');
+  });
 }

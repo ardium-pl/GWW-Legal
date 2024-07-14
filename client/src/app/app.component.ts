@@ -8,7 +8,13 @@ import { ButtonComponent } from './components/button/button.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HttpClientModule, ClipboardModule, ButtonComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    HttpClientModule,
+    ClipboardModule,
+    ButtonComponent,
+  ],
   templateUrl: './app.component.html',
 })
 export class AppComponent {}

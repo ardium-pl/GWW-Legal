@@ -23,7 +23,7 @@ import { translateToTPR } from 'app/utils/tpr-translator.util';
 import * as xmljs from 'xml-js';
 import { saveAs } from 'file-saver';
 import { ErrorSnackbarService } from 'app/services/snackbar.service';
-import { ButtonComponent } from "../../components/button/button.component";
+import { ButtonComponent } from '../../components/button/button.component';
 import { MixpanelService } from 'app/services/mixpanel.service';
 
 @Component({
@@ -34,8 +34,8 @@ import { MixpanelService } from 'app/services/mixpanel.service';
     TransactionTableComponent,
     MatCardModule,
     MatTabsModule,
-    ButtonComponent
-],
+    ButtonComponent,
+  ],
   providers: [ClipboardService, TprDataService, ErrorSnackbarService],
   templateUrl: './tpr.page.html',
   styleUrl: './tpr.page.scss',

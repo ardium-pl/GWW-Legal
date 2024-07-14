@@ -1,7 +1,7 @@
 export type TransakcjaKategoriaD<
-  K extends KorektaCenTransferowych = KorektaCenTransferowych
+  K extends KorektaCenTransferowych = KorektaCenTransferowych,
 > = {
-  KategoriaD: '1201'|'2201';
+  KategoriaD: '1201' | '2201';
   PrzedmiotD: string;
   WartoscD: {
     _attributes: {
@@ -44,14 +44,18 @@ export type TransakcjaKategoriaD<
     };
     _text: number;
   };
-} &
-(K extends 'KC01' ? KC01 : {}) &
-(K extends 'KC02' ? KC02 : {}) &
-(
-  | { NIPKontr1: string; PESELKontr1?: never; NrIdKontr1?: never }
-  | { NIPKontr1?: never; PESELKontr1: string; NrIdKontr1?: never }
-  | { NIPKontr1?: never; PESELKontr1?: never; NrIdKontr1: string; KodKrajuWydania1: string }
-);
+} & (K extends 'KC01' ? KC01 : {}) &
+  (K extends 'KC02' ? KC02 : {}) &
+  (
+    | { NIPKontr1: string; PESELKontr1?: never; NrIdKontr1?: never }
+    | { NIPKontr1?: never; PESELKontr1: string; NrIdKontr1?: never }
+    | {
+        NIPKontr1?: never;
+        PESELKontr1?: never;
+        NrIdKontr1: string;
+        KodKrajuWydania1: string;
+      }
+  );
 
 type KC01 = {
   KorektaCT5: 'KC01';

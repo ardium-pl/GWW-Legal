@@ -1,7 +1,7 @@
 export type TransakcjaKategoriaF<
-  K extends KorektaCenTransferowych = KorektaCenTransferowych
+  K extends KorektaCenTransferowych = KorektaCenTransferowych,
 > = {
-  KategoriaF: '1501'|'2501';
+  KategoriaF: '1501' | '2501';
   PrzedmiotF: string;
   WartoscF: {
     _attributes: {
@@ -21,10 +21,8 @@ export type TransakcjaKategoriaF<
       _text: number;
     };
   };
-} &
-(K extends 'KC01' ? KC01 : {}) &
-(K extends 'KC02' ? KC02 : {});
-
+} & (K extends 'KC01' ? KC01 : {}) &
+  (K extends 'KC02' ? KC02 : {});
 
 type KC01 = {
   KorektaCT6: 'KC01';

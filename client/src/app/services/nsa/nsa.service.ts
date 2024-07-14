@@ -49,7 +49,7 @@ export class NsaService implements OnDestroy {
       });
   }
   public setManualCourtRuling(rulingText: string): void {
-    this._rulingResponse.set([rulingText]); 
+    this._rulingResponse.set([rulingText]);
   }
 
   //! gpt answers to user messages
@@ -62,8 +62,10 @@ export class NsaService implements OnDestroy {
   public readonly areGptAnswersError = computed(() =>
     this._gptAnswersProgress().every((v) => v === 'ERROR'),
   );
-  public readonly isAtLeastOneGptAnswerReady = computed(() =>
-    this._gptAnswersProgress().some((v) => v !== false) || this._gptAnswersProgress().length === 0,
+  public readonly isAtLeastOneGptAnswerReady = computed(
+    () =>
+      this._gptAnswersProgress().some((v) => v !== false) ||
+      this._gptAnswersProgress().length === 0,
   );
 
   private readonly _gptAnswersResponse = signal<string[] | null>(null);
@@ -134,10 +136,12 @@ export class NsaService implements OnDestroy {
 
   //! additional answer
   private readonly _isAdditionalAnswerLoading = signal(false);
-  public readonly isAdditionalAnswerLoading = this._isAdditionalAnswerLoading.asReadonly();
+  public readonly isAdditionalAnswerLoading =
+    this._isAdditionalAnswerLoading.asReadonly();
 
   private readonly _additionalAnswerResponse = signal<string | null>(null);
-  public readonly additionalAnswerResponse = this._additionalAnswerResponse.asReadonly();
+  public readonly additionalAnswerResponse =
+    this._additionalAnswerResponse.asReadonly();
 
   private resetAdditionalAnswer(): void {
     this._isAdditionalAnswerLoading.set(false);
@@ -173,10 +177,10 @@ export class NsaService implements OnDestroy {
 
     this._isAdditionalAnswerLoading.set(false);
     this._additionalAnswerResponse.set(null);
-    
+
     this._cancelAllRequests();
   }
-   
+
   private readonly cancel$ = new Subject<void>();
   private _cancelAllRequests(): void {
     this.cancel$.next();

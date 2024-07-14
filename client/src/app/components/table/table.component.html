@@ -1,10 +1,8 @@
-@if (inputData) {
-  <ag-grid-angular
-    #agGrid
-    class="ag-theme-quartz"
-    domLayout="autoHeight"
-    [rowData]="inputData"
-    [columnDefs]="colDefs"
-    [tooltipShowDelay]="tooltipShowDelay"
-  />
-}
+<ag-grid-angular
+  #agGrid
+  class="ag-theme-quartz"
+  domLayout="autoHeight"
+  [rowData]="inputData()"
+  [columnDefs]="colDefs"
+  [tooltipShowDelay]="tooltipShowDelay"
+/>
