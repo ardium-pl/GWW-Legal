@@ -39,6 +39,7 @@ import {
 } from 'app/components';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
+import { MixpanelService } from 'app/services/mixpanel.service';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
@@ -58,6 +59,13 @@ const DEFAULT_USER_MESSAGES = [
 @Component({
   selector: 'app-nsa',
   standalone: true,
+  providers: [
+    NsaService,
+    provideMarkdown(),
+    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
+  ],
+  templateUrl: './nsa.page.html',
+  styleUrl: './nsa.page.scss',
   imports: [
     MatCardModule,
     MatFormFieldModule,
@@ -75,20 +83,12 @@ const DEFAULT_USER_MESSAGES = [
     SearchFabComponent,
     MatIconModule,
   ],
-  providers: [
-    NsaService,
-    SearchService,
-    provideMarkdown(),
-    { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } },
-  ],
-  templateUrl: './nsa.page.html',
-  styleUrl: './nsa.page.scss',
-  encapsulation: ViewEncapsulation.None,
 })
 export class NsaPage implements OnInit, OnDestroy {
   readonly nsaService = inject(NsaService);
   readonly searchService = inject(SearchService);
   readonly dialog = inject(MatDialog);
+  readonly mixpanelService = inject(MixpanelService);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -164,6 +164,7 @@ export class NsaPage implements OnInit, OnDestroy {
     if (!this.nsaFormPart1.controls.caseSignature.valid) {
       return;
     }
+    this.mixpanelService.track('Orzeczenia');
     this.nsaService.fetchCourtRuling(
       this.nsaFormPart1.controls.caseSignature.value!,
     );
@@ -172,7 +173,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
-
+    this.mixpanelService.track('Odpowiedzi chatu');
     const values = this.nsaFormPart2.value;
     this.nsaService.fetchGptAnswers(values as NsaFormPart2);
     this.nsaFormPart3.reset();
@@ -181,6 +182,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
   fetchAdditionalAnswer(): void {
     if (!this.nsaFormPart3.valid) return;
+    this.mixpanelService.track('Odpowiedzi chatu dodatkowe');
 
     this.nsaFormPart3.markAsPristine();
 

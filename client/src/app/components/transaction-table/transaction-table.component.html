@@ -1,0 +1,12 @@
+<ag-grid-angular
+  class="ag-theme-quartz"
+  domLayout="autoHeight"
+  [rowData]="inputData()"
+  [columnDefs]="colDefs()"
+  [getRowId]="getRowId"
+  [defaultColDef]="defaultColDef"
+  [readOnlyEdit]="true"
+  [columnTypes]="columnTypes"
+  (cellEditRequest)="onCellEditRequest($event)"
+  (gridReady)="onGridReady($event)"
+/>

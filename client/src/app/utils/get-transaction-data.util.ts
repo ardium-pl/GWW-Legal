@@ -1,6 +1,8 @@
 import { WritableSignal } from '@angular/core';
 import {
+  CategorizedTransaction,
   TPR_input,
+  Transaction,
   TransactionCategories,
 } from 'app/services/tpr/tpr-input.types';
 
@@ -9,12 +11,13 @@ export const GetTransactionDataUtil = (
   transactionData: WritableSignal<TransactionCategories>,
   itterable: WritableSignal<any>,
 ): void => {
-  clipboardData.transactions.map((transaction) => {
+  clipboardData.transactions.map((transaction, i) => {
     switch (transaction.transactionCategory) {
       case '1101':
       case '2101':
         transactionData.update((data) => {
-          data.categoryB = [...data.categoryB, transaction];
+          const newTransaction = addId(transaction, i);
+          data.categoryB = [...data.categoryB, newTransaction];
           return data;
         });
         break;
@@ -27,34 +30,40 @@ export const GetTransactionDataUtil = (
       case '2203':
       case '2204':
         transactionData.update((data) => {
-          data.categoryC = [...data.categoryC, transaction];
-          return data;
-        });
-        break;
-      case '1301':
-      case '2301':
-        transactionData.update((data) => {
-          data.categoryD = [...data.categoryD, transaction];
+          const newTransaction = addId(transaction, i);
+          const isD = transaction.safeHarbour === 'TAK';
+          if (
+            isD &&
+            (transaction.transactionCategory === '1201' ||
+              transaction.transactionCategory === '2201')
+          ) {
+            data.categoryD = [...data.categoryD, newTransaction];
+          } else {
+            data.categoryC = [...data.categoryC, newTransaction];
+          }
           return data;
         });
         break;
       case '1401':
       case '2401':
         transactionData.update((data) => {
-          data.categoryE = [...data.categoryE, transaction];
+          const newTransaction = addId(transaction, i);
+          data.categoryE = [...data.categoryE, newTransaction];
           return data;
         });
         break;
       case '1501':
       case '2501':
         transactionData.update((data) => {
-          data.categoryF = [...data.categoryF, transaction];
+          const newTransaction = addId(transaction, i);
+          data.categoryF = [...data.categoryF, newTransaction];
           return data;
         });
         break;
       default:
         transactionData.update((data) => {
-          data.categoryA = [...data.categoryA, transaction];
+          const newTransaction = addId(transaction, i);
+          data.categoryA = [...data.categoryA, newTransaction];
           return data;
         });
         break;
@@ -62,3 +71,7 @@ export const GetTransactionDataUtil = (
   });
   itterable.set(Object.entries({ ...transactionData() }));
 };
+
+function addId(transaction: Transaction, i: number): CategorizedTransaction {
+  return { ...transaction, Id: i };
+}
