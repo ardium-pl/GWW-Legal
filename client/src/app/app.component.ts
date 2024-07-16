@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import {} from '@angular/common/http';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ClipboardModule } from '@angular/cdk/clipboard';
@@ -11,7 +11,6 @@ import { ButtonComponent } from './components/button/button.component';
   imports: [
     CommonModule,
     RouterOutlet,
-    HttpClientModule,
     ClipboardModule,
     ButtonComponent,
   ],
