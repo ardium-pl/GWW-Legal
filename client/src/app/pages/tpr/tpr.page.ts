@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
+import { FileSystemService } from '@ardium-ui/devkit';
 import { TableComponent } from 'app/components/table/table.component';
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
 import { ClipboardService } from 'app/services/clipboard.service';
@@ -21,10 +22,9 @@ import {
 } from 'app/services/tpr/tpr-input.types';
 import { GetTransactionDataUtil } from 'app/utils/get-transaction-data.util';
 import { translateToTPR } from 'app/utils/tpr-translator.util';
-import { saveAs } from 'file-saver';
 import { Subject, from, takeUntil, tap } from 'rxjs';
 import * as xmljs from 'xml-js';
-import { ButtonComponent } from "../../components/button/button.component";
+import { ButtonComponent } from '../../components/button/button.component';
 
 @Component({
   selector: 'tpr-nsa',
@@ -47,6 +47,7 @@ export class TprPage implements OnInit, OnDestroy {
   private readonly errorSnackbarService = inject(ErrorSnackbarService);
   private readonly clipboardService = inject(ClipboardService);
   private readonly mixpanelService = inject(MixpanelService);
+  private readonly fileSystemService = inject(FileSystemService);
   private readonly destroy$$ = new Subject<void>();
   readonly companyData = signal<TPR_input | null>(null);
   constructor() {}
@@ -109,6 +110,12 @@ export class TprPage implements OnInit, OnDestroy {
     const tpr = translateToTPR(companyData);
     const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
     const blob = new Blob([xmlVar], { type: 'application/xml' });
-    saveAs(blob, 'TPR-C(5)_v_35.xml');
+    
+    this.fileSystemService.saveAs(blob, {
+      fileName: 'TPR-C(5)_v_35.xml',
+      types: [
+        { description: 'Plik XML', accept: { 'application/xml': ['.xml'] } },
+      ],
+    });
   }
 }
