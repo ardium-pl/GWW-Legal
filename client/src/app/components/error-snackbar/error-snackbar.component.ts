@@ -1,4 +1,7 @@
-import { MAT_SNACK_BAR_DATA, MatSnackBarLabel } from '@angular/material/snack-bar';
+import {
+  MAT_SNACK_BAR_DATA,
+  MatSnackBarLabel,
+} from '@angular/material/snack-bar';
 import { Component, inject } from '@angular/core';
 
 @Component({

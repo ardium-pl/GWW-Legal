@@ -6,11 +6,16 @@ import {
 } from 'ag-grid-community';
 
 // Utility function to generate reverse mappings
-function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
-  return Object.keys(mapping).reduce((reverseMapping, key) => {
-    reverseMapping[mapping[key]] = key;
-    return reverseMapping;
-  }, {} as Record<string, string>);
+function createReverseMapping(
+  mapping: Record<string, string>,
+): Record<string, string> {
+  return Object.keys(mapping).reduce(
+    (reverseMapping, key) => {
+      reverseMapping[mapping[key]] = key;
+      return reverseMapping;
+    },
+    {} as Record<string, string>,
+  );
 }
 
 // User friendly code mappings
@@ -102,7 +107,9 @@ const RodzajPrzedzialuCodeMapping: Record<string, string> = {
 };
 
 // Generate reverse mappings using the utility function
-const RodzajPrzedzialuReverseCodeMapping = createReverseMapping(RodzajPrzedzialuCodeMapping);
+const RodzajPrzedzialuReverseCodeMapping = createReverseMapping(
+  RodzajPrzedzialuCodeMapping,
+);
 
 export const transactionCColDefs: ColDef[] = [
   {
@@ -149,7 +156,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => correctionCodeMapping[params.value],
+    valueFormatter: (params) => correctionCodeMapping[params.value],
   },
   {
     field: 'WartoscKorekty',
@@ -179,7 +186,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => compensationCodeMapping[params.value],
+    valueFormatter: (params) => compensationCodeMapping[params.value],
   },
   {
     field: 'Kapital',
@@ -255,7 +262,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(ZwolnienieCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => ZwolnienieCodeMapping[params.value],
+    valueFormatter: (params) => ZwolnienieCodeMapping[params.value],
   },
   {
     field: 'PodstawaZwolnienia',
@@ -303,7 +310,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(RodzajTransakcjiCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => RodzajTransakcjiCodeMapping[params.value],
+    valueFormatter: (params) => RodzajTransakcjiCodeMapping[params.value],
   },
   {
     field: 'KodKrajuTransakcji',
@@ -341,7 +348,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(MetodyBadaniaCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => MetodyBadaniaCodeMapping[params.value],
+    valueFormatter: (params) => MetodyBadaniaCodeMapping[params.value],
   },
   {
     field: 'ZrodloDanychFinansowych',
@@ -350,9 +357,12 @@ export const transactionCColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(createReverseMapping(ZrodloDanychFinansowychCodeMapping)),
+      values: Object.values(
+        createReverseMapping(ZrodloDanychFinansowychCodeMapping),
+      ),
     } as ISelectCellEditorParams,
-    valueFormatter: params => ZrodloDanychFinansowychCodeMapping[params.value],
+    valueFormatter: (params) =>
+      ZrodloDanychFinansowychCodeMapping[params.value],
   },
   {
     field: 'KorektaMetodyBadania',
@@ -360,9 +370,11 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Korekta dla metody badania',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(createReverseMapping(KorektaMetodyBadaniaCodeMapping)),
+      values: Object.values(
+        createReverseMapping(KorektaMetodyBadaniaCodeMapping),
+      ),
     } as ISelectCellEditorParams,
-    valueFormatter: params => KorektaMetodyBadaniaCodeMapping[params.value],
+    valueFormatter: (params) => KorektaMetodyBadaniaCodeMapping[params.value],
     type: 'MetodyBadaniaType',
   },
   {
@@ -371,9 +383,12 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Korekta porównywalności próg',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(createReverseMapping(KorektaPorownywalnosciProgCodeMapping)),
+      values: Object.values(
+        createReverseMapping(KorektaPorownywalnosciProgCodeMapping),
+      ),
     } as ISelectCellEditorParams,
-    valueFormatter: params => KorektaPorownywalnosciProgCodeMapping[params.value],
+    valueFormatter: (params) =>
+      KorektaPorownywalnosciProgCodeMapping[params.value],
     editable: ({ data }) =>
       data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&
@@ -392,9 +407,11 @@ export const transactionCColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(createReverseMapping(RodzajOprocentowaniaCodeMapping)),
+      values: Object.values(
+        createReverseMapping(RodzajOprocentowaniaCodeMapping),
+      ),
     } as ISelectCellEditorParams,
-    valueFormatter: params => RodzajOprocentowaniaCodeMapping[params.value],
+    valueFormatter: (params) => RodzajOprocentowaniaCodeMapping[params.value],
   },
   {
     field: 'Marza',
@@ -416,7 +433,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(NazwaStopyBazowejCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => NazwaStopyBazowejCodeMapping[params.value],
+    valueFormatter: (params) => NazwaStopyBazowejCodeMapping[params.value],
   },
   {
     field: 'InnaSB',
@@ -444,9 +461,11 @@ export const transactionCColDefs: ColDef[] = [
     type: 'RodzajOprocentowania1Type',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(createReverseMapping(TerminStopyBazowejCodeMapping)),
+      values: Object.values(
+        createReverseMapping(TerminStopyBazowejCodeMapping),
+      ),
     } as ISelectCellEditorParams,
-    valueFormatter: params => TerminStopyBazowejCodeMapping[params.value],
+    valueFormatter: (params) => TerminStopyBazowejCodeMapping[params.value],
   },
   {
     field: 'Okres',
@@ -518,7 +537,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(RodzajPrzedzialuCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => RodzajPrzedzialuCodeMapping[params.value],
+    valueFormatter: (params) => RodzajPrzedzialuCodeMapping[params.value],
   },
   {
     field: 'DolnaGranicaPrzedzialu',

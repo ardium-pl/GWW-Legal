@@ -6,11 +6,16 @@ import {
 } from 'ag-grid-community';
 
 // Utility function to generate reverse mappings
-function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
-  return Object.keys(mapping).reduce((reverseMapping, key) => {
-    reverseMapping[mapping[key]] = key;
-    return reverseMapping;
-  }, {} as Record<string, string>);
+function createReverseMapping(
+  mapping: Record<string, string>,
+): Record<string, string> {
+  return Object.keys(mapping).reduce(
+    (reverseMapping, key) => {
+      reverseMapping[mapping[key]] = key;
+      return reverseMapping;
+    },
+    {} as Record<string, string>,
+  );
 }
 
 // User friendly code mappings
@@ -75,7 +80,7 @@ export const transactionDColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => correctionCodeMapping[params.value],
+    valueFormatter: (params) => correctionCodeMapping[params.value],
   },
   {
     field: 'WartoscKorekty',
@@ -105,7 +110,7 @@ export const transactionDColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: params => compensationCodeMapping[params.value],
+    valueFormatter: (params) => compensationCodeMapping[params.value],
   },
   {
     field: 'Kapital',

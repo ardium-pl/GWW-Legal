@@ -70,6 +70,7 @@ export type TransactionTable = {
   KorektaPorownywalnosciProg: number;
 };
 
-export type AllTransactionTables = Transaction & TransactionTable &{
-  test: string;
-}
+export type AllTransactionTables = Transaction &
+  TransactionTable & {
+    test: string;
+  };

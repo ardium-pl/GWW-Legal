@@ -53,8 +53,8 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.MetodyBadania !== 'MW01' ||
-        data.SposobUjeciaCeny === 'CK02',
+          data.MetodyBadania !== 'MW01' ||
+          data.SposobUjeciaCeny === 'CK02',
       ),
   },
   RodzajPrzedzialuType: {
@@ -68,8 +68,8 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.MetodyBadania !== 'MW01' ||
-        data.RodzajPrzedzialu === 'RP04',
+          data.MetodyBadania !== 'MW01' ||
+          data.RodzajPrzedzialu === 'RP04',
       ),
   },
   CK2Type: {
@@ -83,9 +83,9 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.MetodyBadania !== 'MW01' ||
-        data.SposobUjeciaCeny !== 'CK02' ||
-        data.RodzajPrzedzialu === 'RP04',
+          data.MetodyBadania !== 'MW01' ||
+          data.SposobUjeciaCeny !== 'CK02' ||
+          data.RodzajPrzedzialu === 'RP04',
       ),
   },
   MW235Type: {
@@ -100,10 +100,10 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.MetodyBadania === 'MW00' ||
-        data.MetodyBadania === 'MW01' ||
-        data.MetodyBadania === 'MW04' ||
-        data.MetodyBadania === 'MW06',
+          data.MetodyBadania === 'MW00' ||
+          data.MetodyBadania === 'MW01' ||
+          data.MetodyBadania === 'MW04' ||
+          data.MetodyBadania === 'MW06',
       ),
   },
   PR02Type: {
@@ -119,11 +119,11 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.RodzajPorownania !== 'PR02' ||
-        data.MetodyBadania === 'MW00' ||
-        data.MetodyBadania === 'MW01' ||
-        data.MetodyBadania === 'MW04' ||
-        data.MetodyBadania === 'MW06',
+          data.RodzajPorownania !== 'PR02' ||
+          data.MetodyBadania === 'MW00' ||
+          data.MetodyBadania === 'MW01' ||
+          data.MetodyBadania === 'MW04' ||
+          data.MetodyBadania === 'MW06',
       ),
   },
   GranicePrzedzialuType: {
@@ -139,11 +139,11 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.RodzajPrzedzialu === 'RP04' ||
-        data.MetodyBadania === 'MW00' ||
-        data.MetodyBadania === 'MW01' ||
-        data.MetodyBadania === 'MW04' ||
-        data.MetodyBadania === 'MW06',
+          data.RodzajPrzedzialu === 'RP04' ||
+          data.MetodyBadania === 'MW00' ||
+          data.MetodyBadania === 'MW01' ||
+          data.MetodyBadania === 'MW04' ||
+          data.MetodyBadania === 'MW06',
       ),
   },
   PrzedzialType: {
@@ -156,9 +156,9 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.MetodyBadania === 'MW04' ||
-        data.MetodyBadania === 'MW00' ||
-        data.MetodyBadania === 'MW06',
+          data.MetodyBadania === 'MW04' ||
+          data.MetodyBadania === 'MW00' ||
+          data.MetodyBadania === 'MW06',
       ),
   },
   MW04Type: {
@@ -181,12 +181,12 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.MetodyBadania !== 'MW06' ||
-        data.Zwolnienie === 'ZW01' ||
-        data.TechWyceny === 'TW03' ||
-        data.TechWyceny === 'TW04' ||
-        data.TechWyceny === 'TW05' ||
-        data.TechWyceny === 'TW06' ||
-        data.TechWyceny === 'TW07',
+          data.Zwolnienie === 'ZW01' ||
+          data.TechWyceny === 'TW03' ||
+          data.TechWyceny === 'TW04' ||
+          data.TechWyceny === 'TW05' ||
+          data.TechWyceny === 'TW06' ||
+          data.TechWyceny === 'TW07',
       ),
   },
   InnyTerminType: {
@@ -198,13 +198,13 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.MetodyBadania !== 'MW06' ||
-        data.Zwolnienie === 'ZW01' ||
-        data.TechWyceny === 'TW03' ||
-        data.TechWyceny === 'TW04' ||
-        data.TechWyceny === 'TW05' ||
-        data.TechWyceny === 'TW06' ||
-        data.TechWyceny === 'TW07' ||
-        data.OkresPrognozy !== 'TB07',
+          data.Zwolnienie === 'ZW01' ||
+          data.TechWyceny === 'TW03' ||
+          data.TechWyceny === 'TW04' ||
+          data.TechWyceny === 'TW05' ||
+          data.TechWyceny === 'TW06' ||
+          data.TechWyceny === 'TW07' ||
+          data.OkresPrognozy !== 'TB07',
       ),
   },
   NrIdType: {
@@ -228,8 +228,8 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.MetodyBadania === 'MW00' ||
-        data.RodzajOprocentowania !== 'OP01',
+          data.MetodyBadania === 'MW00' ||
+          data.RodzajOprocentowania !== 'OP01',
       ),
   },
   RodzajOprocentowania3Type: {
@@ -240,25 +240,45 @@ export const columnTypes: {
     cellStyle: ({ data }) =>
       getCellStyle(
         data.Zwolnienie !== 'ZW02' ||
-        data.MetodyBadania === 'MW00' ||
-        data.RodzajOprocentowania !== 'OP03',
+          data.MetodyBadania === 'MW00' ||
+          data.RodzajOprocentowania !== 'OP03',
       ),
   },
   RestrukturyzacjaType: {
     editable: ({ data }) =>
-      ['3001', '3002', '3003',
-        '3004', '3005', '3006',
-        '3007', '3008', '3009',
-        '3010', '3011', '3012',
-        '3013'].includes(data.transactionCategory),
+      [
+        '3001',
+        '3002',
+        '3003',
+        '3004',
+        '3005',
+        '3006',
+        '3007',
+        '3008',
+        '3009',
+        '3010',
+        '3011',
+        '3012',
+        '3013',
+      ].includes(data.transactionCategory),
 
     cellStyle: ({ data }) =>
       getCellStyle(
-        !['3001', '3002', '3003',
-          '3004', '3005', '3006',
-          '3007', '3008', '3009',
-          '3010', '3011', '3012',
-          '3013'].includes(data.transactionCategory)
+        ![
+          '3001',
+          '3002',
+          '3003',
+          '3004',
+          '3005',
+          '3006',
+          '3007',
+          '3008',
+          '3009',
+          '3010',
+          '3011',
+          '3012',
+          '3013',
+        ].includes(data.transactionCategory),
       ),
   },
 };

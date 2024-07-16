@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
@@ -14,13 +14,8 @@ import { companyColDefs } from './table.consts';
   styleUrls: ['./table.component.scss'],
 })
 export class TableComponent {
-  @Input() public inputData: (TPR_input | null)[] = [null];
-  @ViewChild('agGrid') agGrid!: AgGridAngular;
+  public readonly inputData = input.required<(TPR_input | null)[]>();
 
-  colDefs: ColDef[] = companyColDefs;
-  gridData: TPR_input[] | null = null;
-  tooltipShowDelay = 500;
-
-
-
+  readonly colDefs: ColDef[] = companyColDefs;
+  readonly tooltipShowDelay = 500;
 }

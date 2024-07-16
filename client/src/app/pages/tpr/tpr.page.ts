@@ -34,8 +34,8 @@ import { ButtonComponent } from "../../components/button/button.component";
     TransactionTableComponent,
     MatCardModule,
     MatTabsModule,
-    ButtonComponent
-],
+    ButtonComponent,
+  ],
   providers: [ClipboardService, TprDataService, ErrorSnackbarService],
   templateUrl: './tpr.page.html',
   styleUrl: './tpr.page.scss',

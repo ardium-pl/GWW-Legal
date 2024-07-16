@@ -1,39 +1,36 @@
 export type TransakcjaKategoriaA<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
-  MW extends MetodyBadania = MetodyBadania
-> = {
-  KategoriaA: string;
-  PrzedmiotA: string;
-  WartoscA: {
-    
-      _attributes: {
-        kodWaluty: string;
+  MW extends MetodyBadania = MetodyBadania,
+> =
+  | ({
+      KategoriaA: string;
+      PrzedmiotA: string;
+      WartoscA: {
+        _attributes: {
+          kodWaluty: string;
+        };
+
+        _text: number;
       };
-    
-    _text: number
-};
-  Kompensata: Kompensata;
-  SupportVarMetoda: MW;
-} &
-  (K extends 'KC01' ? KC01 : {}) |
-  (K extends 'KC02' ? KC02 : {}) &
-  (ZW extends 'ZW01' ? ZW01 : {}) |
-  (ZW extends 'ZW02' ? ZW02 : {}) &
-  (MW extends 'MW00' ? MW00 : {}) |
-  (MW extends 'MW01' ? MW01 : {}) |
-  (MW extends 'MW04' ? MW04 : {}) |
-  (MW extends 'MW06' ? MW06 : {}) |
-  (MW extends 'MW02' | 'MW03' | 'MW05' ? MW02_MW03_MW05 : {});
+      Kompensata: Kompensata;
+      SupportVarMetoda: MW;
+    } & (K extends 'KC01' ? KC01 : {}))
+  | ((K extends 'KC02' ? KC02 : {}) & (ZW extends 'ZW01' ? ZW01 : {}))
+  | ((ZW extends 'ZW02' ? ZW02 : {}) & (MW extends 'MW00' ? MW00 : {}))
+  | (MW extends 'MW01' ? MW01 : {})
+  | (MW extends 'MW04' ? MW04 : {})
+  | (MW extends 'MW06' ? MW06 : {})
+  | (MW extends 'MW02' | 'MW03' | 'MW05' ? MW02_MW03_MW05 : {});
 
 export type KC01 = {
   KorektaCT1: 'KC01';
   WartKorektyCT1?: {
     _attributes: {
-        kodWaluty?: string,
-    },
-    _text?: number,
-},
+      kodWaluty?: string;
+    };
+    _text?: number;
+  };
 };
 
 export type KC02 = {
@@ -47,16 +44,14 @@ export type ZW01 = {
     Kraj?: string;
     WartoscAKraj1: {
       _attributes: {
-          kodWaluty?: string,
-      },
-      _text?: number,
-  },
+        kodWaluty?: string;
+      };
+      _text?: number;
+    };
   };
 };
 
-export type ZW02<
-  TK extends RodzajTransakcji = RodzajTransakcji
-> = {
+export type ZW02<TK extends RodzajTransakcji = RodzajTransakcji> = {
   KodZW2: 'ZW02';
 } & (TK extends 'TK01' ? TK01 : {}) &
   (TK extends 'TK02' ? TK02 : {});
@@ -71,7 +66,7 @@ export type TK01 = {
           kodWaluty: string;
         };
       },
-      number
+      number,
     ];
   };
 };
@@ -87,7 +82,7 @@ export type MW00 = {
 
 export type MW01<
   KP extends Korekta = Korekta,
-  CK extends SposobUjeciaCeny = SposobUjeciaCeny
+  CK extends SposobUjeciaCeny = SposobUjeciaCeny,
 > = {
   Metoda01: 'MW01';
   Weryfikacja: SposobWeryfikacjiEynkowegoPoziomuCeny;
@@ -105,9 +100,7 @@ export type KP02 = {
   KorektyPorWynProg: number;
 };
 
-export type CK01<
-  RP extends RodzajPrzedzialu = RodzajPrzedzialu
-> = {
+export type CK01<RP extends RodzajPrzedzialu = RodzajPrzedzialu> = {
   SposobUjCeny1: 'CK01';
   Waluta1: string;
   CenaMin: number;
@@ -135,9 +128,7 @@ export type RP04_for_CK01 = {
   WysCenPor1: number;
 };
 
-export type CK02<
-  RP extends RodzajPrzedzialu = RodzajPrzedzialu
-> = {
+export type CK02<RP extends RodzajPrzedzialu = RodzajPrzedzialu> = {
   SposobUjCeny2: 'CK02';
   ProcentMin: number;
   ProcentMax: number;
@@ -184,7 +175,7 @@ export type lossTrue = {
 export type MW02_MW03_MW05<
   KP extends Korekta = Korekta,
   PR extends RodzajPorownania = RodzajPorownania,
-  RP extends RodzajPrzedzialu = RodzajPrzedzialu
+  RP extends RodzajPrzedzialu = RodzajPrzedzialu,
 > = {
   Metoda02: 'MW02' | 'MW03' | 'MW05';
   WskaznikFinans: WskaznikFinansowy;
@@ -241,13 +232,13 @@ export type MW06<TW extends TechWyceny = TechWyceny> = {
   (TW extends 'TW07' ? TW07_for_MW06 : {}) &
   (TW extends 'TW03' | 'TW04' | 'TW05' | 'TW06' ? TW03_to_TW06_for_MW06 : {});
 
-export type TW01_TW02_for_MW06<
-  TB extends OkresPrognozy = OkresPrognozy
-> = {
+export type TW01_TW02_for_MW06<TB extends OkresPrognozy = OkresPrognozy> = {
   TechWyceny1: 'TW01' | 'TW02';
   WspDyskont: number;
   SupporterVarOkresPrognozy: OkresPrognozy;
-} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB_for_TW01_TW02 : {}) &
+} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06'
+  ? TB_for_TW01_TW02
+  : {}) &
   (TB extends 'TB07' ? TB07_for_TW01_TW02 : {});
 
 export type TB_for_TW01_TW02 = {
@@ -280,7 +271,11 @@ export type MetodyBadania =
   | 'MW04'
   | 'MW05'
   | 'MW06';
-export type SposobWeryfikacjiEynkowegoPoziomuCeny = 'SW01' | 'SW02' | 'SW03' | 'SW04';
+export type SposobWeryfikacjiEynkowegoPoziomuCeny =
+  | 'SW01'
+  | 'SW02'
+  | 'SW03'
+  | 'SW04';
 export type Korekta = 'KP01' | 'KP02';
 export type SposobUjeciaCeny = 'CK01' | 'CK02';
 export type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
@@ -312,7 +307,14 @@ export type KryteriumGeograficzne =
   | 'KG04'
   | 'KG05'
   | 'KG06';
-export type TechWyceny = 'TW01' | 'TW02' | 'TW03' | 'TW04' | 'TW05' | 'TW06' | 'TW07';
+export type TechWyceny =
+  | 'TW01'
+  | 'TW02'
+  | 'TW03'
+  | 'TW04'
+  | 'TW05'
+  | 'TW06'
+  | 'TW07';
 export type OkresPrognozy =
   | 'TB01'
   | 'TB02'

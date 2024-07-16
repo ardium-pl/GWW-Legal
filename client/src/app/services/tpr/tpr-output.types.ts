@@ -13,16 +13,15 @@ export type TPR = {
     };
     Naglowek: {
       KodFormularza: {
-        
-          _attributes: {
-            kodSystemowy: string;
-            kodPodatku: string;
-            rodzajZobowiazania: string;
-            wersjaSchemy: string;
-          };
-        
-        _text: string,
+        _attributes: {
+          kodSystemowy: string;
+          kodPodatku: string;
+          rodzajZobowiazania: string;
+          wersjaSchemy: string;
         };
+
+        _text: string;
+      };
       WariantFormularza: number;
       CelZlozenia: number;
       OkresOd: string;
@@ -57,7 +56,6 @@ export type TPR = {
     };
   };
 };
-
 
 export type PozycjeSzczegolowe = 'ZK01' | 'ZK02';
 type TPR_Universal_Header = {};

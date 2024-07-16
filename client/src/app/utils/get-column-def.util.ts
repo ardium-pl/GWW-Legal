@@ -25,10 +25,26 @@ export const keysToCheckDefault: (keyof TransactionATable)[] = [
   'Zwolnienie',
 ];
 
-export const getColumnDefUtil = (
-  transactionType: string,
-  defaultKeys: WritableSignal<string[]>,
-): ColDef[] => {
+export const getColumnDefUtil = (transactionType: string): ColDef[] => {
+  switch (transactionType) {
+    case 'A':
+      return transactionAColDefs;
+    case 'B':
+      return transactionBColDefs;
+    case 'C':
+      return transactionCColDefs;
+    case 'D':
+      return transactionDColDefs;
+    case 'E':
+      return transactionEColDefs;
+    case 'F':
+      return transactionFColDefs;
+    default:
+      return transactionAColDefs;
+  }
+};
+
+export const getKeysToCheck = (transactionType: string): string[] => {
   const keysToCheckB: (keyof TransactionBTable)[] = [
     'transactionCategory',
     'subjectMatter',
@@ -104,25 +120,18 @@ export const getColumnDefUtil = (
 
   switch (transactionType) {
     case 'A':
-      defaultKeys.set(keysToCheckDefault);
-      return transactionAColDefs;
+      return keysToCheckDefault;
     case 'B':
-      defaultKeys.set(keysToCheckB);
-      return transactionBColDefs;
+      return keysToCheckB;
     case 'C':
-      defaultKeys.set(keysToCheckC);
-      return transactionCColDefs;
+      return keysToCheckC;
     case 'D':
-      defaultKeys.set(keysToCheckD);
-      return transactionDColDefs;
+      return keysToCheckD;
     case 'E':
-      defaultKeys.set(keysToCheckE);
-      return transactionEColDefs;
+      return keysToCheckE;
     case 'F':
-      defaultKeys.set(keysToCheckF);
-      return transactionFColDefs;
+      return keysToCheckF;
     default:
-      defaultKeys.set(keysToCheckDefault);
-      return transactionAColDefs;
+      return keysToCheckDefault;
   }
 };
