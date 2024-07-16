@@ -3,6 +3,13 @@ import { ITooltipParams } from 'ag-grid-community/dist/types/core/rendering/tool
 
 export const companyColDefs: ColDef[] = [
   {
+    field: 'fullName',
+    headerName: 'Nazwa',
+    headerTooltip: 'Nazwa',
+    tooltipValueGetter: (p: ITooltipParams) => p.value,
+    pinned: 'left',
+  },
+  {
     field: 'periodFrom',
     headerName: 'Okres od',
     headerTooltip: 'Okres od',
@@ -17,12 +24,6 @@ export const companyColDefs: ColDef[] = [
     field: 'taxID',
     headerName: 'Numer NIP',
     headerTooltip: 'Numer NIP',
-  },
-  {
-    field: 'fullName',
-    headerName: 'Nazwa',
-    headerTooltip: 'Nazwa',
-    tooltipValueGetter: (p: ITooltipParams) => p.value,
   },
   {
     field: 'countryCode',

@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
-import { DialogService } from './dialog.service';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ClipboardBlockDialogComponent } from 'app/components/clipboard-block-dialog/clipboard-block-dialog.component';
 import { TPR_input } from './tpr/tpr-input.types';
 
 const ACCESS_DENIED_MESSAGE =
@@ -14,7 +15,7 @@ const WRONG_DATA_MESSAGE =
 })
 export class ClipboardService {
   constructor() {}
-  readonly dialogService = inject(DialogService);
+  readonly dialog = inject(MatDialog);
 
   public async readClipboard() {
     try {
@@ -22,7 +23,7 @@ export class ClipboardService {
       const input = await this.getJsonFromClipboard(copiedData);
       return input;
     } catch (error) {
-      this.dialogService.openDialog(ACCESS_DENIED_MESSAGE);
+      this.openDialog(ACCESS_DENIED_MESSAGE);
     }
     return null;
   }
@@ -48,10 +49,23 @@ export class ClipboardService {
       const isObjectIncomplete = keysToCheck.some((key) => {
         return !objectKeys.some((objectKey) => objectKey === key);
       });
-      if (isObjectIncomplete) this.dialogService.openDialog(WRONG_TYPE_MESSAGE);
+      if (isObjectIncomplete) this.openDialog(WRONG_TYPE_MESSAGE);
       return object;
     } catch (err) {
-      this.dialogService.openDialog(WRONG_DATA_MESSAGE);
+      this.openDialog(WRONG_DATA_MESSAGE);
     }
+  }
+
+  private openDialog(
+    warningMessage: string,
+  ): MatDialogRef<ClipboardBlockDialogComponent> {
+    const dialogRef = this.dialog.open(ClipboardBlockDialogComponent, {
+      data: warningMessage,
+      height: '15%',
+      width: '35%',
+      disableClose: true,
+      backdropClass: 'standard-backdrop-class',
+    });
+    return dialogRef;
   }
 }
