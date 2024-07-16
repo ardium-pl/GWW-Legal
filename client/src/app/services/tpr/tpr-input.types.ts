@@ -1,11 +1,11 @@
 import {
-  Kompensata,
-  Korekta,
-  KorektaCenTransferowych,
-  MetodyBadania,
-  RodzajTransakcji,
-  SposobWeryfikacjiEynkowegoPoziomuCeny,
-  ZwolnienieArt11n,
+    Kompensata,
+    Korekta,
+    KorektaCenTransferowych,
+    MetodyBadania,
+    RodzajTransakcji,
+    SposobWeryfikacjiEynkowegoPoziomuCeny,
+    ZwolnienieArt11n,
 } from './typeA.types';
 
 export type TPR_input = {

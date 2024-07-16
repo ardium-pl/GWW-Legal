@@ -8,23 +8,23 @@ import {
   signal,
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { TableComponent } from 'app/components/table/table.component';
-import { ClipboardService } from 'app/services/clipboard.service';
 import { MatTabsModule } from '@angular/material/tabs';
+import { TableComponent } from 'app/components/table/table.component';
+import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
+import { ClipboardService } from 'app/services/clipboard.service';
+import { MixpanelService } from 'app/services/mixpanel.service';
+import { ErrorSnackbarService } from 'app/services/snackbar.service';
+import { TprDataService } from 'app/services/tpr/tpr-data.service';
 import {
   TPR_input,
   TransactionCategories,
 } from 'app/services/tpr/tpr-input.types';
-import { Subject, from, takeUntil, tap } from 'rxjs';
 import { GetTransactionDataUtil } from 'app/utils/get-transaction-data.util';
-import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
-import { TprDataService } from 'app/services/tpr/tpr-data.service';
 import { translateToTPR } from 'app/utils/tpr-translator.util';
-import * as xmljs from 'xml-js';
 import { saveAs } from 'file-saver';
-import { ErrorSnackbarService } from 'app/services/snackbar.service';
+import { Subject, from, takeUntil, tap } from 'rxjs';
+import * as xmljs from 'xml-js';
 import { ButtonComponent } from "../../components/button/button.component";
-import { MixpanelService } from 'app/services/mixpanel.service';
 
 @Component({
   selector: 'tpr-nsa',

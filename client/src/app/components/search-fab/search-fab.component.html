@@ -1,0 +1,63 @@
+<div class="search-fab-container">
+  <div class="search-fab-panel" [class.active]="active()">
+    <div class="search-fab-panel-inner">
+      <label for="search-bar">Wyszukaj w orzeczeniu</label>
+      <div class="input-container">
+        <div [matTooltip]="inputTooltip()">
+          <input
+            #inputEl
+            type="text"
+            id="search-bar"
+            [disabled]="isInputDisabled()"
+            [ngModel]="searchPhrase()"
+            [tabIndex]="isInputDisabled() ? -1 : 0"
+            (input)="setSearch($event.target)"
+            autocomplete="off"
+          />
+          <app-icon icon="search" />
+        </div>
+      </div>
+      <div class="search-results" [class.disabled]="isInputDisabled()">
+        @if (!total()) {
+          Brak wyników
+        } @else {
+          {{ current() ?? "?" }} z {{ total() }}
+        }
+      </div>
+      <div class="buttons-container">
+        <div [matTooltip]="inputTooltip()">
+          <button
+            class="search-icon-btn"
+            (click)="clickPrevEvent.emit()"
+            [disabled]="isInputDisabled()"
+            [tabIndex]="isInputDisabled() ? -1 : 0"
+          >
+            <app-icon icon="north" />
+          </button>
+        </div>
+        <div [matTooltip]="inputTooltip()">
+          <button
+            class="search-icon-btn"
+            (click)="clickNextEvent.emit()"
+            [disabled]="isInputDisabled()"
+            [tabIndex]="isInputDisabled() ? -1 : 0"
+          >
+            <app-icon icon="south" />
+          </button>
+        </div>
+        <button class="search-icon-btn" (click)="close()">
+          <app-icon icon="close" />
+        </button>
+      </div>
+    </div>
+  </div>
+  <button
+    class="search-fab"
+    mat-fab
+    [color]="undefined"
+    aria-label="Wyszukaj w orzeczeniu"
+    (click)="open()"
+  >
+    <app-icon icon="search" />
+  </button>
+</div>
