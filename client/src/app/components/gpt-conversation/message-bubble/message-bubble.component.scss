@@ -22,7 +22,7 @@ $border-radius: 9px;
     right: -#{$border-radius * 2};
 
     &::before {
-      content: "";
+      content: '';
       background: transparent;
       position: absolute;
       width: $border-radius * 2;

@@ -12,8 +12,8 @@ export class ErrorSnackbarService {
     this.snackBar.openFromComponent(ErrorSnackbarComponent, {
       data: content,
       duration: 6000,
-      horizontalPosition: 'end',
-      verticalPosition: 'top',
+      horizontalPosition: 'start',
+      verticalPosition: 'bottom',
     });
   }
 }

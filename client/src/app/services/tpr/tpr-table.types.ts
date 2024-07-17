@@ -19,17 +19,8 @@ import {
 } from './typeA.types';
 import { WynagrodzenieZaRestrukturyzację } from './typeA1.types';
 import { RodzajUmowy, Udział } from './typeA2.types';
-import {
-  NazwaStopyBazowej,
-  RodzajOprocentowania,
-  TerminStopyBazowej,
-  ZrodloDanychFinansowych,
-} from './typeC.types';
-import {
-  RodzajAnalizy,
-  RodzajeWartosciNiematerialnych,
-  SposobKalkulacjiOplaty,
-} from './typeE.types';
+import { NazwaStopyBazowej, RodzajOprocentowania, TerminStopyBazowej, ZrodloDanychFinansowych } from './typeC.types';
+import { RodzajAnalizy, RodzajeWartosciNiematerialnych, SposobKalkulacjiOplaty } from './typeE.types';
 
 export type TransactionATable = {
   Id: number;

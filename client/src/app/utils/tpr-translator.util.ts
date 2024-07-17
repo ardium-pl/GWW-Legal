@@ -8,11 +8,7 @@ import {
   TransactionETable,
   TransactionFTable,
 } from 'app/services/tpr/tpr-table.types';
-import {
-  translateCategoryA,
-  translateCategoryA1,
-  translateCategoryA2,
-} from './translators/translate-typeA.util';
+import { translateCategoryA, translateCategoryA1, translateCategoryA2 } from './translators/translate-typeA.util';
 
 export function translateToTPR(tprInput: any) {
   const translatedTransactions = translateTransactions(tprInput.transactions);
@@ -48,9 +44,7 @@ export function translateToTPR(tprInput: any) {
         KodPKD: tprInput.pkdCode,
       },
       PozycjeSzczegolowe: {
-        ...(tprInput.taxCategory === 'ZK01'
-          ? { PodmiotNZ: tprInput.taxCategory }
-          : { PodmiotKZ: tprInput.taxCategory }),
+        ...(tprInput.taxCategory === 'ZK01' ? { PodmiotNZ: tprInput.taxCategory } : { PodmiotKZ: tprInput.taxCategory }),
         InnyPodmiot: {
           MarzaOper: tprInput.operatingMargin,
           MarzaZysku: tprInput.profitMargin,

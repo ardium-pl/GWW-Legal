@@ -30,9 +30,7 @@ import {
   PR02_for_KategoriaA_MW02_MW03_MW05,
 } from 'app/services/tpr/typeA.types';
 
-export function mapKorektaCenTransferowychA(
-  transaction: TransactionATable,
-): Partial<KC01 | KC02> {
+export function mapKorektaCenTransferowychA(transaction: TransactionATable): Partial<KC01 | KC02> {
   switch (transaction.correction) {
     case 'KC01':
       return {
@@ -53,9 +51,7 @@ export function mapKorektaCenTransferowychA(
   }
 }
 
-export function mapZwolnienieArt11nA(
-  transaction: TransactionATable,
-): Partial<ZW01 | ZW02> {
+export function mapZwolnienieArt11nA(transaction: TransactionATable): Partial<ZW01 | ZW02> {
   switch (transaction.Zwolnienie) {
     case 'ZW01':
       return {
@@ -105,9 +101,7 @@ function mapZW02A(transaction: TransactionATable): Partial<ZW02> {
   return zw2;
 }
 
-export function mapMetodyBadaniaA(
-  transaction: TransactionATable,
-): Partial<MW00 | MW01 | MW04 | MW06 | MW02_MW03_MW05<Korekta>> {
+export function mapMetodyBadaniaA(transaction: TransactionATable): Partial<MW00 | MW01 | MW04 | MW06 | MW02_MW03_MW05<Korekta>> {
   switch (transaction.MetodyBadania) {
     case 'MW00':
       return {
@@ -156,9 +150,7 @@ export function mapMetodyBadaniaA(
   }
 }
 
-function mapSposobUjeciaCeny(
-  transaction: TransactionATable,
-): Partial<CK01 | CK02> {
+function mapSposobUjeciaCeny(transaction: TransactionATable): Partial<CK01 | CK02> {
   switch (transaction.SposobUjeciaCeny) {
     case 'CK01':
       const ck01: Partial<CK01> = {
@@ -184,9 +176,7 @@ function mapSposobUjeciaCeny(
   }
 }
 
-function mapRodzajPrzedzialuCK01(
-  transaction: TransactionATable,
-): Partial<RP01_RP02_for_CK01 | RP03_for_CK01 | RP04_for_CK01> {
+function mapRodzajPrzedzialuCK01(transaction: TransactionATable): Partial<RP01_RP02_for_CK01 | RP03_for_CK01 | RP04_for_CK01> {
   switch (transaction.RodzajPrzedzialu) {
     case 'RP01':
     case 'RP02':
@@ -212,9 +202,7 @@ function mapRodzajPrzedzialuCK01(
   }
 }
 
-function mapRodzajPrzedzialuCK02(
-  transaction: TransactionATable,
-): Partial<RP01_RP02_for_CK02 | RP03_for_CK02 | RP04_for_CK02> {
+function mapRodzajPrzedzialuCK02(transaction: TransactionATable): Partial<RP01_RP02_for_CK02 | RP03_for_CK02 | RP04_for_CK02> {
   switch (transaction.RodzajPrzedzialu) {
     case 'RP01':
     case 'RP02':
@@ -241,7 +229,7 @@ function mapRodzajPrzedzialuCK02(
 }
 
 function mapRodzajPorownania(
-  transaction: TransactionATable,
+  transaction: TransactionATable
 ): Partial<PR01_PR03_for_MW02_MW03_MW05 | PR02_for_KategoriaA_MW02_MW03_MW05> {
   switch (transaction.RodzajPorownania) {
     case 'PR01':
@@ -261,12 +249,8 @@ function mapRodzajPorownania(
 }
 
 function mapRodzajPrzedzialuMW02_MW03_MW05(
-  transaction: TransactionATable,
-): Partial<
-  | RP01_RP02_for_MW02_MW03_MW05
-  | RP03_for_MW02_MW03_MW05
-  | RP04_for_MW02_MW03_MW05
-> {
+  transaction: TransactionATable
+): Partial<RP01_RP02_for_MW02_MW03_MW05 | RP03_for_MW02_MW03_MW05 | RP04_for_MW02_MW03_MW05> {
   switch (transaction.RodzajPrzedzialu) {
     case 'RP01':
     case 'RP02':

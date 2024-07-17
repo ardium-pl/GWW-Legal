@@ -11,7 +11,7 @@ import { ButtonAppearance } from './button.types';
 })
 export class ButtonComponent {
   readonly disabled = input<boolean, any>(false, {
-    transform: (v) => coerceBooleanProperty(v),
+    transform: v => coerceBooleanProperty(v),
   });
 
   readonly htmlId = input<string | null | undefined>(null);

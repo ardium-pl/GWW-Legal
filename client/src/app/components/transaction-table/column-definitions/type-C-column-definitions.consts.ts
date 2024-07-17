@@ -1,20 +1,15 @@
+import { INumberCellEditorParams, ISelectCellEditorParams, ITooltipParams } from 'ag-grid-community';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
-import {
-  INumberCellEditorParams,
-  ISelectCellEditorParams,
-  ITooltipParams,
-} from 'ag-grid-community';
+import { getCellClass } from '../column-types';
 
 // Utility function to generate reverse mappings
-function createReverseMapping(
-  mapping: Record<string, string>,
-): Record<string, string> {
+function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
   return Object.keys(mapping).reduce(
     (reverseMapping, key) => {
       reverseMapping[mapping[key]] = key;
       return reverseMapping;
     },
-    {} as Record<string, string>,
+    {} as Record<string, string>
   );
 }
 
@@ -107,9 +102,7 @@ const RodzajPrzedzialuCodeMapping: Record<string, string> = {
 };
 
 // Generate reverse mappings using the utility function
-const RodzajPrzedzialuReverseCodeMapping = createReverseMapping(
-  RodzajPrzedzialuCodeMapping,
-);
+const RodzajPrzedzialuReverseCodeMapping = createReverseMapping(RodzajPrzedzialuCodeMapping);
 
 export const transactionCColDefs: ColDef[] = [
   {
@@ -156,7 +149,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => correctionCodeMapping[params.value],
+    valueFormatter: params => correctionCodeMapping[params.value],
   },
   {
     field: 'WartoscKorekty',
@@ -186,7 +179,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => compensationCodeMapping[params.value],
+    valueFormatter: params => compensationCodeMapping[params.value],
   },
   {
     field: 'Kapital',
@@ -262,7 +255,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(ZwolnienieCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => ZwolnienieCodeMapping[params.value],
+    valueFormatter: params => ZwolnienieCodeMapping[params.value],
   },
   {
     field: 'PodstawaZwolnienia',
@@ -310,7 +303,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(RodzajTransakcjiCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => RodzajTransakcjiCodeMapping[params.value],
+    valueFormatter: params => RodzajTransakcjiCodeMapping[params.value],
   },
   {
     field: 'KodKrajuTransakcji',
@@ -348,7 +341,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(MetodyBadaniaCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => MetodyBadaniaCodeMapping[params.value],
+    valueFormatter: params => MetodyBadaniaCodeMapping[params.value],
   },
   {
     field: 'ZrodloDanychFinansowych',
@@ -357,12 +350,9 @@ export const transactionCColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(ZrodloDanychFinansowychCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(ZrodloDanychFinansowychCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) =>
-      ZrodloDanychFinansowychCodeMapping[params.value],
+    valueFormatter: params => ZrodloDanychFinansowychCodeMapping[params.value],
   },
   {
     field: 'KorektaMetodyBadania',
@@ -370,11 +360,9 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Korekta dla metody badania',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(KorektaMetodyBadaniaCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(KorektaMetodyBadaniaCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => KorektaMetodyBadaniaCodeMapping[params.value],
+    valueFormatter: params => KorektaMetodyBadaniaCodeMapping[params.value],
     type: 'MetodyBadaniaType',
   },
   {
@@ -383,22 +371,12 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Korekta porównywalności próg',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(KorektaPorownywalnosciProgCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(KorektaPorownywalnosciProgCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) =>
-      KorektaPorownywalnosciProgCodeMapping[params.value],
-    editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.KorektaMetodyBadania === 'KP02',
-    cellStyle: ({ data }) =>
-      data.MetodyBadania === 'MW00' ||
-      data.Zwolnienie !== 'ZW02' ||
-      data.KorektaMetodyBadania !== 'KP02'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    valueFormatter: params => KorektaPorownywalnosciProgCodeMapping[params.value],
+    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.KorektaMetodyBadania === 'KP02',
+    cellClass: ({ data }) =>
+      getCellClass(data.MetodyBadania === 'MW00' || data.Zwolnienie !== 'ZW02' || data.KorektaMetodyBadania !== 'KP02'),
   },
   {
     field: 'RodzajOprocentowania',
@@ -407,11 +385,9 @@ export const transactionCColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(RodzajOprocentowaniaCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(RodzajOprocentowaniaCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => RodzajOprocentowaniaCodeMapping[params.value],
+    valueFormatter: params => RodzajOprocentowaniaCodeMapping[params.value],
   },
   {
     field: 'Marza',
@@ -433,7 +409,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(NazwaStopyBazowejCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => NazwaStopyBazowejCodeMapping[params.value],
+    valueFormatter: params => NazwaStopyBazowejCodeMapping[params.value],
   },
   {
     field: 'InnaSB',
@@ -446,13 +422,13 @@ export const transactionCColDefs: ColDef[] = [
       data.Zwolnienie === 'ZW02' &&
       data.RodzajOprocentowania === 'OP01' &&
       data.NazwaStopyBazowej === 'SB09',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajOprocentowania !== 'OP01' ||
-      data.NazwaStopyBazowej !== 'SB09'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    cellClass: ({ data }) =>
+      getCellClass(
+        data.Zwolnienie !== 'ZW02' ||
+          data.MetodyBadania === 'MW00' ||
+          data.RodzajOprocentowania !== 'OP01' ||
+          data.NazwaStopyBazowej !== 'SB09'
+      ),
   },
   {
     field: 'TerminStopyBazowej',
@@ -461,11 +437,9 @@ export const transactionCColDefs: ColDef[] = [
     type: 'RodzajOprocentowania1Type',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(TerminStopyBazowejCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(TerminStopyBazowejCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => TerminStopyBazowejCodeMapping[params.value],
+    valueFormatter: params => TerminStopyBazowejCodeMapping[params.value],
   },
   {
     field: 'Okres',
@@ -478,13 +452,13 @@ export const transactionCColDefs: ColDef[] = [
       data.Zwolnienie === 'ZW02' &&
       data.RodzajOprocentowania === 'OP01' &&
       data.TerminStopyBazowej === 'TB07',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajOprocentowania !== 'OP01' ||
-      data.TerminStopyBazowej !== 'TB07'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    cellClass: ({ data }) =>
+      getCellClass(
+        data.Zwolnienie !== 'ZW02' ||
+          data.MetodyBadania === 'MW00' ||
+          data.RodzajOprocentowania !== 'OP01' ||
+          data.TerminStopyBazowej !== 'TB07'
+      ),
   },
   {
     field: 'PoziomOprocentowania',
@@ -495,16 +469,9 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       min: 0,
     } as INumberCellEditorParams,
-    editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.RodzajOprocentowania === 'OP02',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajOprocentowania !== 'OP02'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajOprocentowania === 'OP02',
+    cellClass: ({ data }) =>
+      getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajOprocentowania !== 'OP02'),
   },
   {
     field: 'PoziomOprocentowaniaMinimalny',
@@ -537,7 +504,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(RodzajPrzedzialuCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => RodzajPrzedzialuCodeMapping[params.value],
+    valueFormatter: params => RodzajPrzedzialuCodeMapping[params.value],
   },
   {
     field: 'DolnaGranicaPrzedzialu',
@@ -549,31 +516,17 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       min: 0,
     } as INumberCellEditorParams,
-    editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.RodzajPrzedzialu !== 'RP04',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajPrzedzialu === 'RP04'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu !== 'RP04',
+    cellClass: ({ data }) =>
+      getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajPrzedzialu === 'RP04'),
   },
   {
     field: 'GornaGranicaPrzedzialu',
     headerName: 'Górna granica przedziału',
     headerTooltip: 'Górna granica przedziału',
-    editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.RodzajPrzedzialu !== 'RP04',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajPrzedzialu === 'RP04'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu !== 'RP04',
+    cellClass: ({ data }) =>
+      getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajPrzedzialu === 'RP04'),
     cellEditor: 'agNumberCellEditor',
     cellDataType: 'number',
     cellEditorParams: {
@@ -586,16 +539,9 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Wysokość wskaźnika finansowego %',
     cellEditor: 'agNumberCellEditor',
     cellDataType: 'number',
-    editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.RodzajPrzedzialu === 'RP04',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajPrzedzialu !== 'RP04'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu === 'RP04',
+    cellClass: ({ data }) =>
+      getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajPrzedzialu !== 'RP04'),
     cellEditorParams: {
       min: 0,
     } as INumberCellEditorParams,
@@ -606,15 +552,8 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Opis przedziału',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
-    editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.RodzajPrzedzialu === 'RP03',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.RodzajPrzedzialu !== 'RP03'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu === 'RP03',
+    cellClass: ({ data }) =>
+      getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajPrzedzialu !== 'RP03'),
   },
 ];

@@ -4,27 +4,20 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root',
 })
 export class TprDataService {
-  readonly allTransactionsData = signal<any[]>([]);
-  readonly isError = signal<boolean>(false);
+  private readonly _allTransactionsData = signal<any[]>([]);
+  public readonly allTransactionTable = this._allTransactionsData.asReadonly();
 
-  updateData(newData: any[]) {
-    this.allTransactionsData.update((data) => [...data, ...newData]);
+  private readonly _isError = signal<boolean>(false);
+  public readonly isError = this._isError.asReadonly();
+
+  appendTransactionData(newData: any[]) {
+    this._allTransactionsData.update(data => [...data, ...newData]);
   }
-
-  setIsError() {
-    this.isError.set(true);
+  setIsErrorTrue() {
+    this._isError.set(true);
   }
-
-  getData() {
-    return this.allTransactionsData();
-  }
-
-  getIsError() {
-    return this.isError();
-  }
-
-  clearData() {
-    this.isError.set(false);
-    this.allTransactionsData.set([]);
+  reset() {
+    this._isError.set(false);
+    this._allTransactionsData.set([]);
   }
 }

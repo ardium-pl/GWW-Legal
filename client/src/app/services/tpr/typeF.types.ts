@@ -1,6 +1,4 @@
-export type TransakcjaKategoriaF<
-  K extends KorektaCenTransferowych = KorektaCenTransferowych,
-> = {
+export type TransakcjaKategoriaF<K extends KorektaCenTransferowych = KorektaCenTransferowych> = {
   KategoriaF: '1501' | '2501';
   PrzedmiotF: string;
   WartoscF: {

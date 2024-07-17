@@ -1,14 +1,14 @@
 import {
-    Kompensata,
-    Korekta,
-    KorektaCenTransferowych,
-    MetodyBadania,
-    RodzajTransakcji,
-    SposobWeryfikacjiEynkowegoPoziomuCeny,
-    ZwolnienieArt11n,
+  Kompensata,
+  Korekta,
+  KorektaCenTransferowych,
+  MetodyBadania,
+  RodzajTransakcji,
+  SposobWeryfikacjiEynkowegoPoziomuCeny,
+  ZwolnienieArt11n,
 } from './typeA.types';
 
-export type TPR_input = {
+export type TPRCompanyData = {
   periodFrom: string;
   periodUntil: string;
   taxID: string;
@@ -21,7 +21,7 @@ export type TPR_input = {
   returnOnAssets: number;
   returnOnEquity: number;
   statement: string;
-  transactions: Array<any>;
+  transactions: Array<Transaction>;
 };
 
 export type Transaction = {
@@ -37,14 +37,14 @@ export type Transaction = {
 
 export type CategorizedTransaction = Transaction & { Id: number };
 
-export type TransactionCategories = {
-  categoryA: CategorizedTransaction[];
-  categoryB: CategorizedTransaction[];
-  categoryC: CategorizedTransaction[];
-  categoryD: CategorizedTransaction[];
-  categoryE: CategorizedTransaction[];
-  categoryF: CategorizedTransaction[];
-};
+export class TransactionCategories {
+  readonly categoryA: CategorizedTransaction[] = [];
+  readonly categoryB: CategorizedTransaction[] = [];
+  readonly categoryC: CategorizedTransaction[] = [];
+  readonly categoryD: CategorizedTransaction[] = [];
+  readonly categoryE: CategorizedTransaction[] = [];
+  readonly categoryF: CategorizedTransaction[] = [];
+}
 
 export type TransactionTable = {
   KategoriaA: string;

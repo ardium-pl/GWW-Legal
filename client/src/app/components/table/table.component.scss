@@ -26,12 +26,14 @@
     background: #888;
     border-radius: 9999px;
   }
-  .ag-body-horizontal-scroll, .ag-body-horizontal-scroll-viewport, .ag-body-horizontal-scroll-container {
+  .ag-body-horizontal-scroll,
+  .ag-body-horizontal-scroll-viewport,
+  .ag-body-horizontal-scroll-container {
     min-height: 10px !important;
     height: 10px !important;
     max-height: 10px !important;
   }
 }
 .ag-sticky-bottom {
-  display: none;
+  display: none !important;
 }

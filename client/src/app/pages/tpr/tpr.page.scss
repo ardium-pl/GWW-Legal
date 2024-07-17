@@ -1,7 +1,30 @@
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-bottom: 20%;
+
+  app-icon {
+    margin-bottom: 80px;
+    font-size: 80px;
+    color: var(--red);
+  }
+  h1 {
+    font-size: 32px;
+    padding-bottom: 32px;
+  }
+  p {
+    font-size: 16px;
+    min-height: 1.25em;
+  }
+}
+
 .table-card {
   padding: 0;
   margin-bottom: 40px;
-  border-radius: 8px;
+  border-radius: 8px !important;
 }
 
 .table-header {
@@ -12,4 +35,9 @@
 .xml-button {
   display: flex;
   justify-content: center;
+}
+
+.mat-mdc-tab-body-wrapper {
+  position: relative;
+  top: 12px;
 }

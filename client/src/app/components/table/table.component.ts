@@ -3,7 +3,7 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { TPR_input } from 'app/services/tpr/tpr-input.types';
+import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
 import { companyColDefs } from './table.consts';
 
 @Component({
@@ -15,7 +15,7 @@ import { companyColDefs } from './table.consts';
   encapsulation: ViewEncapsulation.None,
 })
 export class TableComponent {
-  public readonly inputData = input.required<(TPR_input | null)[]>();
+  public readonly inputData = input.required<(TPRCompanyData | null)[]>();
 
   readonly colDefs: ColDef[] = companyColDefs;
   readonly tooltipShowDelay = 500;

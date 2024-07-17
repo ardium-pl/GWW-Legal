@@ -17,9 +17,7 @@ import {
 import { AllTransactionTables } from 'app/services/tpr/tpr-input.types';
 import { TransactionCTable } from 'app/services/tpr/tpr-table.types';
 
-export function mapKorektaCenTransferowych(
-  transaction: TransactionCTable,
-): Partial<KC01 | KC02> {
+export function mapKorektaCenTransferowych(transaction: TransactionCTable): Partial<KC01 | KC02> {
   switch (transaction.correction) {
     case 'KC01':
       return {
@@ -40,9 +38,7 @@ export function mapKorektaCenTransferowych(
   }
 }
 
-export function mapZwolnienieArt11n(
-  transaction: TransactionCTable,
-): Partial<ZW01 | ZW02> {
+export function mapZwolnienieArt11n(transaction: TransactionCTable): Partial<ZW01 | ZW02> {
   switch (transaction.Zwolnienie) {
     case 'ZW01':
       return {
@@ -92,9 +88,7 @@ export function mapZW02(transaction: TransactionCTable): Partial<ZW02> {
   return zw2;
 }
 
-export function mapMetodyBadania(
-  transaction: TransactionCTable,
-): Partial<MW00 | MW01toMW06<Korekta>> {
+export function mapMetodyBadania(transaction: TransactionCTable): Partial<MW00 | MW01toMW06<Korekta>> {
   switch (transaction.MetodyBadania) {
     case 'MW00':
       return {
@@ -125,9 +119,7 @@ export function mapMetodyBadania(
   }
 }
 
-export function mapRodzajOprocentowania(
-  transaction: TransactionCTable,
-): Partial<OP01 | OP02 | OP03 | OP04_OP05> {
+export function mapRodzajOprocentowania(transaction: TransactionCTable): Partial<OP01 | OP02 | OP03 | OP04_OP05> {
   switch (transaction.RodzajOprocentowania) {
     case 'OP01':
       return {
