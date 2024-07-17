@@ -21,10 +21,6 @@ export class GptConversationDialogComponent {
   readonly dialogRef = inject(MatDialogRef<GptConversationDialogComponent>);
   readonly dialogData = inject<GptConversationDialogData>(MAT_DIALOG_DATA);
 
-  constructor() {
-    console.log(this.dialogData, this.dialogData.nsaServiceInstance.conversations());
-  }
-
   readonly conversation = this.dialogData.nsaServiceInstance.conversations()[this.dialogData.conversationIndex];
 
   onCloseClick(): void {

@@ -14,6 +14,7 @@ import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { TprDataService } from 'app/services/tpr/tpr-data.service';
 import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
 import { getColumnDefUtil, getKeysToCheck } from 'app/utils/get-column-def.util';
+import { isDefined } from 'simple-bool';
 import { columnTypes } from './column-types';
 
 @Component({
@@ -22,7 +23,7 @@ import { columnTypes } from './column-types';
   imports: [AgGridAngular],
   templateUrl: './transaction-table.component.html',
   styleUrls: ['./transaction-table.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class TransactionTableComponent {
   private readonly tprDataService = inject(TprDataService);
@@ -37,6 +38,7 @@ export class TransactionTableComponent {
 
   onGridReady(params: GridReadyEvent<any>) {
     this.gridApi = params.api;
+    this.getRawData();
   }
 
   public columnTypes: {
@@ -53,6 +55,7 @@ export class TransactionTableComponent {
     };
     event.api.applyTransaction(tx);
     this.gridApi.redrawRows();
+    this.getRawData();
   }
 
   public sendData() {
@@ -77,26 +80,27 @@ export class TransactionTableComponent {
     }
     keysToCheck = [...keysToCheck, ...this.defaultKeys()];
 
+    this.tprDataService.setIsError(false);
     colDefs &&
       colDefs.forEach((colDef: any) => {
         const isEditable = typeof colDef.editable === 'function' ? colDef.editable({ data: result }) : colDef.editable;
-        if (isEditable) {
-          //sprawdzenie czy są wymagane pola uzupełnione
-          const isObjectIncomplete = keysToCheck.some(key => {
-            return !objectKeys.some(objectKey => {
-              const keyValid = objectKey === key;
-              const hasValue = result[objectKey] !== null;
-              return keyValid && hasValue;
-            });
+        if (!isEditable) return;
+        //sprawdzenie czy wymagane pola są uzupełnione
+        const isObjectIncomplete = keysToCheck.some(key => {
+          return !objectKeys.some(objectKey => {
+            const keyValid = objectKey === key;
+            const hasValue = result[objectKey] !== null;
+            return keyValid && hasValue;
           });
-          if (isObjectIncomplete) {
-            this.tprDataService.setIsErrorTrue();
-          } else {
-            for (const key in objectKeys) {
-              if (result[objectKeys[key]] === null || result[objectKeys[key]] === '' || result[objectKeys[key]] === undefined) {
-                this.tprDataService.setIsErrorTrue();
-              }
-            }
+        });
+        if (isObjectIncomplete) {
+          this.tprDataService.setIsError(true);
+          return;
+        }
+        for (const key of objectKeys) {
+          if (!isDefined(result[key]) || result[key] === '') {
+            this.tprDataService.setIsError(true);
+            return;
           }
         }
       });

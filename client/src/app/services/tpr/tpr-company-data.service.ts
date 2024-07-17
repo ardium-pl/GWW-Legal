@@ -1,4 +1,4 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 import { isDefined } from 'simple-bool';
 import { CategorizedTransaction, TPRCompanyData, Transaction, TransactionCategories } from './tpr-input.types';
 
@@ -33,15 +33,12 @@ export class TprCompanyDataService {
   }
   setData(object: object): void {
     for (const KEY of REQUIRED_TPR_DATA_KEYS) {
-      console.log(KEY, KEY in object);
       if (KEY in object) continue;
       this._error.set('KEY_MISSING_ERR');
       return;
     }
     this._data.set(object as TPRCompanyData);
   }
-
-  bfjfdgbj = effect(() => console.log(this.data(), this.hasData()));
 
   public readonly transactionCategoriesArray = computed<[string, CategorizedTransaction[]][] | null>(() => {
     const categories = new TransactionCategories();

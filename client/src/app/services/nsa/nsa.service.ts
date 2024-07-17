@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
@@ -163,10 +163,6 @@ export class NsaService implements OnDestroy {
 
   public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true));
 
-  effdf = effect(() => {
-    console.log(this._independentQuestionsProgress(), this._independentQuestionsResponses());
-  });
-
   fetchindependentAnswer(systemMessage: string, userMessage: string, index: number): void {
     this._independentQuestionsProgress.update(arr => {
       const newArr = [...arr];
@@ -219,13 +215,11 @@ export class NsaService implements OnDestroy {
     this._conversations.set(new Array(amount));
   }
   createConversation(index: number, systemMessage: string, userMessage: string, response: string) {
-    console.log('this.createConversation', response);
     this._conversations.update(arr => {
       const newArr = [...arr];
       newArr[index] = new GptConversation(systemMessage, userMessage, response);
       return newArr;
     });
-    console.log(this._conversations());
   }
   fetchConversationAnswer(index: number, userMessage: string): void {
     const convo = this.conversations()[index];

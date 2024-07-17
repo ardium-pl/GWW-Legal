@@ -13,8 +13,8 @@ export class TprDataService {
   appendTransactionData(newData: any[]) {
     this._allTransactionsData.update(data => [...data, ...newData]);
   }
-  setIsErrorTrue() {
-    this._isError.set(true);
+  setIsError(state: boolean) {
+    this._isError.set(state);
   }
   reset() {
     this._isError.set(false);

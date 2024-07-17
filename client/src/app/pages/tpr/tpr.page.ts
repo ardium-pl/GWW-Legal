@@ -1,6 +1,16 @@
-import { Component, HostListener, OnDestroy, OnInit, ViewEncapsulation, inject, signal, viewChildren } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+  ViewEncapsulation,
+  inject,
+  signal,
+  viewChildren
+} from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { FileSystemService } from '@ardium-ui/devkit';
 import { IconComponent } from 'app/components';
 import { TableComponent } from 'app/components/table/table.component';
@@ -18,7 +28,15 @@ import { ButtonComponent } from '../../components/button/button.component';
 @Component({
   selector: 'tpr-nsa',
   standalone: true,
-  imports: [TableComponent, TransactionTableComponent, MatCardModule, MatTabsModule, ButtonComponent, IconComponent],
+  imports: [
+    TableComponent,
+    TransactionTableComponent,
+    MatCardModule,
+    MatTabsModule,
+    ButtonComponent,
+    IconComponent,
+    MatTooltipModule,
+  ],
   providers: [ClipboardService, TprDataService, ErrorSnackbarService],
   templateUrl: './tpr.page.html',
   styleUrl: './tpr.page.scss',
@@ -27,12 +45,12 @@ import { ButtonComponent } from '../../components/button/button.component';
 export class TprPage implements OnInit, OnDestroy {
   private readonly children = viewChildren(TransactionTableComponent);
 
-  private readonly tprDataService = inject(TprDataService);
   private readonly errorSnackbarService = inject(ErrorSnackbarService);
   private readonly clipboardService = inject(ClipboardService);
   private readonly mixpanelService = inject(MixpanelService);
   private readonly fileSystemService = inject(FileSystemService);
 
+  public readonly tprDataService = inject(TprDataService);
   public readonly tprCompanyDataService = inject(TprCompanyDataService);
 
   public readonly selectedTab = signal<number>(0);
@@ -57,6 +75,7 @@ export class TprPage implements OnInit, OnDestroy {
     this._readClipboard();
   }
   @HostListener('window:focus')
+  @HostListener('click')
   public onWindowFocus(): void {
     if (this.tprCompanyDataService.hasData()) return;
     this._readClipboard();
