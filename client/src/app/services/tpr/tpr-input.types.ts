@@ -21,6 +21,7 @@ export type TPRCompanyData = {
   returnOnAssets: number;
   returnOnEquity: number;
   statement: string;
+  irsCode: string;
   transactions: Array<Transaction>;
 };
 

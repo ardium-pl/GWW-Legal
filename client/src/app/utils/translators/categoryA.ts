@@ -58,10 +58,10 @@ export function mapZwolnienieArt11nA(transaction: TransactionATable): Partial<ZW
         KodZW1: 'ZW01',
         PodstZW: transaction.PodstawaZwolnienia,
         InformacjaOKrajuA1: {
-          Kraj: transaction.KodKrajuTransakcji,
+          Kraj: transaction.KodKrajuZwolnienia,
           WartoscAKraj1: {
             _attributes: {
-              kodWaluty: transaction.KodKrajuZwolnienia,
+              kodWaluty: transaction.KodWalutyKraju,
             },
             _text: transaction.WartoscTransakcjiZwolnienia,
           },

@@ -33,6 +33,7 @@ export function translateToTPR(tprInput: any) {
         CelZlozenia: 1,
         OkresOd: tprInput.periodFrom,
         OkresDo: tprInput.periodUntil,
+        KodUrzedu: tprInput.irsCode,
       },
       Podmiot1: {
         _attributes: {
