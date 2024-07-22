@@ -21,6 +21,7 @@ export type TPR_input = {
   returnOnAssets: number;
   returnOnEquity: number;
   statement: string;
+  irsCode: string;
   transactions: Array<any>;
 };
 

@@ -20,7 +20,7 @@ export function translateToTPR(tprInput: any) {
   const tpr = {
     Deklaracja: {
       _attributes: {
-        xmlns: 'https://ardium.pl/home', //???????????????????????
+        xmlns: 'https://ardium.pl/home',
       },
       Naglowek: {
         KodFormularza: {
@@ -37,6 +37,7 @@ export function translateToTPR(tprInput: any) {
         CelZlozenia: 1,
         OkresOd: tprInput.periodFrom,
         OkresDo: tprInput.periodUntil,
+        KodUrzedu: tprInput.irsCode,
       },
       Podmiot1: {
         _attributes: {
