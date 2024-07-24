@@ -32,6 +32,7 @@
     "more-rounding": "^4.2.1",
     "ngx-markdown": "^18.0.0",
     "node": "^22.5.1",
+    "rollup": "^4.19.0",
     "rxjs": "~7.8.0",
     "simple-bool": "^3.0.1",
     "string-similarity": "^4.0.4",
