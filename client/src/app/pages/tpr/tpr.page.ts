@@ -24,6 +24,9 @@ import { translateToTPR } from 'app/utils/tpr-translator.util';
 import { Subject, catchError, from, takeUntil } from 'rxjs';
 import * as xmljs from 'xml-js';
 import { ButtonComponent } from '../../components/button/button.component';
+import { FileDropZoneComponent } from 'app/components/file-drop-zone/file-drop-zone.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ImportXMLService } from 'app/services/import-xml.service';
 
 @Component({
   selector: 'tpr-nsa',
@@ -36,6 +39,7 @@ import { ButtonComponent } from '../../components/button/button.component';
     ButtonComponent,
     IconComponent,
     MatTooltipModule,
+    FileDropZoneComponent
   ],
   providers: [ClipboardService, TprDataService, ErrorSnackbarService],
   templateUrl: './tpr.page.html',
@@ -49,11 +53,25 @@ export class TprPage implements OnInit, OnDestroy {
   private readonly clipboardService = inject(ClipboardService);
   private readonly mixpanelService = inject(MixpanelService);
   private readonly fileSystemService = inject(FileSystemService);
-
+  private readonly importXMLService = inject(ImportXMLService);
+  showDropZone: boolean = false;
   public readonly tprDataService = inject(TprDataService);
   public readonly tprCompanyDataService = inject(TprCompanyDataService);
+  readonly dialog = inject(MatDialog);
+  parsedXmlData = [];
+
 
   public readonly selectedTab = signal<number>(0);
+
+  async onFileDropped(files: File | File[]) {
+    try {
+      const fileArray = Array.isArray(files) ? files : [files]; // Ensure it's an array
+      await this.importXMLService.handleFileDrop(fileArray);
+      this.hideFileDropZone();
+    } catch (error) {
+      console.error('Error processing file:', error);
+    }
+  }
 
   private _readClipboard(): void {
     const sub = from(this.clipboardService.readClipboard())
@@ -114,5 +132,13 @@ export class TprPage implements OnInit, OnDestroy {
       fileName: 'TPR-C(5)_v_35.xml',
       types: [{ description: 'Plik XML', accept: { 'application/xml': ['.xml'] } }],
     });
+  }
+
+  showFileDropZone() {
+    this.showDropZone = true;
+  }
+
+  hideFileDropZone() {
+    this.showDropZone = false;
   }
 }

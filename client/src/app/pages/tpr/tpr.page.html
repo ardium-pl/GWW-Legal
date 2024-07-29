@@ -1,59 +1,56 @@
 @if (tprCompanyDataService.hasData()) {
-<p class="table-header">Tabela informacji o przedsiębiorstwie</p>
-<mat-card class="table-card">
-  <app-table [inputData]="[tprCompanyDataService.data()]"></app-table>
-</mat-card>
-<p class="table-header">Tabele informacji o transakcjach</p>
-<mat-card
-  class="table-card"
-  style="padding-bottom: 12px"
->
-  <mat-tab-group
-    mat-stretch-tabs="true"
-    mat-align-tabs="start"
-    animationDuration="0ms"
-    [(selectedIndex)]="selectedTab"
-  >
-    @for (category of tprCompanyDataService.transactionCategoriesArray(); track category[0]) {
-    <mat-tab
-      [label]="getLabel(category[0])"
-      [disabled]="!category[1].length"
-    >
-      @if (category[1].length) {
-      <app-transaction-table
-        [inputData]="category[1]"
-        [transactionType]="category[0].slice(-1)"
-      />
+  <p class="table-header">Tabela informacji o przedsiębiorstwie</p>
+  <mat-card class="table-card">
+    <app-table [inputData]="[tprCompanyDataService.data()]"></app-table>
+  </mat-card>
+  <p class="table-header">Tabele informacji o transakcjach</p>
+  <mat-card class="table-card" style="padding-bottom: 12px">
+    <mat-tab-group mat-stretch-tabs="true" mat-align-tabs="start" animationDuration="0ms" [(selectedIndex)]="selectedTab">
+      @for (category of tprCompanyDataService.transactionCategoriesArray(); track category[0]) {
+        <mat-tab [label]="getLabel(category[0])" [disabled]="!category[1].length">
+          @if (category[1].length) {
+            <app-transaction-table [inputData]="category[1]" [transactionType]="category[0].slice(-1)" />
+          }
+        </mat-tab>
       }
-    </mat-tab>
-    }
-  </mat-tab-group>
-</mat-card>
-<div class="button-container" [matTooltip]="!tprDataService.isError() ? '' : 'Przed wygenerowaniem pliku należy uzupełnić wszystkie wymagane komórki tablicy'">
-  <app-button
-    (click)="collectData()"
-    class="xml-button"
-    [disabled]="tprDataService.isError()"
-  >
-    <b>Generuj</b>
+    </mat-tab-group>
+  </mat-card>
+  <div class="button-container" [matTooltip]="!tprDataService.isError() ? '' : 'Przed wygenerowaniem pliku należy uzupełnić wszystkie wymagane komórki tablicy'">
+    <app-button (click)="collectData()" class="xml-button" [disabled]="tprDataService.isError()">
+      <b>Generuj</b>
+    </app-button>
+  </div>
+  <app-button (click)="showFileDropZone()" class="import-button">
+    <b>Importuj XML</b>
   </app-button>
-</div>
+  @if (showDropZone) {
+    <div class="overlay" (click)="hideFileDropZone()">
+      <div class="centered-drop-zone" (click)="$event.stopPropagation()">
+        <app-file-drop-zone maxFiles="1" [accept]="['.xml']" (upload)="onFileDropped($event)"></app-file-drop-zone>
+      </div>
+    </div>
+  }
 } @else if (tprCompanyDataService.error()) {
-<div class="error-container">
-  <app-icon icon="error" />
-  <h1>Nie udało się odczytać danych ze schowka</h1>
-  @switch (tprCompanyDataService.error()) { @case ('ACCESS_DENIED_ERR') {
-  <p>Zablokowano dostęp do schowka. Udziel dostępu, żeby kontynuować.</p>
-  <p><!-- this tag is intentionally empty to prevent layout shifts --></p>
-  } @case ('NO_COPIED_DATA_ERR') {
-  <p>Wygląda na to, że w schowku znajduje się pusty fragment danych.</p>
-  <p>Skopiuj dane z arkusza TPR i spróbuj ponownie.</p>
-  } @case ('NOT_JSON_ERR') {
-  <p>Wygląda na to, że w schowku znajdują się dane nieprawidłowego typu.</p>
-  <p>Skopiuj dane z arkusza TPR i spróbuj ponownie.</p>
-  } @case ('KEY_MISSING_ERR') {
-  <p>Wygląda na to, że w schowku znajdują się nieprawidłowe dane.</p>
-  <p>Skopiuj dane z arkusza TPR i spróbuj ponownie.</p>
-  } }
-</div>
+  <div class="error-container">
+    <app-icon icon="error" />
+    <h1>Nie udało się odczytać danych ze schowka</h1>
+    @switch (tprCompanyDataService.error()) { 
+      @case ('ACCESS_DENIED_ERR') {
+        <p>Zablokowano dostęp do schowka. Udziel dostępu, żeby kontynuować.</p>
+        <p><!-- this tag is intentionally empty to prevent layout shifts --></p>
+      } 
+      @case ('NO_COPIED_DATA_ERR') {
+        <p>Wygląda na to, że w schowku znajduje się pusty fragment danych.</p>
+        <p>Skopiuj dane z arkusza TPR i spróbuj ponownie.</p>
+      } 
+      @case ('NOT_JSON_ERR') {
+        <p>Wygląda na to, że w schowku znajdują się dane nieprawidłowego typu.</p>
+        <p>Skopiuj dane z arkusza TPR i spróbuj ponownie.</p>
+      } 
+      @case ('KEY_MISSING_ERR') {
+        <p>Wygląda na to, że w schowku znajdują się nieprawidłowe dane.</p>
+        <p>Skopiuj dane z arkusza TPR i spróbuj ponownie.</p>
+      } 
+    }
+  </div>
 }
