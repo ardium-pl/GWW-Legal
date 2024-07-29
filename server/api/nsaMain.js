@@ -22,6 +22,22 @@ export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, ca
   return response;
 }
 
+export async function followUpDiscussionAboutNSA(formattedChatHistory) {
+  const historyInstruction = {
+    role: "system",
+    content: "Answer based on the following context and chat history.",
+  };
+  formattedChatHistory.unshift(historyInstruction);
+
+  const rawResponse = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: formattedChatHistory,
+    temperature: 0.5,
+  });
+  const textResponse = retrieveGPTMessage(rawResponse);
+  return textResponse;
+}
+
 function retrieveGPTMessage(response) {
   if (response && response.choices) {
     return response.choices[0].message.content;
