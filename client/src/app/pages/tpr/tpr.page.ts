@@ -37,7 +37,7 @@ import { ButtonComponent } from '../../components/button/button.component';
     IconComponent,
     MatTooltipModule,
   ],
-  providers: [ClipboardService, TprDataService, ErrorSnackbarService],
+  providers: [ClipboardService, TprDataService, ErrorSnackbarService, FileSystemService],
   templateUrl: './tpr.page.html',
   styleUrl: './tpr.page.scss',
   encapsulation: ViewEncapsulation.None,
