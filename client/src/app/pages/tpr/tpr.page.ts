@@ -36,7 +36,7 @@ import { ButtonComponent } from '../../components/button/button.component';
     MatTabsModule,
     ButtonComponent,
   ],
-  providers: [ClipboardService, TprDataService, ErrorSnackbarService],
+  providers: [ClipboardService, TprDataService, ErrorSnackbarService, FileSystemService],
   templateUrl: './tpr.page.html',
   styleUrl: './tpr.page.scss',
 })
