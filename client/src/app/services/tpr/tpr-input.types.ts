@@ -15,14 +15,14 @@ export type TPRCompanyData = {
   fullName: string;
   countryCode: string;
   pkdCode: string;
-  taxCategory: 'ZK01' | 'ZK02';
+  taxCategory: string;
   operatingMargin: number;
   profitMargin: number;
   returnOnAssets: number;
   returnOnEquity: number;
   statement: string;
   irsCode: string;
-  transactions: Array<Transaction>;
+  transactions: Array<any>;
 };
 
 export type Transaction = {

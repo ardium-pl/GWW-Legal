@@ -1,5 +1,41 @@
 import { Injectable } from '@angular/core';
 import { parseString, processors } from 'xml2js';
+import { PozycjeSzczegolowe } from './tpr/tpr-output.types';
+import { TPRCompanyData } from './tpr/tpr-input.types';
+
+
+type Declaration  = {
+  Naglowek: Naglowek;
+  Podmiot1: Podmiot;
+  PozycjeSzczegolowe: PozSzcz;
+  Oswiadczenie: 'OSW1' | 'OSW2';
+}
+type Naglowek = {
+  OkresOd: string;
+  OkresDo: string;
+  KodUrzedu: string;
+}
+
+type PozSzcz = {
+  PodmiotNZ: 'ZK01';
+  PodmiotKZ: 'ZK02';
+  InnyPodmiot: InnyPodmiot;
+  Transakcja: Array<any>;
+}
+
+type InnyPodmiot = {
+  MarzaOper: number;
+  MarzaZysku: number;
+  RentAkt: number;
+  RentKW: number;
+}
+
+type Podmiot = {
+  NIP: string;
+  PelnaNazwa: string;
+  KodKraju: string;
+  KodPKD: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -13,32 +49,53 @@ export class ImportXMLService {
     }
 
     const fileContent = await file.text();
-    console.log(fileContent); // Log the file content to the console
-    const xmlData = this.readAsXml(fileContent);
-    console.log(xmlData);
-    // const parsedData = this.parseXml(xmlData);
+    console.log(fileContent);
+    const xmlData = await this.readAsXml(fileContent);
+    const parsedData = this.parseXML(xmlData);
+    console.log(parsedData);
     
-    // return parsedData;
+    return parsedData;
   }
 
-  private readAsXml(xmlContent: string) {
+  private readAsXml(xmlContent: string): Promise<any> {
     const options = {
       explicitArray: false,
-      mergeAttrs: true,
+      mergeAttrs: false,
       trim: true,
-      normalizeTags: true,
+      normalizeTags: false,
       explicitRoot: false,
-      // tagNameProcessors: [processors.stripPrefix], // Removes namespace prefixes from tag names
-      // attrNameProcessors: [processors.stripPrefix], // Removes namespace prefixes from attribute names
+      tagNameProcessors: [processors.stripPrefix], // Removes namespace prefixes from tag names
+      attrNameProcessors: [processors.stripPrefix]  // Removes namespace prefixes from attribute names
     };
 
-    let result: any;
-    parseString(xmlContent, options, (err, res) => {
-      if (err) {
-        throw new Error(`Error parsing XML: ${err.message}`);
-      }
-      result = res;
+    return new Promise((resolve, reject) => {
+      parseString(xmlContent, options, (err, result) => {
+        if (err) {
+          reject(new Error(`Error parsing XML: ${err.message}`));
+        } else {
+          resolve(result);
+        }
+      });
     });
+  }
+
+  private parseXML(data: Declaration):  TPRCompanyData{
+    const result: TPRCompanyData = {
+      periodFrom: data.Naglowek.OkresOd,
+      periodUntil: data.Naglowek.OkresDo,
+      taxID: data.Podmiot1.NIP,
+      fullName: data.Podmiot1.PelnaNazwa,
+      countryCode: data.Podmiot1.KodKraju,
+      pkdCode: data.Podmiot1.KodPKD,
+      taxCategory: data.PozycjeSzczegolowe.PodmiotNZ || data.PozycjeSzczegolowe.PodmiotKZ,
+      operatingMargin: data.PozycjeSzczegolowe.InnyPodmiot.MarzaOper,
+      profitMargin: data.PozycjeSzczegolowe.InnyPodmiot.MarzaZysku,
+      returnOnAssets: data.PozycjeSzczegolowe.InnyPodmiot.RentAkt,
+      returnOnEquity: data.PozycjeSzczegolowe.InnyPodmiot.RentKW,
+      transactions: data.PozycjeSzczegolowe.Transakcja,
+      statement: data.Oswiadczenie,
+      irsCode: data.Naglowek.KodUrzedu || '',
+    };
 
     return result;
   }
