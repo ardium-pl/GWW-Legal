@@ -20,13 +20,14 @@ import { MixpanelService } from 'app/services/mixpanel.service';
 import { ErrorSnackbarService } from 'app/services/snackbar.service';
 import { TprCompanyDataService } from 'app/services/tpr/tpr-company-data.service';
 import { TprDataService } from 'app/services/tpr/tpr-data.service';
-import { translateToTPR } from 'app/utils/tpr-translator.util';
+import { translateToTPR } from 'app/utils/translators/tpr-translator.util';
 import { Subject, catchError, from, takeUntil } from 'rxjs';
 import * as xmljs from 'xml-js';
 import { ButtonComponent } from '../../components/button/button.component';
 import { FileDropZoneComponent } from 'app/components/file-drop-zone/file-drop-zone.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ImportXMLService } from 'app/services/import-xml.service';
+import { reverseTranslator } from 'app/utils/translators/reverseTranslators/reverse-tpr-translator';
 
 @Component({
   selector: 'tpr-nsa',
@@ -58,7 +59,6 @@ export class TprPage implements OnInit, OnDestroy {
   public readonly tprDataService = inject(TprDataService);
   public readonly tprCompanyDataService = inject(TprCompanyDataService);
   readonly dialog = inject(MatDialog);
-  parsedXmlData = [];
 
 
   public readonly selectedTab = signal<number>(0);
@@ -140,5 +140,11 @@ export class TprPage implements OnInit, OnDestroy {
 
   hideFileDropZone() {
     this.showDropZone = false;
+  }
+
+  importXML(){
+    const xmlData = this.importXMLService.xmlData;
+    const translatedData = reverseTranslator(xmlData);
+    console.log(translatedData);
   }
 }

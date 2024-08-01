@@ -254,7 +254,7 @@ export type TW03_to_TW06_for_MW06 = {
   TechWyceny3: 'TW03' | 'TW04' | 'TW05' | 'TW06';
 };
 
-export type KorektaCenTransferowych = 'KC01' | 'KC02';
+export type KorektaCenTransferowych = 'KC01' | 'KC02' | undefined;
 export type Kompensata = 'KS01' | 'KS02' | 'KS03';
 export type ZwolnienieArt11n = 'ZW01' | 'ZW02';
 export type RodzajTransakcji = 'TK01' | 'TK02';

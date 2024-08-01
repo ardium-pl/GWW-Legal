@@ -75,3 +75,36 @@ export type AllTransactionTables = Transaction &
   TransactionTable & {
     test: string;
   };
+
+export type Declaration = {
+  Naglowek: Naglowek;
+  Podmiot1: Podmiot;
+  PozycjeSzczegolowe: PozSzcz;
+  Oswiadczenie: 'OSW1' | 'OSW2';
+};
+export type Naglowek = {
+  OkresOd: string;
+  OkresDo: string;
+  KodUrzedu: string;
+};
+
+export type PozSzcz = {
+  PodmiotNZ: 'ZK01';
+  PodmiotKZ: 'ZK02';
+  InnyPodmiot: InnyPodmiot;
+  Transakcja: Array<any>;
+};
+
+export type InnyPodmiot = {
+  MarzaOper: number;
+  MarzaZysku: number;
+  RentAkt: number;
+  RentKW: number;
+};
+
+export type Podmiot = {
+  NIP: string;
+  PelnaNazwa: string;
+  KodKraju: string;
+  KodPKD: string;
+};

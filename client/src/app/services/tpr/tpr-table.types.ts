@@ -228,7 +228,7 @@ export type TransactionFTable = {
   correction: KorektaCenTransferowych;
   WartoscKorekty?: number;
   KodWalutyKorekty?: string;
-  safeHarbour: string;
+  safeHarbour?: string;
   compensation: Kompensata;
   TransakcjaZwolniona: 'ZW01';
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;

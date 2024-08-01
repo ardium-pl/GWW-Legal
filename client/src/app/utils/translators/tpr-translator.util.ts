@@ -1,5 +1,5 @@
-import { translateCategoryE } from './translators/translate-typeE.utilss';
-import { translateCategoryC } from './translators/translate-typeC';
+import { translateCategoryE } from './translate-typeE.utilss';
+import { translateCategoryC } from './translate-typeC';
 import {
   TransactionATable,
   TransactionBTable,
@@ -8,7 +8,7 @@ import {
   TransactionETable,
   TransactionFTable,
 } from 'app/services/tpr/tpr-table.types';
-import { translateCategoryA, translateCategoryA1, translateCategoryA2 } from './translators/translate-typeA.util';
+import { translateCategoryA, translateCategoryA1, translateCategoryA2 } from './translate-typeA.util';
 
 export function translateToTPR(tprInput: any) {
   const translatedTransactions = translateTransactions(tprInput.transactions);
@@ -60,7 +60,7 @@ export function translateToTPR(tprInput: any) {
 
   return tpr;
 }
-type AllTables = TransactionATable &
+export type AllTables = TransactionATable &
   TransactionBTable &
   TransactionCTable &
   TransactionDTable &

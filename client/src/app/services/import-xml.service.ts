@@ -1,46 +1,18 @@
 import { Injectable } from '@angular/core';
 import { parseString, processors } from 'xml2js';
-import { PozycjeSzczegolowe } from './tpr/tpr-output.types';
 import { TPRCompanyData } from './tpr/tpr-input.types';
-
-
-type Declaration  = {
-  Naglowek: Naglowek;
-  Podmiot1: Podmiot;
-  PozycjeSzczegolowe: PozSzcz;
-  Oswiadczenie: 'OSW1' | 'OSW2';
-}
-type Naglowek = {
-  OkresOd: string;
-  OkresDo: string;
-  KodUrzedu: string;
-}
-
-type PozSzcz = {
-  PodmiotNZ: 'ZK01';
-  PodmiotKZ: 'ZK02';
-  InnyPodmiot: InnyPodmiot;
-  Transakcja: Array<any>;
-}
-
-type InnyPodmiot = {
-  MarzaOper: number;
-  MarzaZysku: number;
-  RentAkt: number;
-  RentKW: number;
-}
-
-type Podmiot = {
-  NIP: string;
-  PelnaNazwa: string;
-  KodKraju: string;
-  KodPKD: string;
-}
+import { Declaration } from './tpr/tpr-input.types';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ImportXMLService {
+
+  private _xmlData: TPRCompanyData | null = null;
+
+  get xmlData(): TPRCompanyData | null {
+    return this._xmlData;
+  }
 
   async handleFileDrop(files: File[]) {
     const file = files[0];
@@ -49,15 +21,12 @@ export class ImportXMLService {
     }
 
     const fileContent = await file.text();
-    console.log(fileContent);
-    const xmlData = await this.readAsXml(fileContent);
-    const parsedData = this.parseXML(xmlData);
-    console.log(parsedData);
-    
-    return parsedData;
+    const xmlData = this.readAsXml(fileContent);
+    this._xmlData = this.parseXML(xmlData);
+    console.log(this._xmlData);
   }
 
-  private readAsXml(xmlContent: string): Promise<any> {
+  private readAsXml(xmlContent: string): Declaration {
     const options = {
       explicitArray: false,
       mergeAttrs: false,
@@ -68,35 +37,38 @@ export class ImportXMLService {
       attrNameProcessors: [processors.stripPrefix]  // Removes namespace prefixes from attribute names
     };
 
-    return new Promise((resolve, reject) => {
-      parseString(xmlContent, options, (err, result) => {
-        if (err) {
-          reject(new Error(`Error parsing XML: ${err.message}`));
-        } else {
-          resolve(result);
-        }
-      });
+    let result: any;
+    parseString(xmlContent, options, (err, res) => {
+      if (err) {
+        throw new Error(`Error parsing XML: ${err.message}`);
+      } else {
+        result = res;
+      }
     });
+    console.log(result);
+    return result;
   }
 
-  private parseXML(data: Declaration):  TPRCompanyData{
-    const result: TPRCompanyData = {
-      periodFrom: data.Naglowek.OkresOd,
-      periodUntil: data.Naglowek.OkresDo,
-      taxID: data.Podmiot1.NIP,
-      fullName: data.Podmiot1.PelnaNazwa,
-      countryCode: data.Podmiot1.KodKraju,
-      pkdCode: data.Podmiot1.KodPKD,
-      taxCategory: data.PozycjeSzczegolowe.PodmiotNZ || data.PozycjeSzczegolowe.PodmiotKZ,
-      operatingMargin: data.PozycjeSzczegolowe.InnyPodmiot.MarzaOper,
-      profitMargin: data.PozycjeSzczegolowe.InnyPodmiot.MarzaZysku,
-      returnOnAssets: data.PozycjeSzczegolowe.InnyPodmiot.RentAkt,
-      returnOnEquity: data.PozycjeSzczegolowe.InnyPodmiot.RentKW,
-      transactions: data.PozycjeSzczegolowe.Transakcja,
-      statement: data.Oswiadczenie,
-      irsCode: data.Naglowek.KodUrzedu || '',
-    };
+  private parseXML(data: Declaration): TPRCompanyData {
+    return this.transformRecord(data);
+  }
 
-    return result;
+  private transformRecord(record: Declaration): TPRCompanyData {
+    return {
+      periodFrom: record.Naglowek.OkresOd,
+      periodUntil: record.Naglowek.OkresDo,
+      taxID: record.Podmiot1.NIP,
+      fullName: record.Podmiot1.PelnaNazwa,
+      countryCode: record.Podmiot1.KodKraju,
+      pkdCode: record.Podmiot1.KodPKD,
+      taxCategory: record.PozycjeSzczegolowe.PodmiotNZ || record.PozycjeSzczegolowe.PodmiotKZ,
+      operatingMargin: record.PozycjeSzczegolowe.InnyPodmiot.MarzaOper,
+      profitMargin: record.PozycjeSzczegolowe.InnyPodmiot.MarzaZysku,
+      returnOnAssets: record.PozycjeSzczegolowe.InnyPodmiot.RentAkt,
+      returnOnEquity: record.PozycjeSzczegolowe.InnyPodmiot.RentKW,
+      transactions: record.PozycjeSzczegolowe.Transakcja,
+      statement: record.Oswiadczenie,
+      irsCode: record.Naglowek.KodUrzedu || '',
+    };
   }
 }

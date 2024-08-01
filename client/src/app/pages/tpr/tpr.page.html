@@ -19,8 +19,9 @@
     <app-button (click)="collectData()" class="xml-button" [disabled]="tprDataService.isError()">
       <b>Generuj</b>
     </app-button>
+    <app-button (click)="importXML()">Test</app-button>
   </div>
-  <!-- <app-button (click)="showFileDropZone()" class="import-button">
+  <app-button (click)="showFileDropZone()" class="import-button">
     <b>Importuj XML</b>
   </app-button>
   @if (showDropZone) {
@@ -29,7 +30,7 @@
         <app-file-drop-zone maxFiles="1" [accept]="['.xml']" (upload)="onFileDropped($event)"></app-file-drop-zone>
       </div>
     </div>
-  } -->
+  }
 } @else if (tprCompanyDataService.error()) {
   <div class="error-container">
     <app-icon icon="error" />
