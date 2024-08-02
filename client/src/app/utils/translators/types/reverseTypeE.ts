@@ -1,4 +1,4 @@
-export type TransakcjaKategoriaE<
+export type reverseTransakcjaKategoriaE<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania,
@@ -8,10 +8,10 @@ export type TransakcjaKategoriaE<
       KategoriaE: '1401' | '2401';
       PrzedmiotE: string;
       WartoscE: {
-        _attributes: {
+        $: {
           kodWaluty: string;
         };
-        _text: number;
+        _: string;
       };
       Kompensata: Kompensata;
       RodzajDN: RodzajeWartosciNiematerialnych;
@@ -25,10 +25,10 @@ export type TransakcjaKategoriaE<
 export type KC01 = {
   KorektaCT3: 'KC01';
   WartKorektyCT3: {
-    _attributes: {
+    $?: {
       kodWaluty?: string;
     };
-    _text?: number;
+    _?: string;
   };
 };
 
@@ -42,10 +42,10 @@ export type ZW01 = {
   InformacjaOKrajuE1: {
     Kraj?: string;
     WartoscEKraj1: {
-      _attributes: {
+      $?: {
         kodWaluty?: string;
       };
-      _text?: number;
+      _?: string;
     };
   };
 };
@@ -60,10 +60,10 @@ export type TK01 = {
   InformacjaOKrajuE2: {
     Kraj: string;
     WartoscEKraj2: {
-      _attributes: {
+      $: {
         kodWaluty: string;
       };
-      _text: number;
+      _: string;
     };
   };
 };
@@ -82,10 +82,10 @@ export type MW01toMW06<KP extends Korekta> = {
   RodzajAnalizy: RodzajAnalizy;
   SposobWyrCeny: string;
   KalkOplaty1: SposobKalkulacjiOplaty;
-  PoziomOpl1: number; // TOCODE: Podać w procentach
+  PoziomOpl1: string; // TOCODE: Podać w procentach
   RodzajPrzedz10: 'RP01'; // Powinno być aż do RP04 ale klient nigdy nie używa innych wersji
-  WynikAPKO1D1: number; // TOCODE: Podać jako liczba tysięcy
-  WynikAPKO1G1: number; // TOCODE: Podać jako liczba tysięcy
+  WynikAPKO1D1: string; // TOCODE: Podać jako liczba tysięcy
+  WynikAPKO1G1: string; // TOCODE: Podać jako liczba tysięcy
 } & (KP extends 'KP01' ? KP01 : {}) &
   (KP extends 'KP02' ? KP02 : {});
 

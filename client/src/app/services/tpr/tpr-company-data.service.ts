@@ -61,7 +61,6 @@ export class TprCompanyDataService {
         case '2202':
         case '2203':
         case '2204': {
-          categories.categoryB.push(newTransaction);
           if (
             transaction.safeHarbour === 'TAK' &&
             (transaction.transactionCategory === '1201' || transaction.transactionCategory === '2201')
@@ -92,6 +91,6 @@ export class TprCompanyDataService {
   });
 }
 
-function addId(transaction: Transaction, i: number): CategorizedTransaction {
+export function addId(transaction: Transaction, i: number): CategorizedTransaction {
   return { ...transaction, Id: i };
 }
