@@ -207,3 +207,19 @@ mark {
     color: white;
   }
 }
+
+//! ag grid global styling
+
+$numOfLines: 2;
+.ag-header-cell-text.ag-header-cell-text {
+  overflow: hidden;
+  word-break: break-word;
+  text-overflow: ellipsis;
+  text-wrap: wrap;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: $numOfLines;
+  line-clamp: $numOfLines;
+  line-height: 1.1em; /* fallback */
+  max-height: 1.1em * $numOfLines; /* fallback */
+}

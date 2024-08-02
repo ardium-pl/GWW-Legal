@@ -13,7 +13,7 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
 import { TprDataService } from 'app/services/tpr/tpr-data.service';
 import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
-import { getColumnDefUtil, getKeysToCheck } from 'app/utils/get-column-def.util';
+import { getColumnDefByType, getKeysToCheck } from 'app/utils/get-column-def.util';
 import { isDefined } from 'simple-bool';
 import { columnTypes } from './column-types';
 
@@ -30,7 +30,7 @@ export class TransactionTableComponent {
   public readonly transactionType = input<string>('');
   public readonly inputData = input.required<CategorizedTransaction[]>();
   public readonly defaultKeys = computed(() => getKeysToCheck(this.transactionType()));
-  public readonly colDefs = computed(() => getColumnDefUtil(this.transactionType()));
+  public readonly colDefs = computed(() => getColumnDefByType(this.transactionType()));
   public readonly defaultColDef: ColDef = {
     editable: true,
   };
@@ -81,29 +81,28 @@ export class TransactionTableComponent {
     keysToCheck = [...keysToCheck, ...this.defaultKeys()];
 
     this.tprDataService.setIsError(false);
-    colDefs &&
-      colDefs.forEach((colDef: any) => {
-        const isEditable = typeof colDef.editable === 'function' ? colDef.editable({ data: result }) : colDef.editable;
-        if (!isEditable) return;
-        //sprawdzenie czy wymagane pola są uzupełnione
-        const isObjectIncomplete = keysToCheck.some(key => {
-          return !objectKeys.some(objectKey => {
-            const keyValid = objectKey === key;
-            const hasValue = result[objectKey] !== null;
-            return keyValid && hasValue;
-          });
+    colDefs?.forEach((colDef: any) => {
+      const isEditable = typeof colDef.editable === 'function' ? colDef.editable({ data: result }) : colDef.editable;
+      if (!isEditable) return;
+      //sprawdzenie czy wymagane pola są uzupełnione
+      const isObjectIncomplete = keysToCheck.some(key => {
+        return !objectKeys.some(objectKey => {
+          const keyValid = objectKey === key;
+          const hasValue = result[objectKey] !== null;
+          return keyValid && hasValue;
         });
-        if (isObjectIncomplete) {
+      });
+      if (isObjectIncomplete) {
+        this.tprDataService.setIsError(true);
+        return;
+      }
+      for (const key of objectKeys) {
+        if (!isDefined(result[key]) || result[key] === '') {
           this.tprDataService.setIsError(true);
           return;
         }
-        for (const key of objectKeys) {
-          if (!isDefined(result[key]) || result[key] === '') {
-            this.tprDataService.setIsError(true);
-            return;
-          }
-        }
-      });
+      }
+    });
   }
 
   public readonly getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;
