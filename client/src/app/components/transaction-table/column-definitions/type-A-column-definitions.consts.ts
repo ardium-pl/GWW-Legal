@@ -362,6 +362,7 @@ export const transactionAColDefs: ColDef[] = [
     headerTooltip: 'Kompensata',
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
+    width: 530,
     cellEditorParams: {
       values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,

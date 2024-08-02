@@ -169,6 +169,7 @@ export const transactionDColDefs: ColDef[] = [
     headerTooltip: 'Transakcja zwolniona na podst. art. 11n pkt 1-2 ustawy',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+    width: 300,
     editable: false,
     valueFormatter: () => ZwolnienieCodeMapping['ZW01'],
   },

@@ -1,5 +1,5 @@
-import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
 import { INumberCellEditorParams, ISelectCellEditorParams, ITooltipParams } from 'ag-grid-community';
+import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
 
 function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
   return Object.keys(mapping).reduce(
@@ -110,6 +110,7 @@ export const transactionFColDefs: ColDef[] = [
     headerTooltip: 'Transakcja zwolniona na podst. art. 11n pkt 1-2 ustawy',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+    width: 300,
     editable: false,
     valueFormatter: () => exemptionCodeMapping['ZW01'],
   },
