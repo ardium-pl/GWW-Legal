@@ -2,45 +2,45 @@ export type TransakcjaKategoriaD<K extends KorektaCenTransferowych = KorektaCenT
   KategoriaD: '1201' | '2201';
   PrzedmiotD: string;
   WartoscD: {
-    _attributes: {
+    $: {
       kodWaluty: string;
     };
-    _text: number;
+    _: string;
   };
   Kompensata: Kompensata;
   KapitalD: {
-    _attributes: {
+    $: {
       kodWaluty: string;
     };
-    _text: number; // Podać w tysiącach
+    _: string; // Podać w tysiącach
   };
   ZadluzenieD: {
-    _attributes: {
+    $: {
       kodWaluty: string;
     };
-    _text: number; // Podać w tysiącach
+    _: string; // Podać w tysiącach
   };
   OdsetkiDm: {
-    _attributes: {
+    $: {
       kodWaluty: string;
     };
-    _text: number; // Podać w tysiącach
+    _: string; // Podać w tysiącach
   };
   OdsetkiDk: {
-    _attributes: {
+    $: {
       kodWaluty: string;
     };
-    _text: number; // Podać w tysiącach
+    _: string; // Podać w tysiącach
   };
   KodZW1: 'ZW01';
   PodstZW?: PodstawaZwolnienia;
   Kraj: string;
   NazwaKontr1: string;
   WartTransKontr1: {
-    _attributes: {
+    $: {
       kodWaluty: string;
     };
-    _text: number;
+    _: string;
   };
 } & (K extends 'KC01' ? KC01 : {}) &
   (K extends 'KC02' ? KC02 : {}) &
@@ -55,21 +55,21 @@ export type TransakcjaKategoriaD<K extends KorektaCenTransferowych = KorektaCenT
       }
   );
 
-type KC01 = {
+export type KC01 = {
   KorektaCT5: 'KC01';
   WartKorektyCT5: {
-    _attributes: {
+    $: {
       kodWaluty: string;
     };
-    _text: number;
+    _: string;
   };
 };
 
-type KC02 = {
+export type KC02 = {
   BrakKorektyCT5: 'KC02';
 };
 
 // Common types
-type KorektaCenTransferowych = 'KC01' | 'KC02';
-type Kompensata = 'KS01' | 'KS02' | 'KS03';
-type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+export type KorektaCenTransferowych = 'KC01' | 'KC02';
+export type Kompensata = 'KS01' | 'KS02' | 'KS03';
+export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';

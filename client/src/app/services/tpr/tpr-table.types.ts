@@ -168,6 +168,7 @@ export type TransactionDTable = {
   safeHarbour: string;
   Kapital: number;
   KodWalutyKapitalu: string;
+  Zadluzenie: number;
   KodWalutyZadluzenia: string;
   WysokoscOdsetekMiesiecznych: number;
   KodWalutyOdsetekMiesiecznych: string;

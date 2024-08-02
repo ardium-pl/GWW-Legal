@@ -1,6 +1,6 @@
 import { TransactionETable } from "app/services/tpr/tpr-table.types";
 import { reverseMapKorektaCenTransferowych, reverseMapMetodyBadania, reverseMapZwolnienieArt11n } from "./reverseHelpers/reverseCategoryEHelpers";
-import { reverseTransakcjaKategoriaE } from "../types/reverseTypeE";
+import { reverseTransakcjaKategoriaE } from "./types/reverseTypeE";
 
 
 export function reverseTranslateCategoryE(transaction: any, id: number): TransactionETable {

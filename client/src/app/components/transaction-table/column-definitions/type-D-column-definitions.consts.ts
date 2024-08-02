@@ -67,6 +67,12 @@ export const transactionDColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
+    field: 'safeHarbour',
+    headerName: 'Safe harbour',
+    headerTooltip: 'Safe harbour',
+    editable: false
+  },
+  {
     field: 'correction',
     headerName: 'Korekta',
     headerTooltip: 'Korekta',
@@ -123,6 +129,16 @@ export const transactionDColDefs: ColDef[] = [
     headerTooltip: 'Kod waluty kapitału',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+  },
+  {
+    field: 'Zadluzenie',
+    headerName: 'Zadluzenie',
+    headerTooltip: 'Zadluzenie',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
   },
   {
     field: 'KodWalutyZadluzenia',

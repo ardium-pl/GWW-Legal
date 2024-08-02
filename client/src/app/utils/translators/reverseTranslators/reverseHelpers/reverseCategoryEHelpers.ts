@@ -1,5 +1,5 @@
 import { TransactionETable } from 'app/services/tpr/tpr-table.types';
-import { KC01, KC02, MW01toMW06, TK01, TK02, ZW01, ZW02 } from '../../types/reverseTypeE';
+import { KC01, KC02, MW01toMW06, TK01, TK02, ZW01, ZW02 } from '../types/reverseTypeE';
 
 export function reverseMapKorektaCenTransferowych(transaction: Partial<KC01 & KC02>): Partial<TransactionETable> {
     if (transaction.WartKorektyCT3) {

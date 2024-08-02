@@ -1,6 +1,7 @@
 import { TPRCompanyData } from "app/services/tpr/tpr-input.types";
 import { reverseTranslateCategoryF } from "./reverse-categoryF";
 import { reverseTranslateCategoryE } from "./reverse-categoryE";
+import { reverseTranslateCategoryD } from "./reverse-categoryD";
 
 export function reverseTranslator(xmlData: any): TPRCompanyData | null {
     if (!xmlData) {
@@ -30,15 +31,14 @@ export function reverseTranslator(xmlData: any): TPRCompanyData | null {
     return tableData;
 }
 
-export function translateTransactionsReverse(transactions: any): any[] {
+export function translateTransactionsReverse(transactions: any) {
     if (!transactions) {
         console.error('transactions is undefined or null');
         return [];
     }
 
     if (!Array.isArray(transactions)) {
-        console.error('transactions is not an array:', transactions);
-        return [];
+        transactions = [transactions];
     }
 
     return transactions.map((transaction: any, index: number) => {
@@ -58,8 +58,7 @@ export function translateTransactionsReverse(transactions: any): any[] {
                         return category;
                         // return reverseTranslateCategoryC(transaction);
                     case "KategoriaD":
-                        return category;
-                        // return reverseTranslateCategoryD(transaction);
+                        return reverseTranslateCategoryD(transaction, index);
                     case "KategoriaE":
                         return reverseTranslateCategoryE(transaction, index);
                     case "KategoriaF":
@@ -68,9 +67,7 @@ export function translateTransactionsReverse(transactions: any): any[] {
                         return null;
                 }
             }
-            
         }
-        
         return null;
     }).filter((transaction: any) => transaction !== null);
 }
