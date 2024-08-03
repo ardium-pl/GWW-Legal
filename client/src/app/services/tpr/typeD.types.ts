@@ -1,46 +1,48 @@
-export type TransakcjaKategoriaD<K extends KorektaCenTransferowych = KorektaCenTransferowych> = {
+export type TransakcjaKategoriaD<
+  K extends KorektaCenTransferowych = KorektaCenTransferowych,
+> = {
   KategoriaD: '1201' | '2201';
   PrzedmiotD: string;
   WartoscD: {
-    $: {
+    _attributes: {
       kodWaluty: string;
     };
-    _: string;
+    _text: number;
   };
   Kompensata: Kompensata;
   KapitalD: {
-    $: {
+    _attributes: {
       kodWaluty: string;
     };
-    _: string; // Podać w tysiącach
+    _text: number; // Podać w tysiącach
   };
   ZadluzenieD: {
-    $: {
+    _attributes: {
       kodWaluty: string;
     };
-    _: string; // Podać w tysiącach
+    _text: number; // Podać w tysiącach
   };
   OdsetkiDm: {
-    $: {
+    _attributes: {
       kodWaluty: string;
     };
-    _: string; // Podać w tysiącach
+    _text: number; // Podać w tysiącach
   };
   OdsetkiDk: {
-    $: {
+    _attributes: {
       kodWaluty: string;
     };
-    _: string; // Podać w tysiącach
+    _text: number; // Podać w tysiącach
   };
   KodZW1: 'ZW01';
   PodstZW?: PodstawaZwolnienia;
   Kraj: string;
   NazwaKontr1: string;
   WartTransKontr1: {
-    $: {
+    _attributes: {
       kodWaluty: string;
     };
-    _: string;
+    _text: number;
   };
 } & (K extends 'KC01' ? KC01 : {}) &
   (K extends 'KC02' ? KC02 : {}) &
@@ -58,10 +60,10 @@ export type TransakcjaKategoriaD<K extends KorektaCenTransferowych = KorektaCenT
 export type KC01 = {
   KorektaCT5: 'KC01';
   WartKorektyCT5: {
-    $: {
+    _attributes: {
       kodWaluty: string;
     };
-    _: string;
+    _text: number;
   };
 };
 

@@ -1,6 +1,5 @@
 import { TransactionETable } from "app/services/tpr/tpr-table.types";
 import { reverseMapKorektaCenTransferowych, reverseMapMetodyBadania, reverseMapZwolnienieArt11n } from "./reverseHelpers/reverseCategoryEHelpers";
-import { reverseTransakcjaKategoriaE } from "./types/reverseTypeE";
 
 
 export function reverseTranslateCategoryE(transaction: any, id: number): TransactionETable {
@@ -8,9 +7,9 @@ export function reverseTranslateCategoryE(transaction: any, id: number): Transac
     const baseTableData: Partial<TransactionETable> = {
         Id: id,
         transactionCategory: transaction.KategoriaE,
-        transactionValue: parseFloat(transaction.WartoscE._!),
+        transactionValue: transaction.WartoscE._text,
         subjectMatter: transaction.PrzedmiotE,
-        currencyCode: transaction.WartoscE.$.kodWaluty,
+        currencyCode: transaction.WartoscE._attributes.kodWaluty,
         compensation: transaction.Kompensata,
         RodzajWartosciNiematerialnych: transaction.RodzajDN,
     }

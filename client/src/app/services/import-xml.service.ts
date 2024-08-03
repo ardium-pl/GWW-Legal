@@ -3,11 +3,24 @@ import { parseString, processors } from 'xml2js';
 import { TPRCompanyData } from './tpr/tpr-input.types';
 import { Declaration } from './tpr/tpr-input.types';
 
+const NUMBER_TAGS_THAT_SHOULD_REMAIN_STRINGS = [
+  'OkresOd',
+  'OkresDo',
+  'KodUrzedu',
+  'NIP',
+  'KategoriaA',
+  'KategoriaA1',
+  'KategoriaA2',
+  'KategoriaB',
+  'KategoriaC',
+  'KategoriaD',
+  'KategoriaE',
+  'KategoriaF',
+];
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ImportXMLService {
-
   private _xmlData: TPRCompanyData | null = null;
 
   get xmlData(): TPRCompanyData | null {
@@ -32,9 +45,12 @@ export class ImportXMLService {
       mergeAttrs: false,
       trim: true,
       normalizeTags: false,
+      charkey: '_text',
+      attrkey: '_attributes',
       explicitRoot: false,
       tagNameProcessors: [processors.stripPrefix], // Removes namespace prefixes from tag names
-      attrNameProcessors: [processors.stripPrefix]  // Removes namespace prefixes from attribute names
+      attrNameProcessors: [processors.stripPrefix],
+      valueProcessors: [this.customValueProcessor], // Removes namespace prefixes from attribute names
     };
 
     let result: any;
@@ -47,6 +63,13 @@ export class ImportXMLService {
     });
     console.log(result);
     return result;
+  }
+
+  private customValueProcessor(value: string, name: string) {
+    if (!NUMBER_TAGS_THAT_SHOULD_REMAIN_STRINGS.includes(name)) {
+      return processors.parseNumbers(value);
+    }
+    return value;
   }
 
   private parseXML(data: Declaration): TPRCompanyData {
