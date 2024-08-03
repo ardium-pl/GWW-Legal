@@ -39,7 +39,7 @@ export function reverseMapKorektaCenTransferowych(transaction: any): Partial<Tra
         RodzajTransakcji: 'TK01',
         KodKrajuTransakcji: transaction.InformacjaOKrajuA2.Kraj,
         WartośćTransakcjiKraju: transaction.InformacjaOKrajuA2.WartoscAKraj2._text,
-        KodWalutyKrajuTransakcji: transaction.InformacjaOKrajuA2.WartoscAKraj2._attr.kodWaluty,
+        KodWalutyKrajuTransakcji: transaction.InformacjaOKrajuA2.WartoscAKraj2._attributes.kodWaluty,
       });
     } else if (transaction.RodzajTrans2) {
       Object.assign(zw2, {
