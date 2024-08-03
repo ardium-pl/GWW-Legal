@@ -9,7 +9,6 @@ export function reverseTranslateCategoryF(transaction: TransakcjaKategoriaF & Pa
         subjectMatter: transaction.PrzedmiotF,
         transactionValue: transaction.WartoscF._text,
         currencyCode: transaction.WartoscF._attributes.kodWaluty,
-        safeHarbour: transaction.Kompensata,
         compensation: transaction.Kompensata,
         TransakcjaZwolniona: transaction.KodZW1,
         PodstawaZwolnienia: transaction.PodstZW || null,

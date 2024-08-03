@@ -2,6 +2,7 @@ import { TPRCompanyData } from "app/services/tpr/tpr-input.types";
 import { reverseTranslateCategoryF } from "./reverse-categoryF";
 import { reverseTranslateCategoryE } from "./reverse-categoryE";
 import { reverseTranslateCategoryD } from "./reverse-categoryD";
+import { reverseTranslateCategoryC } from "./reverse-categoryC";
 
 export function reverseTranslator(xmlData: any): TPRCompanyData | null {
     if (!xmlData) {
@@ -55,8 +56,7 @@ export function translateTransactionsReverse(transactions: any) {
                         return category;
                         // return reverseTranslateCategoryB(transaction);
                     case "KategoriaC":
-                        return category;
-                        // return reverseTranslateCategoryC(transaction);
+                        return reverseTranslateCategoryC(transaction, index);
                     case "KategoriaD":
                         return reverseTranslateCategoryD(transaction, index);
                     case "KategoriaE":

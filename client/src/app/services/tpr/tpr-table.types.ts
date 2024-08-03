@@ -138,7 +138,7 @@ export type TransactionCTable = {
   MetodyBadania?: MetodyBadania;
   ZrodloDanychFinansowych?: ZrodloDanychFinansowych;
   KorektaMetodyBadania?: Korekta;
-  KorektaPorownywalnosciProg?: string;
+  KorektaPorownywalnosciProg?: number;
   RodzajOprocentowania?: RodzajOprocentowania;
   Marza?: number;
   NazwaStopyBazowej?: NazwaStopyBazowej;
