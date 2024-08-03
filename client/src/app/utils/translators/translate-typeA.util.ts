@@ -25,7 +25,7 @@ export function translateCategoryA(transaction: TransactionATable) {
     ...zwolnienieArt11n,
   };
 
-  return transakcja as TransakcjaKategoriaA;
+  return transakcja;
 }
 
 export function translateCategoryA1(transaction: TransactionATable) {

@@ -3,7 +3,7 @@ export type TransakcjaKategoriaA<
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania,
 > =
-  | ({
+  & ({
       KategoriaA: string;
       PrzedmiotA: string;
       WartoscA: {
@@ -16,7 +16,7 @@ export type TransakcjaKategoriaA<
       Kompensata: Kompensata;
       SupportVarMetoda: MW;
     } & (K extends 'KC01' ? KC01 : {}))
-  | ((K extends 'KC02' ? KC02 : {}) & (ZW extends 'ZW01' ? ZW01 : {}))
+  & ((K extends 'KC02' ? KC02 : {}) & (ZW extends 'ZW01' ? ZW01 : {}))
   | ((ZW extends 'ZW02' ? ZW02 : {}) & (MW extends 'MW00' ? MW00 : {}))
   | (MW extends 'MW01' ? MW01 : {})
   | (MW extends 'MW04' ? MW04 : {})

@@ -1,7 +1,7 @@
 import { TransactionBTable } from "app/services/tpr/tpr-table.types";
 import { KC01, KC02, TransakcjaKategoriaB } from "app/services/tpr/typeB.types";
 
-export function reverseTranslateCategoryF(transaction: TransakcjaKategoriaB & Partial<KC01 & KC02>, id: number): TransactionBTable {
+export function reverseTranslateCategoryB(transaction: TransakcjaKategoriaB & Partial<KC01 & KC02>, id: number): TransactionBTable {
 
     const tableData = {
         Id: id,
