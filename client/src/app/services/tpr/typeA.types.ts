@@ -80,10 +80,7 @@ export type MW00 = {
   Metoda00: 'MW00';
 };
 
-export type MW01<
-  KP extends Korekta = Korekta,
-  CK extends SposobUjeciaCeny = SposobUjeciaCeny,
-> = {
+export type MW01<KP extends Korekta = Korekta, CK extends SposobUjeciaCeny = SposobUjeciaCeny> = {
   Metoda01: 'MW01';
   Weryfikacja: SposobWeryfikacjiEynkowegoPoziomuCeny;
 } & (KP extends 'KP01' ? KP01 : {}) &
@@ -236,9 +233,7 @@ export type TW01_TW02_for_MW06<TB extends OkresPrognozy = OkresPrognozy> = {
   TechWyceny1: 'TW01' | 'TW02';
   WspDyskont: number;
   SupporterVarOkresPrognozy: OkresPrognozy;
-} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06'
-  ? TB_for_TW01_TW02
-  : {}) &
+} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB_for_TW01_TW02 : {}) &
   (TB extends 'TB07' ? TB07_for_TW01_TW02 : {});
 
 export type TB_for_TW01_TW02 = {
@@ -263,19 +258,8 @@ export type KorektaCenTransferowych = 'KC01' | 'KC02';
 export type Kompensata = 'KS01' | 'KS02' | 'KS03';
 export type ZwolnienieArt11n = 'ZW01' | 'ZW02';
 export type RodzajTransakcji = 'TK01' | 'TK02';
-export type MetodyBadania =
-  | 'MW00'
-  | 'MW01'
-  | 'MW02'
-  | 'MW03'
-  | 'MW04'
-  | 'MW05'
-  | 'MW06';
-export type SposobWeryfikacjiEynkowegoPoziomuCeny =
-  | 'SW01'
-  | 'SW02'
-  | 'SW03'
-  | 'SW04';
+export type MetodyBadania = 'MW00' | 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
+export type SposobWeryfikacjiEynkowegoPoziomuCeny = 'SW01' | 'SW02' | 'SW03' | 'SW04';
 export type Korekta = 'KP01' | 'KP02';
 export type SposobUjeciaCeny = 'CK01' | 'CK02';
 export type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
@@ -300,37 +284,8 @@ export type WskaznikFinansowy =
   | 'WF17';
 export type RodzajPorownania = 'PR01' | 'PR02' | 'PR03';
 export type PodmiotBadany = 'PB01' | 'PB02';
-export type KryteriumGeograficzne =
-  | 'KG01'
-  | 'KG02'
-  | 'KG03'
-  | 'KG04'
-  | 'KG05'
-  | 'KG06';
-export type TechWyceny =
-  | 'TW01'
-  | 'TW02'
-  | 'TW03'
-  | 'TW04'
-  | 'TW05'
-  | 'TW06'
-  | 'TW07';
-export type OkresPrognozy =
-  | 'TB01'
-  | 'TB02'
-  | 'TB03'
-  | 'TB04'
-  | 'TB05'
-  | 'TB06'
-  | 'TB07';
-export type ZrodloDanychZgodnosci =
-  | 'AZ01'
-  | 'AZ02'
-  | 'AZ03'
-  | 'AZ04'
-  | 'AZ05'
-  | 'AZ06'
-  | 'AZ07'
-  | 'AZ08'
-  | 'AZ09';
+export type KryteriumGeograficzne = 'KG01' | 'KG02' | 'KG03' | 'KG04' | 'KG05' | 'KG06';
+export type TechWyceny = 'TW01' | 'TW02' | 'TW03' | 'TW04' | 'TW05' | 'TW06' | 'TW07';
+export type OkresPrognozy = 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' | 'TB07';
+export type ZrodloDanychZgodnosci = 'AZ01' | 'AZ02' | 'AZ03' | 'AZ04' | 'AZ05' | 'AZ06' | 'AZ07' | 'AZ08' | 'AZ09';
 export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2' | null;

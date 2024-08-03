@@ -1,10 +1,6 @@
 import { TransakcjaKategoriaE } from 'app/services/tpr/typeE.types';
 import { Transaction } from 'app/services/tpr/tpr-input.types';
-import {
-  mapKorektaCenTransferowych,
-  mapZwolnienieArt11n,
-  mapMetodyBadania,
-} from './categoryEHelpers';
+import { mapKorektaCenTransferowych, mapZwolnienieArt11n, mapMetodyBadania } from './categoryEHelpers';
 
 export function translateCategoryE(transaction: any): TransakcjaKategoriaE {
   const baseTransakcja: Partial<TransakcjaKategoriaE> = {

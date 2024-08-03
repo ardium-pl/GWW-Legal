@@ -40,9 +40,7 @@ export type TransakcjaKategoriaC<
     } & (K extends 'KC01' ? KC01 : {}))
   | ((K extends 'KC02' ? KC02 : {}) & (ZW extends 'ZW01' ? ZW01 : {}))
   | ((ZW extends 'ZW02' ? ZW02 : {}) & (MW extends 'MW00' ? MW00 : {}))
-  | (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06'
-      ? MW01toMW06
-      : {});
+  | (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06' ? MW01toMW06 : {});
 
 export type KC01 = {
   KorektaCT2: 'KC01';
@@ -112,8 +110,7 @@ export type MW01toMW06<
   | ((KP extends 'KP02' ? KP02 : {}) & (OP extends 'OP01' ? OP01 : {}))
   | (OP extends 'OP02' ? OP02 : {})
   | (OP extends 'OP03' ? OP03 : {})
-  | ((OP extends 'OP04' | 'OP05' ? OP04_OP05 : {}) &
-      (RP extends 'RP01' ? RP01 : {}))
+  | ((OP extends 'OP04' | 'OP05' ? OP04_OP05 : {}) & (RP extends 'RP01' ? RP01 : {}))
   | (RP extends 'RP02' ? RP02 : {})
   | (RP extends 'RP03' ? RP03 : {});
 
@@ -126,28 +123,12 @@ export type KP02 = {
   KorektyPorWynProg: number;
 };
 
-export type OP01<
-  SB extends NazwaStopyBazowej = NazwaStopyBazowej,
-  TB extends TerminStopyBazowej = TerminStopyBazowej,
-> =
+export type OP01<SB extends NazwaStopyBazowej = NazwaStopyBazowej, TB extends TerminStopyBazowej = TerminStopyBazowej> =
   | ({
       KalkOproc1: 'OP01';
       Marza: number; // show in %
-    } & (SB extends
-      | 'SB01'
-      | 'SB02'
-      | 'SB03'
-      | 'SB04'
-      | 'SB05'
-      | 'SB06'
-      | 'SB07'
-      | 'SB08'
-      ? SB01toSB08
-      : {}))
-  | ((SB extends 'SB09' ? SB09 : {}) &
-      (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06'
-        ? TB01toTB06
-        : {}))
+    } & (SB extends 'SB01' | 'SB02' | 'SB03' | 'SB04' | 'SB05' | 'SB06' | 'SB07' | 'SB08' ? SB01toSB08 : {}))
+  | ((SB extends 'SB09' ? SB09 : {}) & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB01toTB06 : {}))
   | (TB extends 'TB07' ? TB07 : {});
 
 export type SB01toSB08 = {
@@ -204,39 +185,11 @@ export type KorektaCenTransferowych = 'KC01' | 'KC02';
 export type Kompensata = 'KS01' | 'KS02' | 'KS03';
 export type ZwolnienieArt11n = 'ZW01' | 'ZW02';
 export type RodzajTransakcji = 'TK01' | 'TK02';
-export type MetodyBadania =
-  | 'MW00'
-  | 'MW01'
-  | 'MW02'
-  | 'MW03'
-  | 'MW04'
-  | 'MW05'
-  | 'MW06';
-export type ZrodloDanychFinansowych =
-  | 'ZD01'
-  | 'ZD02'
-  | 'ZD03'
-  | 'ZD04'
-  | 'ZD05';
+export type MetodyBadania = 'MW00' | 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
+export type ZrodloDanychFinansowych = 'ZD01' | 'ZD02' | 'ZD03' | 'ZD04' | 'ZD05';
 export type Korekta = 'KP01' | 'KP02';
 export type RodzajOprocentowania = 'OP01' | 'OP02' | 'OP03' | 'OP04' | 'OP05';
 export type RodzajPrzedzialu = 'RP01' | 'RP02' | 'RP03' | 'RP04';
 export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
-export type NazwaStopyBazowej =
-  | 'SB01'
-  | 'SB02'
-  | 'SB03'
-  | 'SB04'
-  | 'SB05'
-  | 'SB06'
-  | 'SB07'
-  | 'SB08'
-  | 'SB09';
-export type TerminStopyBazowej =
-  | 'TB01'
-  | 'TB02'
-  | 'TB03'
-  | 'TB04'
-  | 'TB05'
-  | 'TB06'
-  | 'TB07';
+export type NazwaStopyBazowej = 'SB01' | 'SB02' | 'SB03' | 'SB04' | 'SB05' | 'SB06' | 'SB07' | 'SB08' | 'SB09';
+export type TerminStopyBazowej = 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' | 'TB07';

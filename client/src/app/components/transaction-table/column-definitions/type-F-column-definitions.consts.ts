@@ -1,19 +1,13 @@
+import { INumberCellEditorParams, ISelectCellEditorParams, ITooltipParams } from 'ag-grid-community';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
-import {
-  INumberCellEditorParams,
-  ISelectCellEditorParams,
-  ITooltipParams,
-} from 'ag-grid-community';
 
-function createReverseMapping(
-  mapping: Record<string, string>,
-): Record<string, string> {
+function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
   return Object.keys(mapping).reduce(
     (reverseMapping, key) => {
       reverseMapping[mapping[key]] = key;
       return reverseMapping;
     },
-    {} as Record<string, string>,
+    {} as Record<string, string>
   );
 }
 
@@ -78,7 +72,7 @@ export const transactionFColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => correctionCodeMapping[params.value],
+    valueFormatter: params => correctionCodeMapping[params.value],
   },
   {
     field: 'WartoscKorekty',
@@ -108,7 +102,7 @@ export const transactionFColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => compensationCodeMapping[params.value],
+    valueFormatter: params => compensationCodeMapping[params.value],
   },
   {
     field: 'TransakcjaZwolniona',
@@ -116,6 +110,7 @@ export const transactionFColDefs: ColDef[] = [
     headerTooltip: 'Transakcja zwolniona na podst. art. 11n pkt 1-2 ustawy',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+    width: 300,
     editable: false,
     valueFormatter: () => exemptionCodeMapping['ZW01'],
   },

@@ -18,9 +18,7 @@ export type TransakcjaKategoriaE<
     } & (K extends 'KC01' ? KC01 : {}))
   | ((K extends 'KC02' ? KC02 : {}) & (ZW extends 'ZW01' ? ZW01 : {}))
   | ((ZW extends 'ZW02' ? ZW02 : {}) & (MW extends 'MW00' ? MW00 : {}))
-  | (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06'
-      ? MW01toMW06<KP>
-      : {});
+  | (MW extends 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06' ? MW01toMW06<KP> : {});
 
 export type KC01 = {
   KorektaCT3: 'KC01';
@@ -101,41 +99,11 @@ export type KP02 = {
 // Common types
 export type KorektaCenTransferowych = 'KC01' | 'KC02';
 export type Kompensata = 'KS01' | 'KS02' | 'KS03';
-export type RodzajeWartosciNiematerialnych =
-  | 'DN01'
-  | 'DN02'
-  | 'DN03'
-  | 'DN04'
-  | 'DN05'
-  | 'DN06'
-  | 'DN07'
-  | 'DN08';
+export type RodzajeWartosciNiematerialnych = 'DN01' | 'DN02' | 'DN03' | 'DN04' | 'DN05' | 'DN06' | 'DN07' | 'DN08';
 export type ZwolnienieArt11n = 'ZW01' | 'ZW02';
-export type RodzajAnalizy =
-  | 'RA01'
-  | 'RA02'
-  | 'RA03'
-  | 'RA04'
-  | 'RA05'
-  | 'RA06'
-  | 'RA07'
-  | 'RA08'
-  | 'RA09';
-export type MetodyBadania =
-  | 'MW00'
-  | 'MW01'
-  | 'MW02'
-  | 'MW03'
-  | 'MW04'
-  | 'MW05'
-  | 'MW06';
+export type RodzajAnalizy = 'RA01' | 'RA02' | 'RA03' | 'RA04' | 'RA05' | 'RA06' | 'RA07' | 'RA08' | 'RA09';
+export type MetodyBadania = 'MW00' | 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
 export type RodzajTransakcji = 'TK01' | 'TK02';
 export type Korekta = 'KP01' | 'KP02';
-export type SposobKalkulacjiOplaty =
-  | 'SK01'
-  | 'SK02'
-  | 'SK03'
-  | 'SK04'
-  | 'SK05'
-  | 'SK06';
+export type SposobKalkulacjiOplaty = 'SK01' | 'SK02' | 'SK03' | 'SK04' | 'SK05' | 'SK06';
 export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2' | null;

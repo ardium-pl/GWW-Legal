@@ -1,5 +1,8 @@
 <div class="search-fab-container">
-  <div class="search-fab-panel" [class.active]="active()">
+  <div
+    class="search-fab-panel"
+    [class.active]="active()"
+  >
     <div class="search-fab-panel-inner">
       <label for="search-bar">Wyszukaj w orzeczeniu</label>
       <div class="input-container">
@@ -17,11 +20,14 @@
           <app-icon icon="search" />
         </div>
       </div>
-      <div class="search-results" [class.disabled]="isInputDisabled()">
+      <div
+        class="search-results"
+        [class.disabled]="isInputDisabled()"
+      >
         @if (!total()) {
           Brak wyników
         } @else {
-          {{ current() ?? "?" }} z {{ total() }}
+          {{ current() ?? '?' }} z {{ total() }}
         }
       </div>
       <div class="buttons-container">
@@ -45,7 +51,10 @@
             <app-icon icon="south" />
           </button>
         </div>
-        <button class="search-icon-btn" (click)="close()">
+        <button
+          class="search-icon-btn"
+          (click)="close()"
+        >
           <app-icon icon="close" />
         </button>
       </div>

@@ -11,11 +11,23 @@ import { MatIconModule } from '@angular/material/icon';
     [fontIcon]="icon()"
   />`,
   encapsulation: ViewEncapsulation.None,
-  styles: `app-icon {
-    height: 24px;
-    width: 24px;
-    display: block;
-  }`
+  styles: `
+    app-icon {
+      font-size: 24px;
+      height: 1em;
+      width: 1em;
+      display: block;
+    }
+    mat-icon {
+      width: 1em !important;
+      height: 1em !important;
+      font-size: inherit !important;
+
+      &::before {
+        font-size: inherit !important;
+      }
+    }
+  `,
 })
 export class IconComponent {
   readonly icon = input.required<string>();
