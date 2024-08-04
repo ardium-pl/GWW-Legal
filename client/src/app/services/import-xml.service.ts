@@ -3,7 +3,7 @@ import { parseString, processors } from 'xml2js';
 import { TPRCompanyData } from './tpr/tpr-input.types';
 import { Declaration } from './tpr/tpr-input.types';
 
-const NUMBER_TAGS_THAT_SHOULD_REMAIN_STRINGS = [
+const TAGS_THAT_SHOULD_REMAIN_STRINGS = [
   'OkresOd',
   'OkresDo',
   'KodUrzedu',
@@ -66,7 +66,7 @@ export class ImportXMLService {
   }
 
   private customValueProcessor(value: string, name: string) {
-    if (!NUMBER_TAGS_THAT_SHOULD_REMAIN_STRINGS.includes(name)) {
+    if (!TAGS_THAT_SHOULD_REMAIN_STRINGS.includes(name)) {
       return processors.parseNumbers(value);
     }
     return value;

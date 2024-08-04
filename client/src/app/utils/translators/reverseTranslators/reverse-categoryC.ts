@@ -4,7 +4,6 @@ import { reverseMapKorektaCenTransferowych, reverseMapMetodyBadania, reverseMapR
 export function reverseTranslateCategoryC(transaction: any, id: number): TransactionCTable {
 
     const baseTableData: Partial<TransactionCTable> = {
-        Id: id,
         transactionCategory: transaction.KategoriaC,
         transactionValue: transaction.WartoscC._text,
         subjectMatter: transaction.PrzedmiotC,

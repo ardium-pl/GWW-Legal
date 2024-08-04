@@ -1,36 +1,25 @@
-import {
-  Component,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  ViewEncapsulation,
-  inject,
-  signal,
-  viewChildren
-} from '@angular/core';
+import { Component, inject, signal, viewChildren } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { FileSystemService } from '@ardium-ui/devkit';
 import { IconComponent } from 'app/components';
+import { ButtonComponent } from 'app/components/button/button.component';
+import { FileDropZoneComponent } from 'app/components/file-drop-zone/file-drop-zone.component';
 import { TableComponent } from 'app/components/table/table.component';
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
-import { ClipboardService } from 'app/services/clipboard.service';
 import { MixpanelService } from 'app/services/mixpanel.service';
 import { ErrorSnackbarService } from 'app/services/snackbar.service';
 import { TprCompanyDataService } from 'app/services/tpr/tpr-company-data.service';
 import { TprDataService } from 'app/services/tpr/tpr-data.service';
+import { FileSystemService } from '@ardium-ui/devkit';
 import { translateToTPR } from 'app/utils/translators/tpr-translator.util';
-import { Subject, catchError, from, takeUntil } from 'rxjs';
 import * as xmljs from 'xml-js';
-import { ButtonComponent } from '../../components/button/button.component';
-import { FileDropZoneComponent } from 'app/components/file-drop-zone/file-drop-zone.component';
-import { MatDialog } from '@angular/material/dialog';
 import { ImportXMLService } from 'app/services/import-xml.service';
 import { reverseTranslator } from 'app/utils/translators/reverseTranslators/reverse-tpr-translator';
 
 @Component({
-  selector: 'tpr-nsa',
+  selector: 'app-import-xml',
   standalone: true,
   imports: [
     TableComponent,
@@ -42,23 +31,18 @@ import { reverseTranslator } from 'app/utils/translators/reverseTranslators/reve
     MatTooltipModule,
     FileDropZoneComponent
   ],
-  providers: [ClipboardService, TprDataService, ErrorSnackbarService],
-  templateUrl: './tpr.page.html',
-  styleUrl: './tpr.page.scss',
-  encapsulation: ViewEncapsulation.None,
+  templateUrl: './import-xml.page.html',
+  styleUrl: './import-xml.page.scss'
 })
-export class TprPage implements OnInit, OnDestroy {
+export class ImportXMLPage {
   private readonly children = viewChildren(TransactionTableComponent);
-
-  private readonly errorSnackbarService = inject(ErrorSnackbarService);
-  private readonly clipboardService = inject(ClipboardService);
-  private readonly mixpanelService = inject(MixpanelService);
   private readonly fileSystemService = inject(FileSystemService);
-  private readonly importXMLService = inject(ImportXMLService);
-  showDropZone: boolean = false;
+  private readonly errorSnackbarService = inject(ErrorSnackbarService);
   public readonly tprDataService = inject(TprDataService);
   public readonly tprCompanyDataService = inject(TprCompanyDataService);
+  private readonly importXMLService = inject(ImportXMLService);
   readonly dialog = inject(MatDialog);
+  private readonly mixpanelService = inject(MixpanelService);
 
 
   public readonly selectedTab = signal<number>(0);
@@ -67,42 +51,13 @@ export class TprPage implements OnInit, OnDestroy {
     try {
       const fileArray = Array.isArray(files) ? files : [files]; // Ensure it's an array
       await this.importXMLService.handleFileDrop(fileArray);
-      this.hideFileDropZone();
+      const xmlData = await this.importXMLService.xmlData;
+      const translatedData = await reverseTranslator(xmlData);
+      this.tprCompanyDataService.setData(translatedData as object);
+      console.log(translatedData);
     } catch (error) {
       console.error('Error processing file:', error);
     }
-  }
-
-  private _readClipboard(): void {
-    const sub = from(this.clipboardService.readClipboard())
-      .pipe(
-        takeUntil(this.destroy$),
-        catchError((err, caught) => {
-          this.tprCompanyDataService.setError(err);
-          sub.unsubscribe();
-          return caught;
-        })
-      )
-      .subscribe((clipboardData: object) => {
-        this.tprCompanyDataService.setData(clipboardData);
-        const firstNonDisabledIndex = this.tprCompanyDataService.transactionCategoriesArray()?.findIndex(v => v[1].length) ?? 0;
-        this.selectedTab.set(firstNonDisabledIndex);
-      });
-  }
-  public ngOnInit(): void {
-    this._readClipboard();
-  }
-  @HostListener('window:focus')
-  @HostListener('click')
-  public onWindowFocus(): void {
-    if (this.tprCompanyDataService.hasData()) return;
-    this._readClipboard();
-  }
-
-  private readonly destroy$ = new Subject<void>();
-  public ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   public getLabel(category: string): string {
@@ -134,17 +89,4 @@ export class TprPage implements OnInit, OnDestroy {
     });
   }
 
-  showFileDropZone() {
-    this.showDropZone = true;
-  }
-
-  hideFileDropZone() {
-    this.showDropZone = false;
-  }
-
-  importXML(){
-    const xmlData = this.importXMLService.xmlData;
-    const translatedData = reverseTranslator(xmlData);
-    console.log(translatedData)
-  }
 }
