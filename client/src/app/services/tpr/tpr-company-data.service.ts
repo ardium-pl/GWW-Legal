@@ -31,6 +31,11 @@ export class TprCompanyDataService {
   setError(error: string): void {
     this._error.set(error);
   }
+
+  reset(){
+    this._data.set(null);
+  }
+
   setData(object: object): void {
     for (const KEY of REQUIRED_TPR_DATA_KEYS) {
       if (KEY in object) continue;

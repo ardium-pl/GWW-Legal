@@ -34,19 +34,31 @@ export function reverseMapKorektaCenTransferowych(transaction: any): Partial<Tra
     const zw2: Partial<TransactionATable> = {
       Zwolnienie: 'ZW02',
     };
+  
     if (transaction.RodzajTrans1) {
-      Object.assign(zw2, {
-        RodzajTransakcji: 'TK01',
-        KodKrajuTransakcji: transaction.InformacjaOKrajuA2.Kraj,
-        WartośćTransakcjiKraju: transaction.InformacjaOKrajuA2.WartoscAKraj2._text,
-        KodWalutyKrajuTransakcji: transaction.InformacjaOKrajuA2.WartoscAKraj2._attributes.kodWaluty,
-      });
+      zw2.RodzajTransakcji = 'TK01';
+
+      if (Array.isArray(transaction.InformacjaOKrajuA2)) {
+        const countryInfo = transaction.InformacjaOKrajuA2[0];
+        Object.assign(zw2, {
+          KodKrajuTransakcji: countryInfo.Kraj,
+          WartośćTransakcjiKraju: countryInfo.WartoscAKraj2._text,
+          KodWalutyKrajuTransakcji: countryInfo.WartoscAKraj2._attributes.kodWaluty,
+        });
+      } else {
+        Object.assign(zw2, {
+          KodKrajuTransakcji: transaction.InformacjaOKrajuA2.Kraj,
+          WartośćTransakcjiKraju: transaction.InformacjaOKrajuA2.WartoscAKraj2._text,
+          KodWalutyKrajuTransakcji: transaction.InformacjaOKrajuA2.WartoscAKraj2._attributes.kodWaluty,
+        });
+      }
     } else if (transaction.RodzajTrans2) {
       Object.assign(zw2, {
         RodzajTransakcji: 'TK02',
         KodKrajuTransakcji: transaction.Kraj,
       });
     }
+  
     Object.assign(zw2, reverseMapMetodyBadaniaA(transaction));
     return zw2;
   }

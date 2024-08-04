@@ -16,6 +16,9 @@ const TAGS_THAT_SHOULD_REMAIN_STRINGS = [
   'KategoriaD',
   'KategoriaE',
   'KategoriaF',
+  'PESELKontr1',
+  'NrIdKontr1',
+  'NIPKontr1',
 ];
 @Injectable({
   providedIn: 'root',
@@ -32,13 +35,23 @@ export class ImportXMLService {
     if (!file.name.endsWith('.xml')) {
       throw new Error('Invalid file type. Please upload an XML file.');
     }
+    
 
     const fileContent = await file.text();
+    let validation = this._validateXmlFile(fileContent);
+    if(!validation){
     const xmlData = this.readAsXml(fileContent);
     this._xmlData = this.parseXML(xmlData);
     console.log(this._xmlData);
+    }
   }
 
+  private _validateXmlFile(content: string): false | [string, string] {
+    if (!/<KodFormularza.*?>TPR-C<\/KodFormularza>/.test(content)) {
+        window.alert('Dodany plik nie wygląda na poprawny plik XML. Upewnij się, że dodajesz plik wygenerowany przez formularz TPR-C.')
+      }
+    return false;
+  }
   private readAsXml(xmlContent: string): Declaration {
     const options = {
       explicitArray: false,
@@ -50,7 +63,7 @@ export class ImportXMLService {
       explicitRoot: false,
       tagNameProcessors: [processors.stripPrefix], // Removes namespace prefixes from tag names
       attrNameProcessors: [processors.stripPrefix],
-      valueProcessors: [this.customValueProcessor], // Removes namespace prefixes from attribute names
+      valueProcessors: [this._customValueProcessor], // Removes namespace prefixes from attribute names
     };
 
     let result: any;
@@ -65,18 +78,15 @@ export class ImportXMLService {
     return result;
   }
 
-  private customValueProcessor(value: string, name: string) {
+  private _customValueProcessor(value: string, name: string) {
     if (!TAGS_THAT_SHOULD_REMAIN_STRINGS.includes(name)) {
       return processors.parseNumbers(value);
     }
     return value;
   }
 
-  private parseXML(data: Declaration): TPRCompanyData {
-    return this.transformRecord(data);
-  }
 
-  private transformRecord(record: Declaration): TPRCompanyData {
+  private parseXML(record: Declaration): TPRCompanyData {
     return {
       periodFrom: record.Naglowek.OkresOd,
       periodUntil: record.Naglowek.OkresDo,

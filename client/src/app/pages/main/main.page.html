@@ -3,12 +3,23 @@
         <img src="assets\images\GWW-logo.png" />
         <div class="subtitle show-subtitle">Kolekcja narzędzi stworzonych specjalnie dla Kancelarii GWW</div>
         <div class="content">
+            @if(!showTprOptions){
             <app-card routerLink="nsa" header="NSA">
                 <p>Wyszukaj orzeczenie sądowe</p>
             </app-card>
-            <app-card routerLink="tpr" header="TPR">
+            <app-card (click)="showTprOptions = true" header="TPR">
                 <p>Stwórz swój plik XML</p>
             </app-card>
+        }
+        @else {
+            <app-card routerLink="import" header="Importuj XML" (click)="tprCompanyDataService.reset()">
+                <p>Zaimportuj swój plik XML</p>
+            </app-card>
+            <app-card routerLink="tpr" header="Utwórz XML">
+                <p>Stwórz swój plik XML</p>
+            </app-card>
+
+        }
         </div>
     </body>
 </main>

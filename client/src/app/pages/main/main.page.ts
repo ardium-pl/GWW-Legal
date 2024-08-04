@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CardComponent } from 'app/components/card/card.component';
+import { TprCompanyDataService } from 'app/services/tpr/tpr-company-data.service';
 
 @Component({
   selector: '_main-page',
@@ -9,4 +10,7 @@ import { CardComponent } from 'app/components/card/card.component';
   templateUrl: './main.page.html',
   styleUrl: './main.page.scss',
 })
-export class MainPage {}
+export class MainPage {
+  showTprOptions = false;
+  readonly tprCompanyDataService = inject(TprCompanyDataService);
+}

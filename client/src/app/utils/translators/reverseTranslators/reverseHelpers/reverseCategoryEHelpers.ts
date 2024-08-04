@@ -1,5 +1,5 @@
 import { TransactionETable } from 'app/services/tpr/tpr-table.types';
-import { KC01, KC02, KP01, KP02, MW01toMW06, TK01, TK02, ZW01, ZW02 } from 'app/services/tpr/typeE.types';
+import { KC01, KC02, KP01, KP02, MW00, MW01toMW06, TK01, TK02, ZW01, ZW02 } from 'app/services/tpr/typeE.types';
 
 export function reverseMapKorektaCenTransferowych(transaction: Partial<KC01 & KC02>): Partial<TransactionETable> {
   if (transaction.WartKorektyCT3) {
@@ -15,7 +15,6 @@ export function reverseMapKorektaCenTransferowych(transaction: Partial<KC01 & KC
   }
 }
 
-// Function to map ZwolnienieArt11n
 export function reverseMapZwolnienieArt11n(transaction: Partial<ZW01 & ZW02> & Partial<TK01 & TK02>): Partial<TransactionETable> {
   if (transaction.KodZW1) {
     return {
@@ -45,7 +44,7 @@ export function reverseMapZwolnienieArt11n(transaction: Partial<ZW01 & ZW02> & P
 }
 
 export function reverseMapMetodyBadania(
-  transaction: Partial<MW01toMW06<any>> & Partial<KP01 & KP02>
+  transaction: Partial<MW01toMW06<any> & MW00> & Partial<KP01 & KP02>
 ): Partial<TransactionETable> {
   if (transaction.MetodaE) {
     const result: Partial<TransactionETable> = {
@@ -67,6 +66,9 @@ export function reverseMapMetodyBadania(
     }
 
     return result;
+  }else {
+    return {
+      MetodyBadania: transaction.MetodaE1
+    }
   }
-  return {};
 }

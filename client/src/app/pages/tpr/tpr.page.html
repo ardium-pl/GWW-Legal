@@ -4,7 +4,7 @@
     <app-table [inputData]="[tprCompanyDataService.data()]"></app-table>
   </mat-card>
   <p class="table-header">Tabele informacji o transakcjach</p>
-  <mat-card class="table-card" style="padding-bottom: 12px">
+  <mat-card class="table-card">
     <mat-tab-group mat-stretch-tabs="true" mat-align-tabs="start" animationDuration="0ms" [(selectedIndex)]="selectedTab">
       @for (category of tprCompanyDataService.transactionCategoriesArray(); track category[0]) {
         <mat-tab [label]="getLabel(category[0])" [disabled]="!category[1].length">
@@ -19,18 +19,7 @@
     <app-button (click)="collectData()" class="xml-button" [disabled]="tprDataService.isError()">
       <b>Generuj</b>
     </app-button>
-    <app-button (click)="importXML()">Test</app-button>
   </div>
-  <app-button (click)="showFileDropZone()" class="import-button">
-    <b>Importuj XML</b>
-  </app-button>
-  @if (showDropZone) {
-    <div class="overlay" (click)="hideFileDropZone()">
-      <div class="centered-drop-zone" (click)="$event.stopPropagation()">
-        <app-file-drop-zone maxFiles="1" [accept]="['.xml']" (upload)="onFileDropped($event)"></app-file-drop-zone>
-      </div>
-    </div>
-  }
 } @else if (tprCompanyDataService.error()) {
   <div class="error-container">
     <app-icon icon="error" />

@@ -1,14 +1,15 @@
 <div class="file-drop-zone-wrapper">
-    <input #inputEl class="file-drop-zone-input" title="Kliknij, aby wybrać" type="file" (change)="readFile($event)"
-      [accept]="accept()" [multiple]="maxFiles() !== 1">
-    <div class="file-drop-zone">
-      <div class="file-drop-zone-text">
-        <strong>Kliknij, aby wybrać</strong>
-        <span>lub przeciągnij i upuść</span>
-      </div>
-      <div class="file-drop-zone-additional additional">
-        Maks.{{ maxFiles() ? ' ' + maxFiles() + ' plików po ' : '' }} 10 MB • {{ accept() == "*" ? "Dowolny rodzaj plików"
-        : "Jedynie pliki "+acceptString() }}
-      </div>
+  <input #inputEl class="file-drop-zone-input" title="Kliknij, aby wybrać" type="file" (change)="readFile($event)"
+    [accept]="accept()" [multiple]="maxFiles() !== 1">
+  <div class="file-drop-zone">
+    <app-icon class="upload-icon" icon="upload"/> 
+    <div class="file-drop-zone-text">
+      <strong>Kliknij, aby wybrać</strong>
+      <span>lub przeciągnij i upuść</span>
+    </div>
+    <div class="file-drop-zone-additional additional">
+      Maks.{{ maxFiles() ? ' ' + maxFiles() + ' plików po ' : '' }} 10 MB • {{ accept() == "*" ? "Dowolny rodzaj plików"
+      : "Jedynie pliki "+acceptString() }}
     </div>
   </div>
+</div>

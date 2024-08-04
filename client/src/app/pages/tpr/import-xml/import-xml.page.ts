@@ -44,15 +44,14 @@ export class ImportXMLPage {
   readonly dialog = inject(MatDialog);
   private readonly mixpanelService = inject(MixpanelService);
 
-
   public readonly selectedTab = signal<number>(0);
 
   async onFileDropped(files: File | File[]) {
     try {
       const fileArray = Array.isArray(files) ? files : [files]; // Ensure it's an array
       await this.importXMLService.handleFileDrop(fileArray);
-      const xmlData = await this.importXMLService.xmlData;
-      const translatedData = await reverseTranslator(xmlData);
+      const xmlData = this.importXMLService.xmlData;
+      const translatedData = reverseTranslator(xmlData);
       this.tprCompanyDataService.setData(translatedData as object);
       console.log(translatedData);
     } catch (error) {

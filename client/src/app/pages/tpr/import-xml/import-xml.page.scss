@@ -1,25 +1,3 @@
-.error-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding-bottom: 20%;
-  
-    app-icon {
-      margin-bottom: 80px;
-      font-size: 80px;
-      color: var(--red);
-    }
-    h1 {
-      font-size: 32px;
-      padding-bottom: 32px;
-    }
-    p {
-      font-size: 16px;
-      min-height: 1.25em;
-    }
-  }
   .button-container {
     display: flex;
     margin: 0 auto;
@@ -75,15 +53,14 @@
 
 $gap: 32px;
 
-_import-page {
-    
+_import-page{
   .sections-wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: $gap;
     align-items: center;
-  }
+  
   .upload-card {
     width: 100%;
     max-width: 1200px;
@@ -91,6 +68,7 @@ _import-page {
     mat-card-header {
       display: flex;
       justify-content: center;
+      width: 100%;
     }
   }
   .upload-card-columns {
@@ -101,12 +79,7 @@ _import-page {
   .file-drop-zone-container {
     height: 100%;
   }
-  .uploaded-container {
-    padding-left: $gap;
-    border-left: 1px solid var(--detail);
-    display: flex;
-    flex-direction: column;
-  }
+}
 }
 
   
