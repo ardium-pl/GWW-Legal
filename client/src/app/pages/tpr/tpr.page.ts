@@ -9,13 +9,16 @@ import {
   viewChildren
 } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FileSystemService } from '@ardium-ui/devkit';
 import { IconComponent } from 'app/components';
+import { FileDropZoneComponent } from 'app/components/file-drop-zone/file-drop-zone.component';
 import { TableComponent } from 'app/components/table/table.component';
 import { TransactionTableComponent } from 'app/components/transaction-table/transaction-table.component';
 import { ClipboardService } from 'app/services/clipboard.service';
+import { ImportXMLService } from 'app/services/import-xml.service';
 import { MixpanelService } from 'app/services/mixpanel.service';
 import { ErrorSnackbarService } from 'app/services/snackbar.service';
 import { TprCompanyDataService } from 'app/services/tpr/tpr-company-data.service';
@@ -24,10 +27,6 @@ import { translateToTPR } from 'app/utils/translators/tpr-translator.util';
 import { Subject, catchError, from, takeUntil } from 'rxjs';
 import * as xmljs from 'xml-js';
 import { ButtonComponent } from '../../components/button/button.component';
-import { FileDropZoneComponent } from 'app/components/file-drop-zone/file-drop-zone.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ImportXMLService } from 'app/services/import-xml.service';
-import { reverseTranslator } from 'app/utils/translators/reverseTranslators/reverse-tpr-translator';
 
 @Component({
   selector: 'tpr-nsa',
@@ -65,9 +64,8 @@ export class TprPage implements OnInit, OnDestroy {
 
   async onFileDropped(files: File | File[]) {
     try {
-      const fileArray = Array.isArray(files) ? files : [files]; // Ensure it's an array
+      const fileArray = Array.isArray(files) ? files : [files];
       await this.importXMLService.handleFileDrop(fileArray);
-      this.hideFileDropZone();
     } catch (error) {
       console.error('Error processing file:', error);
     }
@@ -134,17 +132,4 @@ export class TprPage implements OnInit, OnDestroy {
     });
   }
 
-  showFileDropZone() {
-    this.showDropZone = true;
-  }
-
-  hideFileDropZone() {
-    this.showDropZone = false;
-  }
-
-  importXML(){
-    const xmlData = this.importXMLService.xmlData;
-    const translatedData = reverseTranslator(xmlData);
-    console.log(translatedData)
-  }
 }

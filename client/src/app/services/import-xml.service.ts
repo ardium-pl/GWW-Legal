@@ -35,14 +35,12 @@ export class ImportXMLService {
     if (!file.name.endsWith('.xml')) {
       throw new Error('Invalid file type. Please upload an XML file.');
     }
-    
 
     const fileContent = await file.text();
     let validation = this._validateXmlFile(fileContent);
     if(!validation){
     const xmlData = this.readAsXml(fileContent);
     this._xmlData = this.parseXML(xmlData);
-    console.log(this._xmlData);
     }
   }
 
@@ -74,7 +72,6 @@ export class ImportXMLService {
         result = res;
       }
     });
-    console.log(result);
     return result;
   }
 

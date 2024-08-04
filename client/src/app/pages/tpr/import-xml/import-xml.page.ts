@@ -53,7 +53,6 @@ export class ImportXMLPage {
       const xmlData = this.importXMLService.xmlData;
       const translatedData = reverseTranslator(xmlData);
       this.tprCompanyDataService.setData(translatedData as object);
-      console.log(translatedData);
     } catch (error) {
       console.error('Error processing file:', error);
     }
