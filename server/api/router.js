@@ -3,7 +3,7 @@ import { getCourtRulingID, getRulingBySignature } from "../sql/courtRulingQuerry
 import { getGptResponse } from "../sql/gptAnswQuerry.js";
 import { getSystemMessageId, getUserMessageId } from "../sql/messagesQuerry.js";
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
-import { askGptAboutNSA, followUpDiscussionAboutNSA } from "./nsaMain.js";
+import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
 export const nsaRouter = express.Router();
 
@@ -84,30 +84,5 @@ nsaRouter.post("/api/nsa/conversation", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });
-  }
-
-  function transformMessages(messages) {
-    return messages.map((message) => {
-      let role;
-
-      switch (message.type) {
-        case "system-message":
-          role = "system";
-          break;
-        case "user-message":
-          role = "user";
-          break;
-        case "response":
-          role = "assistant";
-          break;
-        default:
-          throw new Error("Unknown message type: " + message.type);
-      }
-
-      return {
-        role: role,
-        content: message.content,
-      };
-    });
   }
 });

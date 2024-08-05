@@ -5,6 +5,31 @@ import { getCourtRulingID, insertRuling } from "../sql/courtRulingQuerry.js"
 
 const openai = new OpenAI();
 
+export function transformMessages(messages) {
+  return messages.map((message) => {
+    let role;
+
+    switch (message.type) {
+      case "system-message":
+        role = "system";
+        break;
+      case "user-message":
+        role = "user";
+        break;
+      case "response":
+        role = "assistant";
+        break;
+      default:
+        throw new Error("Unknown message type: " + message.type);
+    }
+
+    return {
+      role: role,
+      content: message.content,
+    };
+  });
+}
+
 export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature) {
   const rawResponse = await openai.chat.completions.create({
     model: "gpt-4o",
