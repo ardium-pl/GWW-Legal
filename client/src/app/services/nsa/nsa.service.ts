@@ -189,13 +189,11 @@ export class NsaService implements OnDestroy {
     userMessage: string,
     response: string,
   ) {
-    console.log('this.createConversation', response);
     this._conversations.update((arr) => {
       const newArr = [...arr];
       newArr[index] = new GptConversation(systemMessage, userMessage, response);
       return newArr;
     });
-    console.log(this._conversations());
   }
   fetchConversationAnswer(index: number, userMessage: string): void {
     const convo = this.conversations()[index];
