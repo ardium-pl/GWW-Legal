@@ -1,20 +1,15 @@
+import { INumberCellEditorParams, ISelectCellEditorParams, ITooltipParams } from 'ag-grid-community';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
-import {
-  INumberCellEditorParams,
-  ISelectCellEditorParams,
-  ITooltipParams,
-} from 'ag-grid-community';
+import { getCellClass } from '../column-types';
 
 // Utility function to generate reverse mappings
-function createReverseMapping(
-  mapping: Record<string, string>,
-): Record<string, string> {
+function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
   return Object.keys(mapping).reduce(
     (reverseMapping, key) => {
       reverseMapping[mapping[key]] = key;
       return reverseMapping;
     },
-    {} as Record<string, string>,
+    {} as Record<string, string>
   );
 }
 
@@ -72,6 +67,12 @@ export const transactionDColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
+    field: 'safeHarbour',
+    headerName: 'Safe harbour',
+    headerTooltip: 'Safe harbour',
+    editable: false
+  },
+  {
     field: 'correction',
     headerName: 'Korekta',
     headerTooltip: 'Korekta',
@@ -80,7 +81,7 @@ export const transactionDColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => correctionCodeMapping[params.value],
+    valueFormatter: params => correctionCodeMapping[params.value],
   },
   {
     field: 'WartoscKorekty',
@@ -110,7 +111,7 @@ export const transactionDColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => compensationCodeMapping[params.value],
+    valueFormatter: params => compensationCodeMapping[params.value],
   },
   {
     field: 'Kapital',
@@ -128,6 +129,16 @@ export const transactionDColDefs: ColDef[] = [
     headerTooltip: 'Kod waluty kapitału',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
+  },
+  {
+    field: 'Zadluzenie',
+    headerName: 'Zadluzenie',
+    headerTooltip: 'Zadluzenie',
+    cellEditor: 'agNumberCellEditor',
+    cellDataType: 'number',
+    cellEditorParams: {
+      min: 0,
+    } as INumberCellEditorParams,
   },
   {
     field: 'KodWalutyZadluzenia',
@@ -237,10 +248,7 @@ export const transactionDColDefs: ColDef[] = [
     editable: ({ data }) => {
       return data.IdentyfikatorKontrahenta === 'NIP';
     },
-    cellStyle: ({ data }) =>
-      data.IdentyfikatorKontrahenta !== 'NIP'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    cellClass: ({ data }) => getCellClass(data.IdentyfikatorKontrahenta !== 'NIP'),
   },
   {
     field: 'Pesel',
@@ -251,10 +259,7 @@ export const transactionDColDefs: ColDef[] = [
     editable: ({ data }) => {
       return data.IdentyfikatorKontrahenta === 'PESEL';
     },
-    cellStyle: ({ data }) =>
-      data.IdentyfikatorKontrahenta !== 'PESEL'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    cellClass: ({ data }) => getCellClass(data.IdentyfikatorKontrahenta !== 'PESEL'),
   },
   {
     field: 'NrId',

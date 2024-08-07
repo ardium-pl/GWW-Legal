@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
+import { GptConversation } from './gpt-conversation';
 import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
 
 @Injectable({
@@ -12,13 +13,9 @@ export class NsaService implements OnDestroy {
   private readonly http = inject(HttpClient);
 
   //! court ruling
-  private readonly _rulingRequestState = signal<RequestState>(
-    RequestState.Undefined,
-  );
+  private readonly _rulingRequestState = signal<RequestState>(RequestState.Undefined);
   public readonly rulingRequestState = this._rulingRequestState.asReadonly();
-  public readonly isRulingLoading = computed(
-    () => this._rulingRequestState() === RequestState.Pending,
-  );
+  public readonly isRulingLoading = computed(() => this._rulingRequestState() === RequestState.Pending);
 
   private readonly _rulingResponse = signal<string[] | null>(null);
   public readonly rulingResponse = this._rulingResponse.asReadonly();
@@ -26,7 +23,7 @@ export class NsaService implements OnDestroy {
   private readonly _rulingError = signal<string[] | null>(null);
   public readonly rulingError = this._rulingError.asReadonly();
 
-  private _caseSignature: string = ''; 
+  private _caseSignature: string = '';
 
   public fetchCourtRuling(caseSignature: string): void {
     this._rulingRequestState.set(RequestState.Pending);
@@ -44,9 +41,9 @@ export class NsaService implements OnDestroy {
           }
           sub.unsubscribe();
           return caught;
-        }),
+        })
       )
-      .subscribe((res) => {
+      .subscribe(res => {
         this._rulingResponse.set(res as string[]);
         this._rulingRequestState.set(RequestState.Success);
       });
@@ -59,16 +56,10 @@ export class NsaService implements OnDestroy {
   private readonly _gptAnswersProgress = signal<(boolean | 'ERROR')[]>([]);
   public readonly gptAnswersProgress = this._gptAnswersProgress.asReadonly();
 
-  public readonly areGptAnswersReady = computed(() =>
-    this._gptAnswersProgress().every((v) => v !== false),
-  );
-  public readonly areGptAnswersError = computed(() =>
-    this._gptAnswersProgress().every((v) => v === 'ERROR'),
-  );
+  public readonly areGptAnswersReady = computed(() => this._gptAnswersProgress().every(v => v !== false));
+  public readonly areGptAnswersError = computed(() => this._gptAnswersProgress().every(v => v === 'ERROR'));
   public readonly isAtLeastOneGptAnswerReady = computed(
-    () =>
-      this._gptAnswersProgress().some((v) => v !== false) ||
-      this._gptAnswersProgress().length === 0,
+    () => this._gptAnswersProgress().some(v => v !== false) || this._gptAnswersProgress().length === 0
   );
 
   private readonly _gptAnswersResponse = signal<string[] | null>(null);
@@ -76,7 +67,7 @@ export class NsaService implements OnDestroy {
 
   public getCleanCourtRuling(): string | undefined {
     return this.rulingResponse()
-      ?.map((v) => v.replace(/<\/?p>/g, ''))
+      ?.map(v => v.replace(/<\/?p>/g, ''))
       .join('\n');
   }
 
@@ -86,77 +77,69 @@ export class NsaService implements OnDestroy {
     const courtRuling = this.getCleanCourtRuling();
     const caseSignature = this._caseSignature;
 
-    const streams = [
-      formOutput.userMessage1,
-      formOutput.userMessage2,
-      formOutput.userMessage3,
-    ].map((userMessage) =>
+    const userMessages = [formOutput.userMessage1, formOutput.userMessage2, formOutput.userMessage3];
+
+    const streams = userMessages.map(userMessage =>
       this.http.post(apiUrl('/nsa/question'), {
         caseSignature,
         courtRuling,
         systemMessage: formOutput.systemMessage,
         userMessage,
-      }),
+      })
     );
 
     this._gptAnswersProgress.set(new Array(streams.length).fill(false));
     this._gptAnswersResponse.set(new Array(streams.length).fill(''));
+    this.resetAndInitializeConversations(streams.length);
 
     streams.forEach((stream, i) => {
       const sub = stream
         .pipe(
           takeUntil(this.cancel$),
           catchError((err, caught) => {
-            this._gptAnswersProgress.update((v) => {
+            this._gptAnswersProgress.update(v => {
               const newProgress = [...v];
               newProgress[i] = 'ERROR';
               return newProgress;
             });
-            this._gptAnswersResponse.update((v) => {
+            this._gptAnswersResponse.update(v => {
               const newArr = v ? [...v] : [];
-              newArr[i] =
-                typeof err.error === 'string'
-                  ? err.error
-                  : 'Error: ' + err.status + ' ' + err.statusText;
+              newArr[i] = typeof err.error === 'string' ? err.error : 'Error: ' + err.status + ' ' + err.statusText;
               return newArr;
             });
             sub.unsubscribe();
             return caught;
-          }),
+          })
         )
-        .subscribe((response) => {
-          this._gptAnswersProgress.update((v) => {
+        .subscribe(response => {
+          this._gptAnswersProgress.update(v => {
             const newProgress = [...v];
             newProgress[i] = true;
             return newProgress;
           });
-          this._gptAnswersResponse.update((v) => {
+          this._gptAnswersResponse.update(v => {
             const newArr = v ? [...v] : [];
             newArr[i] = response as string;
             return newArr;
           });
+          this.createConversation(i, formOutput.systemMessage!, userMessages[i]!, response as string);
         });
     });
   }
 
   //! additional answer
   private readonly _isAdditionalAnswerLoading = signal(false);
-  public readonly isAdditionalAnswerLoading =
-    this._isAdditionalAnswerLoading.asReadonly();
+  public readonly isAdditionalAnswerLoading = this._isAdditionalAnswerLoading.asReadonly();
 
   private readonly _additionalAnswerResponse = signal<string | null>(null);
-  public readonly additionalAnswerResponse =
-    this._additionalAnswerResponse.asReadonly();
+  public readonly additionalAnswerResponse = this._additionalAnswerResponse.asReadonly();
 
   private resetAdditionalAnswer(): void {
     this._isAdditionalAnswerLoading.set(false);
     this._additionalAnswerResponse.set(null);
   }
 
-  public fetchAdditionalAnswer(
-    systemMessage: string,
-    userMessage: string,
-  ): void {
+  public fetchAdditionalAnswer(systemMessage: string, userMessage: string): void {
     this._isAdditionalAnswerLoading.set(true);
     this.http
       .post(apiUrl('/nsa/question'), {
@@ -165,35 +148,23 @@ export class NsaService implements OnDestroy {
         userMessage,
       })
       .pipe(takeUntil(this.cancel$))
-      .subscribe((res) => {
+      .subscribe(res => {
         this._additionalAnswerResponse.set(res as string);
         this._isAdditionalAnswerLoading.set(false);
       });
   }
 
   //! independent questions
-  private readonly _independentQuestionsProgress = signal<(boolean | 'ERROR')[]>(
-    [],
-  );
-  public readonly independentQuestionsProgress =
-    this._independentQuestionsProgress.asReadonly();
+  private readonly _independentQuestionsProgress = signal<(boolean | 'ERROR')[]>([]);
+  public readonly independentQuestionsProgress = this._independentQuestionsProgress.asReadonly();
 
   private readonly _independentQuestionsResponses = signal<(string | null)[]>([]);
-  public readonly independentQuestionsResponses =
-    this._independentQuestionsResponses.asReadonly();
-  
-  public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true))
-  
-  effdf = effect(() => {
-    console.log(this._independentQuestionsProgress(), this._independentQuestionsResponses());
-  })
+  public readonly independentQuestionsResponses = this._independentQuestionsResponses.asReadonly();
 
-  fetchindependentAnswer(
-    systemMessage: string,
-    userMessage: string,
-    index: number,
-  ): void {
-    this._independentQuestionsProgress.update((arr) => {
+  public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true));
+
+  fetchindependentAnswer(systemMessage: string, userMessage: string, index: number): void {
+    this._independentQuestionsProgress.update(arr => {
       const newArr = [...arr];
       newArr[index] = true;
       return newArr;
@@ -208,34 +179,65 @@ export class NsaService implements OnDestroy {
       .pipe(
         takeUntil(this.cancel$),
         catchError((err, caught) => {
-          this._gptAnswersProgress.update((v) => {
+          this._gptAnswersProgress.update(v => {
             const newProgress = [...v];
             newProgress[index] = 'ERROR';
             return newProgress;
           });
-          this._gptAnswersResponse.update((v) => {
+          this._gptAnswersResponse.update(v => {
             const newArr = v ? [...v] : [];
-            newArr[index] =
-              typeof err.error === 'string'
-                ? err.error
-                : 'Error: ' + err.status + ' ' + err.statusText;
+            newArr[index] = typeof err.error === 'string' ? err.error : 'Error: ' + err.status + ' ' + err.statusText;
             return newArr;
           });
           sub.unsubscribe();
           return caught;
-        }),
+        })
       )
-      .subscribe((res) => {
-        this._independentQuestionsProgress.update((arr) => {
+      .subscribe(res => {
+        this._independentQuestionsProgress.update(arr => {
           const newArr = [...arr];
           newArr[index] = false;
           return newArr;
         });
-        this._independentQuestionsResponses.update((arr) => {
+        this._independentQuestionsResponses.update(arr => {
           const newArr = [...arr];
           newArr[index] = res as string;
           return newArr;
         });
+      });
+  }
+
+  //! conversations
+  private readonly _conversations = signal<GptConversation[]>([]);
+  public readonly conversations = this._conversations.asReadonly();
+
+  resetAndInitializeConversations(amount: number) {
+    this._conversations.set(new Array(amount));
+  }
+  createConversation(index: number, systemMessage: string, userMessage: string, response: string) {
+    this._conversations.update(arr => {
+      const newArr = [...arr];
+      newArr[index] = new GptConversation(systemMessage, userMessage, response);
+      return newArr;
+    });
+  }
+  fetchConversationAnswer(index: number, userMessage: string): void {
+    const convo = this.conversations()[index];
+
+    convo.addUserMessage(userMessage);
+    convo.addEmptyResponse();
+
+    this.http
+      .post(apiUrl('/nsa/conversation'), {
+        courtRuling: this.getCleanCourtRuling(),
+        messageHistory: convo.items.map(v => ({
+          content: v.content,
+          type: v.type,
+        })),
+      })
+      .pipe(takeUntil(this.cancel$))
+      .subscribe(response => {
+        convo.setLatestResponseContent(response as string);
       });
   }
 

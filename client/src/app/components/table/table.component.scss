@@ -1,4 +1,5 @@
-@use "ag-grid-community/styles" as ag;
+@use 'ag-grid-community/styles' as ag;
+
 @include ag.grid-styles(
   (
     theme: quartz,
@@ -7,4 +8,32 @@
 .ag-theme-quartz {
   width: 100%;
   margin: auto;
+}
+.ag-center-cols-viewport,
+.ag-center-cols-container {
+  min-height: 42px !important;
+}
+
+.ag-root {
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track-piece {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 9999px;
+  }
+  .ag-body-horizontal-scroll,
+  .ag-body-horizontal-scroll-viewport,
+  .ag-body-horizontal-scroll-container {
+    min-height: 10px !important;
+    height: 10px !important;
+    max-height: 10px !important;
+  }
+}
+.ag-sticky-bottom {
+  display: none !important;
 }

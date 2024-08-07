@@ -1,0 +1,41 @@
+@import '../../../variables';
+body {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background-color: var(--bg-dark);
+  padding: 8rem;
+}
+
+img {
+  height: calc($logoHeight / 3);
+  width: calc($logoWidth / 3);
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+
+  app-card {
+    margin: 20px;
+    margin-top: 50px;
+  p {
+    display: flex;
+    justify-content: center;
+    font-family: var(--main-font);
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: rgba(20, 20, 20, 0.9);
+  }
+}
+
+}
+
+.subtitle {
+  font-size: 2rem;
+  color: var(--border);
+  font-family: var(--main-font);
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}

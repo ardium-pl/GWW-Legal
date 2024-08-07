@@ -19,17 +19,8 @@ import {
 } from './typeA.types';
 import { WynagrodzenieZaRestrukturyzację } from './typeA1.types';
 import { RodzajUmowy, Udział } from './typeA2.types';
-import {
-  NazwaStopyBazowej,
-  RodzajOprocentowania,
-  TerminStopyBazowej,
-  ZrodloDanychFinansowych,
-} from './typeC.types';
-import {
-  RodzajAnalizy,
-  RodzajeWartosciNiematerialnych,
-  SposobKalkulacjiOplaty,
-} from './typeE.types';
+import { NazwaStopyBazowej, RodzajOprocentowania, TerminStopyBazowej, ZrodloDanychFinansowych } from './typeC.types';
+import { RodzajAnalizy, RodzajeWartosciNiematerialnych, SposobKalkulacjiOplaty } from './typeE.types';
 
 export type TransactionATable = {
   Id: number;
@@ -78,8 +69,8 @@ export type TransactionATable = {
   ProcentMinimalny?: number;
   ProcentMaksymalny?: number;
   Miara2?: string;
-  DolnaGranica?: number;
-  GornaGranica?: number;
+  DolnaGranicaPrzedzialu?: number;
+  GornaGranicaPrzedzialu?: number;
   WysokoscWskaznikaFinansowego?: number;
   WskaznikFinansowy?: WskaznikFinansowy;
   WynikTransakcji?: number;
@@ -147,7 +138,7 @@ export type TransactionCTable = {
   MetodyBadania?: MetodyBadania;
   ZrodloDanychFinansowych?: ZrodloDanychFinansowych;
   KorektaMetodyBadania?: Korekta;
-  KorektaPorownywalnosciProg?: string;
+  KorektaPorownywalnosciProg?: number;
   RodzajOprocentowania?: RodzajOprocentowania;
   Marza?: number;
   NazwaStopyBazowej?: NazwaStopyBazowej;
@@ -177,6 +168,7 @@ export type TransactionDTable = {
   safeHarbour: string;
   Kapital: number;
   KodWalutyKapitalu: string;
+  Zadluzenie: number;
   KodWalutyZadluzenia: string;
   WysokoscOdsetekMiesiecznych: number;
   KodWalutyOdsetekMiesiecznych: string;
@@ -237,7 +229,7 @@ export type TransactionFTable = {
   correction: KorektaCenTransferowych;
   WartoscKorekty?: number;
   KodWalutyKorekty?: string;
-  safeHarbour: string;
+  safeHarbour?: string;
   compensation: Kompensata;
   TransakcjaZwolniona: 'ZW01';
   PodstawaZwolnienia: '11n1' | '11n1a' | '11n2' | null;

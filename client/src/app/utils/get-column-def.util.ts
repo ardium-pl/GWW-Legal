@@ -1,4 +1,3 @@
-import { WritableSignal } from '@angular/core';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
 import { transactionAColDefs } from 'app/components/transaction-table/column-definitions/type-A-column-definitions.consts';
 import { transactionBColDefs } from 'app/components/transaction-table/column-definitions/type-B-column-definitions.consts';
@@ -83,6 +82,7 @@ export const getKeysToCheck = (transactionType: string): string[] => {
     'correction',
     'compensation',
     'KodWalutyKapitalu',
+    'Zadluzenie',
     'KodWalutyZadluzenia',
     'KodWalutyOdsetekMiesiecznych',
     'KodWalutyOdsetekKwartalnych',

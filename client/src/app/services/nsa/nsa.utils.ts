@@ -9,8 +9,7 @@ export const RulingErrorCode = {
   NOT_FOUND_ERR: 'NOT_FOUND_ERR',
   NO_TEXT_ERR: 'NO_TEXT_ERR',
 } as const;
-export type RulingErrorCode =
-  (typeof RulingErrorCode)[keyof typeof RulingErrorCode];
+export type RulingErrorCode = (typeof RulingErrorCode)[keyof typeof RulingErrorCode];
 
 const RULING_ERROR_CODE_MAP = {
   [RulingErrorCode.NOT_FOUND_ERR]: [
@@ -22,10 +21,7 @@ const RULING_ERROR_CODE_MAP = {
     'Spróbuj wyszukać orzeczenie własnoręcznie i wpisać poniżej:',
   ],
 };
-const DEFAULT_RULING_ERROR_TEXT = [
-  'Wystąpił nieznany błąd.',
-  'Spróbuj wyszukać orzeczenie własnoręcznie i wpisać poniżej:',
-];
+const DEFAULT_RULING_ERROR_TEXT = ['Wystąpił nieznany błąd.', 'Spróbuj wyszukać orzeczenie własnoręcznie i wpisać poniżej:'];
 
 export function rulingErrorToText(error: RulingErrorCode): string[] {
   return RULING_ERROR_CODE_MAP[error] || DEFAULT_RULING_ERROR_TEXT;
