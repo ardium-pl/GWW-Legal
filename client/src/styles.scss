@@ -41,6 +41,7 @@ body {
   --foreground: white;
 
   --red: rgb(239, 53, 29);
+  --error: rgb(240, 83, 63);
   --warning: rgb(235, 85, 15);
   --green: rgb(68, 162, 72);
 
@@ -95,6 +96,8 @@ body {
   --info-500: 19, 113, 236;
   --info-700: 13, 81, 172;
   --info-900: 8, 49, 102;
+
+  --mdc-snackbar-container-color: rgb(240, 83, 63);
 }
 
 //global styling

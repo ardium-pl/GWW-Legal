@@ -1,6 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
 
 export type ConfirmationDialogData = {
   title: string;
@@ -8,7 +15,7 @@ export type ConfirmationDialogData = {
   yesButtonText?: string;
   noButtonText?: string;
   swapButtonColors?: boolean;
-}
+};
 
 @Component({
   selector: 'app-confirmation-dialog',

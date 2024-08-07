@@ -3,14 +3,14 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  ViewEncapsulation,
   computed,
   effect,
   inject,
   signal,
-  viewChild,
+  viewChild
 } from '@angular/core';
 import {
+  FormArray,
   FormControl,
   FormGroup,
   FormsModule,
@@ -39,6 +39,7 @@ import {
 import { GptConversationDialogComponent, GptConversationDialogData } from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
+import { MixpanelService } from 'app/services/mixpanel.service';
 import { GptConversation } from 'app/services/nsa/gpt-conversation';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
@@ -81,13 +82,14 @@ const DEFAULT_USER_MESSAGES = [
     MarkdownModule,
     MatCheckboxModule,
     SearchFabComponent,
+    MatIconModule,
   ],
-  encapsulation: ViewEncapsulation.None,
 })
 export class NsaPage implements OnInit, OnDestroy {
   readonly nsaService = inject(NsaService);
   readonly searchService = inject(SearchService);
   readonly dialog = inject(MatDialog);
+  readonly mixpanelService = inject(MixpanelService);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -111,6 +113,7 @@ export class NsaPage implements OnInit, OnDestroy {
     additionalQuestion: new FormControl<string | null>(null, [
       Validators.required,
     ]),
+    independentQuestions: new FormArray<FormControl<string | null>>([]),
   });
 
   readonly caseSigntaureInput =
@@ -162,6 +165,7 @@ export class NsaPage implements OnInit, OnDestroy {
     if (!this.nsaFormPart1.controls.caseSignature.valid) {
       return;
     }
+    this.mixpanelService.track('Orzeczenia');
     this.nsaService.fetchCourtRuling(
       this.nsaFormPart1.controls.caseSignature.value!,
     );
@@ -170,7 +174,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
-
+    this.mixpanelService.track('Odpowiedzi chatu');
     const values = this.nsaFormPart2.value;
     this.nsaService.fetchGptAnswers(values as NsaFormPart2);
     this.nsaFormPart3.reset();
@@ -179,6 +183,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
   fetchAdditionalAnswer(): void {
     if (!this.nsaFormPart3.valid) return;
+    this.mixpanelService.track('Odpowiedzi chatu dodatkowe');
 
     this.nsaFormPart3.markAsPristine();
 
@@ -386,6 +391,36 @@ export class NsaPage implements OnInit, OnDestroy {
       );
     }
     this.nextPage();
+  }
+  //! adding questions
+  onAddButtonClick() {
+    this.nsaFormPart3.controls.independentQuestions.push(
+      new FormControl<string>(''),
+    );
+  }
+
+  onindependentQuestionButtonClick(index: number, control: FormControl) {
+    this.nsaService.fetchindependentAnswer(
+      this.nsaFormPart2.controls.systemMessage.value!,
+      control.value!,
+      index,
+    );
+  }
+
+  hasClickedFetchindependent(index: number) {
+    return this.nsaService.independentQuestionsProgress()[index] != undefined;
+  }
+  isVisibleAddButton() {
+    return (
+      this.nsaService.independentQuestionsProgress().length ==
+      this.nsaFormPart3.controls.independentQuestions.controls.length
+    );
+  }
+  independentLoaded(index: number) {
+    return this.nsaService.independentQuestionsLoaded()[index];
+  }
+  independentLoading(index: number) {
+    return this.nsaService.independentQuestionsLoaded()[index] == false;
   }
 
   //! resetting
