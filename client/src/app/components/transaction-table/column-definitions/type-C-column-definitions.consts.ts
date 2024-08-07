@@ -13,6 +13,7 @@ function createReverseMapping(mapping: Record<string, string>): Record<string, s
   );
 }
 
+
 // User friendly code mappings
 const correctionCodeMapping: Record<string, string> = {
   KC01: 'Podatnik dokonał korekty cen transferowych',
@@ -272,6 +273,7 @@ export const transactionCColDefs: ColDef[] = [
     field: 'KodKrajuZwolnienia',
     headerName: 'Kod kraju',
     headerTooltip: 'Kod kraju',
+    type: 'exemptionType',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
   },
@@ -292,7 +294,6 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Kod waluty dla kraju',
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
-    type: 'exemptionType',
   },
   {
     field: 'RodzajTransakcji',
@@ -418,16 +419,17 @@ export const transactionCColDefs: ColDef[] = [
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
     editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
+      !!data.InnaSB ||
+      (data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&
       data.RodzajOprocentowania === 'OP01' &&
-      data.NazwaStopyBazowej === 'SB09',
+      data.NazwaStopyBazowej === 'SB09'),
     cellClass: ({ data }) =>
       getCellClass(
         data.Zwolnienie !== 'ZW02' ||
-          data.MetodyBadania === 'MW00' ||
-          data.RodzajOprocentowania !== 'OP01' ||
-          data.NazwaStopyBazowej !== 'SB09'
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajOprocentowania !== 'OP01' ||
+        data.NazwaStopyBazowej !== 'SB09',
       ),
   },
   {
@@ -448,16 +450,17 @@ export const transactionCColDefs: ColDef[] = [
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
     editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
+      !!data.Okres ||
+      (data.MetodyBadania !== 'MW00' &&
       data.Zwolnienie === 'ZW02' &&
       data.RodzajOprocentowania === 'OP01' &&
-      data.TerminStopyBazowej === 'TB07',
+      data.TerminStopyBazowej === 'TB07'),
     cellClass: ({ data }) =>
       getCellClass(
         data.Zwolnienie !== 'ZW02' ||
-          data.MetodyBadania === 'MW00' ||
-          data.RodzajOprocentowania !== 'OP01' ||
-          data.TerminStopyBazowej !== 'TB07'
+        data.MetodyBadania === 'MW00' ||
+        data.RodzajOprocentowania !== 'OP01' ||
+        data.TerminStopyBazowej !== 'TB07',
       ),
   },
   {
@@ -469,7 +472,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       min: 0,
     } as INumberCellEditorParams,
-    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajOprocentowania === 'OP02',
+    editable: ({ data }) => (data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajOprocentowania === 'OP02') || data.PoziomOprocentowania,
     cellClass: ({ data }) =>
       getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajOprocentowania !== 'OP02'),
   },
@@ -516,7 +519,7 @@ export const transactionCColDefs: ColDef[] = [
     cellEditorParams: {
       min: 0,
     } as INumberCellEditorParams,
-    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu !== 'RP04',
+    editable: ({ data }) => (data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu !== 'RP04') ||  data.DolnaGranicaPrzedzialu || data.GornaGranicaPrzedzialu,
     cellClass: ({ data }) =>
       getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajPrzedzialu === 'RP04'),
   },
@@ -524,7 +527,7 @@ export const transactionCColDefs: ColDef[] = [
     field: 'GornaGranicaPrzedzialu',
     headerName: 'Górna granica przedziału',
     headerTooltip: 'Górna granica przedziału',
-    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu !== 'RP04',
+    editable: ({ data }) => (data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu !== 'RP04') || data.DolnaGranicaPrzedzialu || data.GornaGranicaPrzedzialu,
     cellClass: ({ data }) =>
       getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajPrzedzialu === 'RP04'),
     cellEditor: 'agNumberCellEditor',
@@ -539,7 +542,7 @@ export const transactionCColDefs: ColDef[] = [
     headerTooltip: 'Wysokość wskaźnika finansowego %',
     cellEditor: 'agNumberCellEditor',
     cellDataType: 'number',
-    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu === 'RP04',
+    editable: ({ data }) => (data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.RodzajPrzedzialu === 'RP04') || data.WysokoscWskaznikaFinansowego,
     cellClass: ({ data }) =>
       getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.RodzajPrzedzialu !== 'RP04'),
     cellEditorParams: {

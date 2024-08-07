@@ -256,14 +256,14 @@ function mapRodzajPrzedzialuMW02_MW03_MW05(
     case 'RP02':
       return {
         RodzajPrzedz5: transaction.RodzajPrzedzialu,
-        WynikAP1: transaction.DolnaGranica,
-        WynikAP2: transaction.GornaGranica,
+        WynikAP1: transaction.DolnaGranicaPrzedzialu,
+        WynikAP2: transaction.GornaGranicaPrzedzialu,
       };
     case 'RP03':
       return {
         RodzajPrzedz15: 'RP03',
-        WynikAP3: transaction.DolnaGranica,
-        WynikAP4: transaction.GornaGranica,
+        WynikAP3: transaction.DolnaGranicaPrzedzialu,
+        WynikAP4: transaction.GornaGranicaPrzedzialu,
         OpisPrzedz: transaction.OpisPrzedzialu,
       };
     case 'RP04':

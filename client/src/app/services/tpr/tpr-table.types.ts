@@ -69,8 +69,8 @@ export type TransactionATable = {
   ProcentMinimalny?: number;
   ProcentMaksymalny?: number;
   Miara2?: string;
-  DolnaGranica?: number;
-  GornaGranica?: number;
+  DolnaGranicaPrzedzialu?: number;
+  GornaGranicaPrzedzialu?: number;
   WysokoscWskaznikaFinansowego?: number;
   WskaznikFinansowy?: WskaznikFinansowy;
   WynikTransakcji?: number;

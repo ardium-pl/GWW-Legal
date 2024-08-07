@@ -13,7 +13,6 @@ export const companyColDefs: ColDef[] = [
     field: 'periodFrom',
     headerName: 'Okres od',
     headerTooltip: 'Okres od',
-    editable: true,
   },
   {
     field: 'periodUntil',
@@ -66,4 +65,10 @@ export const companyColDefs: ColDef[] = [
     headerTooltip: 'Zwrot z kapitału',
     valueFormatter: p => p.value + '%',
   },
+  {
+    field: 'irsCode',
+    headerName: 'Kod urzędu',
+    headerTooltip: 'Kod urzędu',
+    editable: true,
+  }
 ];

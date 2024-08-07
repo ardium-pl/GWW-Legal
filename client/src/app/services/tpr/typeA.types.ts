@@ -2,8 +2,7 @@ export type TransakcjaKategoriaA<
   K extends KorektaCenTransferowych = KorektaCenTransferowych,
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania,
-> =
-  & ({
+> = {
       KategoriaA: string;
       PrzedmiotA: string;
       WartoscA: {
@@ -15,7 +14,7 @@ export type TransakcjaKategoriaA<
       };
       Kompensata: Kompensata;
       SupportVarMetoda: MW;
-    } & (K extends 'KC01' ? KC01 : {}))
+    } & (K extends 'KC01' ? KC01 : {})
   & ((K extends 'KC02' ? KC02 : {}) & (ZW extends 'ZW01' ? ZW01 : {}))
   | ((ZW extends 'ZW02' ? ZW02 : {}) & (MW extends 'MW00' ? MW00 : {}))
   | (MW extends 'MW01' ? MW01 : {})
@@ -60,14 +59,13 @@ export type TK01 = {
   RodzajTrans1: 'TK01';
   InformacjaOKrajuA2: {
     Kraj: string;
-    WartoscAKraj2: [
+    WartoscAKraj2: 
       {
-        _attr: {
+        _attributes: {
           kodWaluty: string;
         };
-      },
-      number,
-    ];
+      _text: number,
+    },
   };
 };
 
@@ -94,7 +92,7 @@ export type KP01 = {
 
 export type KP02 = {
   KorektyPorWyn5: 'KP02';
-  KorektyPorWynProg: number;
+  KorektyPorWynProg: string;
 };
 
 export type CK01<RP extends RodzajPrzedzialu = RodzajPrzedzialu> = {
@@ -191,7 +189,7 @@ export type KP01_for_MW02_MW03_MW05 = {
 
 export type KP02_for_MW02_MW03_MW05 = {
   KorektyPorWyn6: 'KP02';
-  KorektyPorWynProg: number;
+  KorektyPorWynProg: string;
 };
 
 export type PR01_PR03_for_MW02_MW03_MW05 = {
@@ -241,7 +239,7 @@ export type TB_for_TW01_TW02 = {
 };
 
 export type TB07_for_TW01_TW02 = {
-  OkresProg2: 'TW07';
+  OkresProg2: 'TB07';
   TerminInny: ZrodloDanychZgodnosci;
 };
 
@@ -289,3 +287,16 @@ export type TechWyceny = 'TW01' | 'TW02' | 'TW03' | 'TW04' | 'TW05' | 'TW06' | '
 export type OkresPrognozy = 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' | 'TB07';
 export type ZrodloDanychZgodnosci = 'AZ01' | 'AZ02' | 'AZ03' | 'AZ04' | 'AZ05' | 'AZ06' | 'AZ07' | 'AZ08' | 'AZ09';
 export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2' | null;
+
+export type TransakcjaA = {
+  KategoriaA: string;
+  PrzedmiotA: string;
+  WartoscA: {
+    _attributes: {
+      kodWaluty: string;
+    };
+
+    _text: number;
+  };
+  Kompensata: Kompensata;
+}

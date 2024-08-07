@@ -1,28 +1,19 @@
 import { TransactionCTable } from 'app/services/tpr/tpr-table.types';
 import {
-  KC01,
-  KC02,
-  KP01,
-  KP02,
-  MW00,
-  MW01toMW06,
-  OP01,
-  OP02,
-  OP03,
-  OP04_OP05,
-  RodzajPrzedzialu,
-  RP01,
-  RP02,
-  RP03,
-  SB01toSB08,
-  SB09,
-  TB01toTB06,
-  TB07,
-  TK01,
-  TK02,
-  TransactionPartial,
-  ZW01,
-  ZW02,
+    KC01,
+    KC02,
+    KP01,
+    KP02,
+    MW00,
+    MW01toMW06,
+    RP01,
+    RP02,
+    RP03,
+    TK01,
+    TK02,
+    TransactionPartial,
+    ZW01,
+    ZW02
 } from 'app/services/tpr/typeC.types';
 
 export function reverseMapKorektaCenTransferowych(transaction: Partial<KC01 & KC02>): Partial<TransactionCTable> {
@@ -67,7 +58,7 @@ export function reverseMapZwolnienieArt11n(transaction: Partial<ZW01 & ZW02> & P
   }
 }
 
-export function reverseMapMetodyBadania(transaction: Partial<MW01toMW06<any> & MW00 & KP01 & KP02>): Partial<TransactionCTable> {
+export function reverseMapMetodyBadania(transaction: Partial<MW01toMW06 & MW00 & KP01 & KP02>): Partial<TransactionCTable> {
   if (transaction.MetodaC1) {
     return {
       MetodyBadania: transaction.MetodaC1,

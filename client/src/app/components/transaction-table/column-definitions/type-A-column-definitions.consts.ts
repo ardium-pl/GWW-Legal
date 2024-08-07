@@ -292,7 +292,7 @@ export const transactionAColDefs: ColDef[] = [
       min: 0,
     } as INumberCellEditorParams,
     editable: ({ data }) => {
-      return data.transactionCategory === '3101' && data.Udzial === 'UD01';
+      return !!data.ProcentUdzialuWZyskach || (data.transactionCategory === '3101' && data.Udzial === 'UD01');
     },
     cellClass: ({ data }) => getCellClass(data.transactionCategory !== '3101' || data.Udzial !== 'UD01'),
   },
@@ -307,7 +307,7 @@ export const transactionAColDefs: ColDef[] = [
       min: 0,
     } as INumberCellEditorParams,
     editable: ({ data }) => {
-      return data.transactionCategory === '3101' && data.Udzial === 'UD02';
+      return !!data.ProcentUdzialuWStracie || (data.transactionCategory === '3101' && data.Udzial === 'UD02');
     },
     cellClass: ({ data }) => getCellClass(data.transactionCategory !== '3101' || data.Udzial !== 'UD02'),
   },
@@ -322,7 +322,7 @@ export const transactionAColDefs: ColDef[] = [
       min: 0,
     } as INumberCellEditorParams,
     editable: ({ data }) => {
-      return data.transactionCategory === '3101' && data.Udzial === 'UD03';
+      return !!data.ProcentUdzialuWMajatkuLikwidacyjnym || (data.transactionCategory === '3101' && data.Udzial === 'UD03');
     },
     cellClass: ({ data }) => getCellClass(data.transactionCategory !== '3101' || data.Udzial !== 'UD03'),
   },
@@ -485,18 +485,19 @@ export const transactionAColDefs: ColDef[] = [
       values: Object.values(createReverseMapping(KorektaMetodyBadaniaCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => KorektaMetodyBadaniaCodeMapping[params.value],
-    editable: ({ data }) =>
-      (data.MetodyBadania === 'MW01' ||
+    editable: ({ data }) => {
+      return !!data.KorektaMetodyBadania ||
+      ((data.MetodyBadania === 'MW01' ||
         data.MetodyBadania === 'MW02' ||
         data.MetodyBadania === 'MW03' ||
         data.MetodyBadania === 'MW05') &&
-      data.Zwolnienie === 'ZW02',
-    cellClass: ({ data }) =>
-      getCellClass(
+      data.Zwolnienie === 'ZW02');
+    },
+    cellClass: ({ data }) => getCellClass(
         data.Zwolnienie !== 'ZW02' ||
           data.MetodyBadania === 'MW04' ||
           data.MetodyBadania === 'MW00' ||
-          data.MetodyBadania === 'MW06'
+          data.MetodyBadania === 'MW06',
       ),
   },
   {
@@ -508,20 +509,21 @@ export const transactionAColDefs: ColDef[] = [
       values: Object.values(createReverseMapping(KorektaPorownywalnosciProgCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => KorektaPorownywalnosciProgCodeMapping[params.value],
-    editable: ({ data }) =>
-      (data.MetodyBadania === 'MW01' ||
+    editable: ({ data }) => {
+      return !!data.KorektaPorownywalnosciProg ||
+      ((data.MetodyBadania === 'MW01' ||
         data.MetodyBadania === 'MW02' ||
         data.MetodyBadania === 'MW03' ||
         data.MetodyBadania === 'MW05') &&
       data.Zwolnienie === 'ZW02' &&
-      data.KorektaMetodyBadania === 'KP02',
-    cellClass: ({ data }) =>
-      getCellClass(
+      data.KorektaMetodyBadania === 'KP02');
+    },
+    cellClass: ({ data }) => getCellClass(
         data.KorektaMetodyBadania !== 'KP02' ||
           data.MetodyBadania === 'MW04' ||
           data.MetodyBadania === 'MW06' ||
           data.MetodyBadania === 'MW00' ||
-          data.Zwolnienie !== 'ZW02'
+          data.Zwolnienie !== 'ZW02',
       ),
   },
   {
@@ -614,22 +616,21 @@ export const transactionAColDefs: ColDef[] = [
     cellEditor: 'agTextCellEditor',
     cellDataType: 'text',
     editable: ({ data }) => {
-      return (
-        data.Zwolnienie === 'ZW02' &&
+      return data.OpisPrzedzialu ||
+      (data.Zwolnienie === 'ZW02' &&
         (data.MetodyBadania === 'MW01' ||
           data.MetodyBadania === 'MW02' ||
           data.MetodyBadania === 'MW03' ||
           data.MetodyBadania === 'MW05') &&
-        data.RodzajPrzedzialu === 'RP03'
-      );
+        data.RodzajPrzedzialu === 'RP03');
     },
-    cellClass: ({ data }) =>
-      getCellClass(
+    cellClass: ({ data }) => getCellClass(
         data.Zwolnienie !== 'ZW02' ||
           data.MetodyBadania === 'MW00' ||
           data.MetodyBadania === 'MW04' ||
           data.MetodyBadania === 'MW06' ||
-          data.RodzajPrzedzialu !== 'RP03'
+          data.RodzajPrzedzialu !== 'RP03',
+        
       ),
   },
   {
@@ -642,10 +643,10 @@ export const transactionAColDefs: ColDef[] = [
       min: 0,
     } as INumberCellEditorParams,
     editable: ({ data }) => {
-      return data.Zwolnienie === 'ZW02' && data.MetodyBadania === 'MW01' && data.RodzajPrzedzialu === 'RP04';
+      return data.WysokoscCenyPorownywalnej || (data.Zwolnienie === 'ZW02' && data.MetodyBadania === 'MW01' && data.RodzajPrzedzialu === 'RP04');
     },
-    cellClass: ({ data }) =>
-      getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania !== 'MW01' || data.RodzajPrzedzialu !== 'RP04'),
+    cellClass: ({ data }) => getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania !== 'MW01' || data.RodzajPrzedzialu !== 'RP04'),
+    
   },
   {
     field: 'ProcentMinimalny',
@@ -678,7 +679,7 @@ export const transactionAColDefs: ColDef[] = [
     cellDataType: 'text',
   },
   {
-    field: 'DolnaGranica',
+    field: 'DolnaGranicaPrzedzialu',
     headerName: 'Dolna granica przedziału',
     headerTooltip: 'Dolna granica przedziału',
     type: 'GranicePrzedzialuType',
@@ -689,7 +690,7 @@ export const transactionAColDefs: ColDef[] = [
     } as INumberCellEditorParams,
   },
   {
-    field: 'GornaGranica',
+    field: 'GornaGranicaPrzedzialu',
     headerName: 'Górna granica przedziału',
     headerTooltip: 'Górna granica przedziału',
     type: 'GranicePrzedzialuType',
@@ -709,20 +710,21 @@ export const transactionAColDefs: ColDef[] = [
       min: 0,
     } as INumberCellEditorParams,
     editable: ({ data }) => {
-      return (
-        data.Zwolnienie === 'ZW02' &&
-        (data.MetodyBadania === 'MW02' || data.MetodyBadania === 'MW03' || data.MetodyBadania === 'MW05') &&
-        data.RodzajPrzedzialu === 'RP04'
-      );
+      return data.WysokoscWskaznikaFinansowego ||
+      (data.Zwolnienie === 'ZW02' &&
+        (data.MetodyBadania === 'MW02' ||
+         data.MetodyBadania === 'MW03' ||
+         data.MetodyBadania === 'MW05') &&
+        data.RodzajPrzedzialu === 'RP04');
     },
-    cellClass: ({ data }) =>
-      getCellClass(
+    cellClass: ({ data }) => getCellClass(
         data.Zwolnienie !== 'ZW02' ||
           data.MetodyBadania === 'MW00' ||
           data.MetodyBadania === 'MW01' ||
           data.MetodyBadania === 'MW04' ||
           data.MetodyBadania === 'MW06' ||
-          data.RodzajPrzedzialu !== 'RP04'
+          data.RodzajPrzedzialu !== 'RP04',
+        
       ),
   },
   {
@@ -822,7 +824,7 @@ export const transactionAColDefs: ColDef[] = [
       min: 0,
     } as INumberCellEditorParams,
     editable: ({ data }) => {
-      return data.MetodyBadania === 'MW04' && !data.Strata;
+      return data.ZrealizowanyZysk || (data.MetodyBadania === 'MW04' && !data.Strata);
     },
     cellClass: ({ data }) => getCellClass(data.MetodyBadania !== 'MW04' || data.Strata),
   },
@@ -876,8 +878,9 @@ export const transactionAColDefs: ColDef[] = [
       values: Object.values(createReverseMapping(ZrodloDanychZgodnosciCodeMapping)),
     } as ISelectCellEditorParams,
     valueFormatter: params => ZrodloDanychZgodnosciCodeMapping[params.value],
-    editable: ({ data }) => data.MetodyBadania === 'MW06' && data.Zwolnienie === 'ZW02' && data.TechWyceny === 'TW07',
-    cellClass: ({ data }) =>
-      getCellClass(data.MetodyBadania !== 'MW06' || data.Zwolnienie === 'ZW01' || data.TechWyceny !== 'TW07'),
+    editable: ({ data }) => {
+      return !!data.ZrodloDanychZgodnosci || (data.MetodyBadania === 'MW06' && data.Zwolnienie === 'ZW02' && data.TechWyceny === 'TW07');
+    },
+    cellClass: ({ data }) => getCellClass(data.MetodyBadania !== 'MW06' || data.Zwolnienie === 'ZW01' || data.TechWyceny !== 'TW07'),
   },
 ];
