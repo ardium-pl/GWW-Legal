@@ -1,3 +1,4 @@
 **/.env
 server/client
 **/node_modules
+/testing_files

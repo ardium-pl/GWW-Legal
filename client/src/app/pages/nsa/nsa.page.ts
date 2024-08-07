@@ -3,12 +3,11 @@ import {
   ElementRef,
   OnDestroy,
   OnInit,
-  ViewEncapsulation,
   computed,
   effect,
   inject,
   signal,
-  viewChild,
+  viewChild
 } from '@angular/core';
 import {
   FormArray,
@@ -44,7 +43,6 @@ import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
-import { TableComponent } from 'app/components/table/table.component';
 import { isNull } from 'simple-bool';
 
 const DEFAULT_SYSTEM_MESSAGE =
@@ -119,7 +117,7 @@ export class NsaPage implements OnInit, OnDestroy {
     viewChild<ElementRef<HTMLInputElement>>('caseSigntaureInput');
 
   get isFindCaseButtonDisabled(): boolean {
-    return (
+  return (
       this.nsaService.isRulingLoading() ||
       !this.nsaFormPart1.valid ||
       !this.nsaFormPart1.dirty
