@@ -2,7 +2,7 @@
   <input #inputEl class="file-drop-zone-input" title="Kliknij, aby wybrać" type="file" (change)="readFile($event)"
     [accept]="accept()" [multiple]="maxFiles() !== 1">
   <div class="file-drop-zone">
-    <app-file-drop-zone-icon class="upload-icon">upload</app-file-drop-zone-icon> 
+    <span class="material-symbols-outlined upload-icon">upload</span>
     <div class="file-drop-zone-text">
       <strong>Kliknij, aby wybrać</strong>
       <span>lub przeciągnij i upuść</span>

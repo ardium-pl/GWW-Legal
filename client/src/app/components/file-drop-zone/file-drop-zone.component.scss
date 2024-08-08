@@ -4,6 +4,7 @@
     margin: 0 auto;
 }
 
+
 .file-drop-zone-input {
     position: absolute;
     left: 0;
@@ -38,10 +39,10 @@
 .upload-icon {
     font-size: 3rem;
     font-variation-settings:
-        'FILL' 0,
-        'wght' 200,
-        'GRAD' 0,
-        'opsz' 24;
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
 }
 
 .file-drop-zone-text {

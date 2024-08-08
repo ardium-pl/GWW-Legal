@@ -2,12 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Output, computed, input, viewChild } from '@angular/core';
 import { coerceArrayProperty, coerceBooleanProperty, coerceNumberProperty } from '@ardium-ui/devkit';
 import { IconComponent } from '../icon/icon.component';
-import { FileDropZoneIconComponent } from '../file-drop-zone-icon/file-drop-zone-icon.component';
 
 @Component({
   selector: 'app-file-drop-zone',
   standalone: true,
-  imports: [CommonModule, IconComponent, FileDropZoneIconComponent],
+  imports: [CommonModule, IconComponent],
   templateUrl: './file-drop-zone.component.html',
   styleUrl: './file-drop-zone.component.scss',
 })
