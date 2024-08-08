@@ -1,41 +1,45 @@
 @if (tprCompanyDataService.hasData()) {
-<p class="table-header">Tabela informacji o przedsiębiorstwie</p>
-<mat-card class="table-card">
-  <app-table [inputData]="[tprCompanyDataService.data()]"></app-table>
-</mat-card>
-<p class="table-header">Tabele informacji o transakcjach</p>
-<mat-card class="table-card">
-  <mat-tab-group mat-stretch-tabs="true" mat-align-tabs="start" animationDuration="0ms" [(selectedIndex)]="selectedTab">
-    @for (category of tprCompanyDataService.transactionCategoriesArray(); track category[0]) {
-      <mat-tab [label]="getLabel(category[0])" [disabled]="!category[1].length">
-        @if (category[1].length) {
-          <app-transaction-table [inputData]="category[1]" [transactionType]="category[0].slice(-1)" />
+    <p class="table-header">Tabela informacji o przedsiębiorstwie</p>
+    <mat-card class="table-card">
+      <app-table [inputData]="[tprCompanyDataService.data()]"></app-table>
+    </mat-card>
+    <p class="table-header">Tabele informacji o transakcjach</p>
+    <mat-card class="table-card">
+      <mat-tab-group mat-stretch-tabs="true" mat-align-tabs="start" animationDuration="0ms" [(selectedIndex)]="selectedTab">
+        @for (category of tprCompanyDataService.transactionCategoriesArray(); track category[0]) {
+          <mat-tab [label]="getLabel(category[0])" [disabled]="!category[1].length">
+            @if (category[1].length) {
+              <app-transaction-table [inputData]="category[1]" [transactionType]="category[0].slice(-1)" />
+            }
+          </mat-tab>
         }
-      </mat-tab>
-    }
-  </mat-tab-group>
-</mat-card>
-<div class="button-container" [matTooltip]="!tprDataService.isError() ? '' : 'Przed wygenerowaniem pliku należy uzupełnić wszystkie wymagane komórki tablicy'">
-  <app-button (click)="collectData()" class="xml-button" [disabled]="tprDataService.isError()">
-    <b>Generuj</b>
-  </app-button>
-</div>
-}
-@else{
+      </mat-tab-group>
+    </mat-card>
+    <div class="button-container" [matTooltip]="!tprDataService.isError() ? '' : 'Przed wygenerowaniem pliku należy uzupełnić wszystkie wymagane komórki tablicy'">
+      <app-button (click)="collectData()" class="xml-button" [disabled]="tprDataService.isError()">
+        <b>Generuj</b>
+      </app-button>
+    </div>
+    } @else {
     <main>
-        <h1>Importuj XML</h1>
-        <div class="sections-wrapper">
-            <mat-card class="upload-card">
-                <mat-card-header><b>Dodaj odpowiedni plik XML</b></mat-card-header>
-                <mat-card-content>
-                    <div class="upload-card-columns">
-                        <div class="file-drop-zone-container">
-                            <app-file-drop-zone maxFiles="1" [accept]="['.xml']" (upload)="onFileDropped($event)"></app-file-drop-zone>
-                        </div>
-                    </div>
-                </mat-card-content>
-            </mat-card>
-        </div>
+      <h1>Importuj XML</h1>
+      <div class="sections-wrapper">
+        <mat-card class="upload-card">
+          <mat-card-header>Dodaj odpowiedni plik XML</mat-card-header>
+          <mat-card-content>
+            <div class="upload-card-columns">
+              <div class="file-drop-zone-container">
+                <app-file-drop-zone maxFiles="1" [accept]="['.xml']" (upload)="onFileDropped($event)"/>
+              </div>
+              <div class="uploaded-container">
+                @for (file of importXMLService.files; track $index) {
+                <app-tpr-file [tprFile]="file" />
+                }
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
     </main>
+    }
     
-}

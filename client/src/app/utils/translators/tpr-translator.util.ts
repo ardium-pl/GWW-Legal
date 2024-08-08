@@ -9,8 +9,9 @@ import {
   TransactionFTable,
 } from 'app/services/tpr/tpr-table.types';
 import { translateCategoryA, translateCategoryA1, translateCategoryA2 } from './translate-typeA.util';
+import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
 
-export function translateToTPR(tprInput: any) {
+export function translateToTPR(tprInput: TPRCompanyData) {
   const translatedTransactions = translateTransactions(tprInput.transactions);
 
   const tpr = {

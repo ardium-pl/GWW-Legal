@@ -1,7 +1,17 @@
-import { Injectable } from '@angular/core';
+import { computed, Injectable } from '@angular/core';
 import { parseString, processors } from 'xml2js';
 import { TPRCompanyData } from './tpr/tpr-input.types';
 import { Declaration } from './tpr/tpr-input.types';
+import { TprFile, TprFileState, TprFileType } from './tpr/tpr-file';
+import { Tuple } from 'app/utils/util-types';
+import { sleep } from 'app/utils/async';
+
+
+export const TPRFileName = {
+  XML: 'Plik TPR-C',
+} as const;
+
+export type TPRFileName = (typeof TPRFileName)[keyof typeof TPRFileName];
 
 const TAGS_THAT_SHOULD_REMAIN_STRINGS = [
   'OkresOd',
@@ -26,6 +36,15 @@ const TAGS_THAT_SHOULD_REMAIN_STRINGS = [
 export class ImportXMLService {
   private _xmlData: TPRCompanyData | null = null;
 
+  readonly files: Tuple<TprFile, 1> = [
+    new TprFile(TprFileType.XML, TPRFileName.XML),
+  ];
+
+  readonly areAllFilesOK = computed(() => {
+    return this.files.every(file => file.state() === TprFileState.OK);
+  });
+
+
   get xmlData(): TPRCompanyData | null {
     return this._xmlData;
   }
@@ -35,9 +54,24 @@ export class ImportXMLService {
     if (!file.name.endsWith('.xml')) {
       throw new Error('Invalid file type. Please upload an XML file.');
     }
-
     const fileContent = await file.text();
     let validation = this._validateXmlFile(fileContent);
+    this.files[0].fileName.set(null);
+    this.files[0].fileSize.set(null);
+    this.files[0].fileContent.set(null);
+    this.files[0].validationData.set(false);
+    this.files[0].state.set(TprFileState.Loading);
+
+    const sleepModifier = Math.sqrt(fileContent.length);
+    const sleepAmount = sleepModifier + Math.random() * sleepModifier;
+    await sleep(sleepAmount);
+
+    this.files[0].fileName.set(file.name);
+    this.files[0].fileSize.set(file.size);
+    this.files[0].fileContent.set(fileContent);
+    this.files[0].validationData.set(validation);
+    console.log(validation);
+    this.files[0].state.set(validation ? TprFileState.Error : TprFileState.OK);
     if(!validation){
     const xmlData = this.readAsXml(fileContent);
     this._xmlData = this.parseXML(xmlData);
@@ -46,7 +80,7 @@ export class ImportXMLService {
 
   private _validateXmlFile(content: string): false | [string, string] {
     if (!/<KodFormularza.*?>TPR-C<\/KodFormularza>/.test(content)) {
-        window.alert('Dodany plik nie wygląda na poprawny plik XML. Upewnij się, że dodajesz plik wygenerowany przez formularz TPR-C.')
+        return ['Dodany plik nie wygląda na poprawny plik XML. Upewnij się, że dodajesz plik wygenerowany przez formularz TPR-C.', 'VLD_XML_0'];
       }
     return false;
   }

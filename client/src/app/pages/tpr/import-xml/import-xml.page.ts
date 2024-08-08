@@ -17,6 +17,10 @@ import { translateToTPR } from 'app/utils/translators/tpr-translator.util';
 import * as xmljs from 'xml-js';
 import { ImportXMLService } from 'app/services/import-xml.service';
 import { reverseTranslator } from 'app/utils/translators/reverseTranslators/reverse-tpr-translator';
+import { TprFileComponent } from 'app/components/tpr-file/tpr-file.component';
+import { MainPage } from "../../main/main.page";
+import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
+import { TprFileState } from 'app/services/tpr/tpr-file';
 
 @Component({
   selector: 'app-import-xml',
@@ -29,8 +33,10 @@ import { reverseTranslator } from 'app/utils/translators/reverseTranslators/reve
     ButtonComponent,
     IconComponent,
     MatTooltipModule,
-    FileDropZoneComponent
-  ],
+    FileDropZoneComponent,
+    TprFileComponent,
+    MainPage
+],
   templateUrl: './import-xml.page.html',
   styleUrl: './import-xml.page.scss'
 })
@@ -40,7 +46,7 @@ export class ImportXMLPage {
   private readonly errorSnackbarService = inject(ErrorSnackbarService);
   public readonly tprDataService = inject(TprDataService);
   public readonly tprCompanyDataService = inject(TprCompanyDataService);
-  private readonly importXMLService = inject(ImportXMLService);
+  public readonly importXMLService = inject(ImportXMLService);
   readonly dialog = inject(MatDialog);
   private readonly mixpanelService = inject(MixpanelService);
 
@@ -48,13 +54,13 @@ export class ImportXMLPage {
 
   async onFileDropped(files: File | File[]) {
     try {
-      const fileArray = Array.isArray(files) ? files : [files]; // Ensure it's an array
+      const fileArray = Array.isArray(files) ? files : [files]; 
       await this.importXMLService.handleFileDrop(fileArray);
-      const xmlData = this.importXMLService.xmlData;
-      const translatedData = reverseTranslator(xmlData);
-      this.tprCompanyDataService.setData(translatedData as object);
+        const xmlData = this.importXMLService.xmlData;
+        const translatedData = reverseTranslator(xmlData);
+        this.tprCompanyDataService.setData(translatedData as object);
     } catch (error) {
-      console.error('Error processing file:', error);
+      this.importXMLService.files[0].state.set(TprFileState.Error);
     }
   }
 
@@ -75,9 +81,9 @@ export class ImportXMLPage {
       : this.generateXML(companyData);
   }
 
-  generateXML(companyData: any) {
+  generateXML(companyData: TPRCompanyData | null) {
     this.mixpanelService.track('XML');
-    const tpr = translateToTPR(companyData);
+    const tpr = translateToTPR(companyData as TPRCompanyData);
     const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
     const blob = new Blob([xmlVar], { type: 'application/xml' });
 

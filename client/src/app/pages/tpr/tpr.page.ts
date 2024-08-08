@@ -27,6 +27,7 @@ import { translateToTPR } from 'app/utils/translators/tpr-translator.util';
 import { Subject, catchError, from, takeUntil } from 'rxjs';
 import * as xmljs from 'xml-js';
 import { ButtonComponent } from '../../components/button/button.component';
+import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
 
 @Component({
   selector: 'tpr-nsa',
@@ -120,9 +121,9 @@ export class TprPage implements OnInit, OnDestroy {
       : this.generateXML(companyData);
   }
 
-  generateXML(companyData: any) {
+  generateXML(companyData: TPRCompanyData | null) {
     this.mixpanelService.track('XML');
-    const tpr = translateToTPR(companyData);
+    const tpr = translateToTPR(companyData as TPRCompanyData);
     const xmlVar = xmljs.js2xml(tpr, { compact: true, spaces: 2 });
     const blob = new Blob([xmlVar], { type: 'application/xml' });
 
