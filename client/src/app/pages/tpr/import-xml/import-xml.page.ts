@@ -18,7 +18,7 @@ import * as xmljs from 'xml-js';
 import { ImportXMLService } from 'app/services/import-xml.service';
 import { reverseTranslator } from 'app/utils/translators/reverseTranslators/reverse-tpr-translator';
 import { TprFileComponent } from 'app/components/tpr-file/tpr-file.component';
-import { MainPage } from "../../main/main.page";
+import { MainPage } from '../../main/main.page';
 import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
 import { TprFileState } from 'app/services/tpr/tpr-file';
 
@@ -35,10 +35,10 @@ import { TprFileState } from 'app/services/tpr/tpr-file';
     MatTooltipModule,
     FileDropZoneComponent,
     TprFileComponent,
-    MainPage
-],
+    MainPage,
+  ],
   templateUrl: './import-xml.page.html',
-  styleUrl: './import-xml.page.scss'
+  styleUrl: './import-xml.page.scss',
 })
 export class ImportXMLPage {
   private readonly children = viewChildren(TransactionTableComponent);
@@ -54,11 +54,10 @@ export class ImportXMLPage {
 
   async onFileDropped(files: File | File[]) {
     try {
-      const fileArray = Array.isArray(files) ? files : [files]; 
-      await this.importXMLService.handleFileDrop(fileArray);
-        const xmlData = this.importXMLService.xmlData;
-        const translatedData = reverseTranslator(xmlData);
-        this.tprCompanyDataService.setData(translatedData as object);
+      await this.importXMLService.handleFileDrop(files as File);
+      const xmlData = this.importXMLService.xmlData;
+      const translatedData = reverseTranslator(xmlData);
+      this.tprCompanyDataService.setData(translatedData as object);
     } catch (error) {
       this.importXMLService.files[0].state.set(TprFileState.Error);
     }
@@ -92,5 +91,4 @@ export class ImportXMLPage {
       types: [{ description: 'Plik XML', accept: { 'application/xml': ['.xml'] } }],
     });
   }
-
 }

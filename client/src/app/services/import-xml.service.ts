@@ -6,7 +6,6 @@ import { TprFile, TprFileState, TprFileType } from './tpr/tpr-file';
 import { Tuple } from 'app/utils/util-types';
 import { sleep } from 'app/utils/async';
 
-
 export const TPRFileName = {
   XML: 'Plik TPR-C',
 } as const;
@@ -36,26 +35,24 @@ const TAGS_THAT_SHOULD_REMAIN_STRINGS = [
 export class ImportXMLService {
   private _xmlData: TPRCompanyData | null = null;
 
-  readonly files: Tuple<TprFile, 1> = [
-    new TprFile(TprFileType.XML, TPRFileName.XML),
-  ];
+  readonly files: Tuple<TprFile, 1> = [new TprFile(TprFileType.XML, TPRFileName.XML)];
 
   readonly areAllFilesOK = computed(() => {
     return this.files.every(file => file.state() === TprFileState.OK);
   });
 
-
   get xmlData(): TPRCompanyData | null {
     return this._xmlData;
   }
 
-  async handleFileDrop(files: File[]) {
-    const file = files[0];
+  async handleFileDrop(files: File) {
+    const file = files;
     if (!file.name.endsWith('.xml')) {
       throw new Error('Invalid file type. Please upload an XML file.');
     }
     const fileContent = await file.text();
     let validation = this._validateXmlFile(fileContent);
+
     this.files[0].fileName.set(null);
     this.files[0].fileSize.set(null);
     this.files[0].fileContent.set(null);
@@ -70,20 +67,24 @@ export class ImportXMLService {
     this.files[0].fileSize.set(file.size);
     this.files[0].fileContent.set(fileContent);
     this.files[0].validationData.set(validation);
-    console.log(validation);
     this.files[0].state.set(validation ? TprFileState.Error : TprFileState.OK);
-    if(!validation){
-    const xmlData = this.readAsXml(fileContent);
-    this._xmlData = this.parseXML(xmlData);
+
+    if (!validation) {
+      const xmlData = this.readAsXml(fileContent);
+      this._xmlData = this.parseXML(xmlData);
     }
   }
 
   private _validateXmlFile(content: string): false | [string, string] {
     if (!/<KodFormularza.*?>TPR-C<\/KodFormularza>/.test(content)) {
-        return ['Dodany plik nie wygląda na poprawny plik XML. Upewnij się, że dodajesz plik wygenerowany przez formularz TPR-C.', 'VLD_XML_0'];
-      }
+      return [
+        'Dodany plik nie wygląda na poprawny plik XML. Upewnij się, że dodajesz plik wygenerowany przez formularz TPR-C.',
+        'VLD_XML_0',
+      ];
+    }
     return false;
   }
+
   private readAsXml(xmlContent: string): Declaration {
     const options = {
       explicitArray: false,
@@ -115,7 +116,6 @@ export class ImportXMLService {
     }
     return value;
   }
-
 
   private parseXML(record: Declaration): TPRCompanyData {
     return {

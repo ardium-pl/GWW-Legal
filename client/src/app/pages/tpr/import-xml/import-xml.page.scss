@@ -5,10 +5,10 @@ $gap: 32px;
   margin: 0 auto;
   width: max-content;
 }
-h1{
-    font-size: 60px;
-    line-height: 72px;
-    margin: 1rem 0 3rem 0;
+h1 {
+  font-size: 60px;
+  line-height: 72px;
+  margin: 1rem 0 3rem 0;
 }
 .sections-wrapper {
   width: 100%;
@@ -16,34 +16,33 @@ h1{
   flex-direction: column;
   gap: 32px;
   align-items: center;
-}
-.upload-card {
-  width: 100%;
-  max-width: 1000px;
 
-  mat-card-header {
-    padding-bottom: $gap;
-    display: flex;
-    justify-content: center;
-    font-size: 1.2rem;
-    font-weight: 500;
+  .upload-card {
+    width: 100%;
+    max-width: 1000px;
+
+    mat-card-header {
+      padding-bottom: $gap;
+      display: flex;
+      justify-content: center;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
   }
-
-  
-}
-.upload-card-columns {
-  display: flex;
-  gap: $gap;
-  align-items: center;
-}
-.file-drop-zone-container {
+  .upload-card-columns {
+    display: flex;
+    gap: $gap;
+    align-items: center;
+  }
+  .file-drop-zone-container {
     border-right: 1px solid var(--detail);
     padding-right: $gap;
-  height: 100%;
-}
-.uploaded-container {
-  display: flex;
-  flex-direction: column;
+    height: 100%;
+  }
+  .uploaded-container {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .table-card {
@@ -96,21 +95,19 @@ h1{
 }
 
 @media only screen and (max-width: 1260px) {
-    .tpr-file {
-      grid-template-columns: max-content 2.5fr 1fr;
-    }
-
+  .tpr-file {
+    grid-template-columns: max-content 2.5fr 1fr;
+  }
 }
 @media only screen and (max-width: 1040px) {
-    .upload-card-columns {
-      flex-direction: column;
-    }
-    .uploaded-container {
-      padding: 0;
-      border: none;
-      padding-top: $gap;
-      border-top: 1px solid var(--detail);
-      width: 100%;
-    }
+  .upload-card-columns {
+    flex-direction: column;
   }
-
+  .uploaded-container {
+    padding: 0;
+    border: none;
+    padding-top: $gap;
+    border-top: 1px solid var(--detail);
+    width: 100%;
+  }
+}

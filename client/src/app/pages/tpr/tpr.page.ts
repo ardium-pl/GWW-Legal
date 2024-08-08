@@ -54,23 +54,12 @@ export class TprPage implements OnInit, OnDestroy {
   private readonly clipboardService = inject(ClipboardService);
   private readonly mixpanelService = inject(MixpanelService);
   private readonly fileSystemService = inject(FileSystemService);
-  private readonly importXMLService = inject(ImportXMLService);
-  showDropZone: boolean = false;
   public readonly tprDataService = inject(TprDataService);
   public readonly tprCompanyDataService = inject(TprCompanyDataService);
   readonly dialog = inject(MatDialog);
 
 
   public readonly selectedTab = signal<number>(0);
-
-  async onFileDropped(files: File | File[]) {
-    try {
-      const fileArray = Array.isArray(files) ? files : [files];
-      await this.importXMLService.handleFileDrop(fileArray);
-    } catch (error) {
-      console.error('Error processing file:', error);
-    }
-  }
 
   private _readClipboard(): void {
     const sub = from(this.clipboardService.readClipboard())
