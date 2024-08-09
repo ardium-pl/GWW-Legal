@@ -218,15 +218,16 @@ function reverseMapMW06(
 ): Partial<TransactionATable> {
   const mw06: Partial<TransactionATable> = {
     MetodyBadania: 'MW06',
-    TechWyceny: transaction.TechWyceny1,
   };
   if (transaction.TechWyceny1) {
+    mw06.TechWyceny = transaction.TechWyceny1;
     mw06.WspolczynnikDyskontowy = transaction.WspDyskont;
     if (transaction.OkresProg2) {
       mw06.OkresPrognozy = transaction.OkresProg2;
       mw06.TerminInny = transaction.TerminInny;
     }
   } else if (transaction.TechWyceny2) {
+    mw06.TechWyceny = transaction.TechWyceny2;
     mw06.ZrodloDanychZgodnosci = transaction.ZrodloDanychZgodn;
   }
   return mw06;
