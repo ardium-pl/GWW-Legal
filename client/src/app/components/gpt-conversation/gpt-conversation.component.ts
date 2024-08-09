@@ -1,4 +1,4 @@
-import { Component, input, output, signal } from '@angular/core';
+import { Component, input, output, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +24,7 @@ import { MessageBubbleComponent } from './message-bubble/message-bubble.componen
   providers: [provideMarkdown()],
   templateUrl: './gpt-conversation.component.html',
   styleUrl: './gpt-conversation.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class GptConversationComponent {
   readonly items =

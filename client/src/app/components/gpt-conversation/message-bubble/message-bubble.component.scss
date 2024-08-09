@@ -11,7 +11,7 @@ $border-radius: 9px;
   border-bottom-right-radius: 0;
   margin-left: auto;
   margin-right: 8px + $border-radius;
-  max-width: calc(min(100%, 600px) - $border-radius);
+  max-width: calc(min(calc(100% - 64px), 600px) - $border-radius);
 
   .bubble-arrow {
     position: absolute;
