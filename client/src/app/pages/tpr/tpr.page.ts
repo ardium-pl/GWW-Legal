@@ -89,6 +89,7 @@ export class TprPage implements OnInit, OnDestroy {
 
   private readonly destroy$ = new Subject<void>();
   public ngOnDestroy(): void {
+    this.tprCompanyDataService.reset()
     this.destroy$.next();
     this.destroy$.complete();
   }

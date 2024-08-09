@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Output, computed, input, viewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, computed, input, output, viewChild } from '@angular/core';
 import { coerceArrayProperty, coerceBooleanProperty, coerceNumberProperty } from '@ardium-ui/devkit';
 import { IconComponent } from '../icon/icon.component';
 
@@ -11,8 +11,7 @@ import { IconComponent } from '../icon/icon.component';
   styleUrl: './file-drop-zone.component.scss',
 })
 export class FileDropZoneComponent {
-  @Output('upload') uploadEvent = new EventEmitter<File | File[]>();
-
+  readonly upload = output<File | File[]>();
   readonly accept = input<string, any>('*', { transform: v => coerceArrayProperty(v).join(',') });
   readonly acceptString = computed(() => this.accept().replaceAll(',', ', '));
   readonly maxFiles = input<number, any>(1, { transform: v => (v === 'any' ? Infinity : coerceNumberProperty(v)) });
@@ -25,7 +24,7 @@ export class FileDropZoneComponent {
       if (files.length === 0) {
         throw new Error('No file selected.');
       }
-      this.uploadEvent.emit(files);
+      this.upload.emit(files);
       const inputEl = this.inputEl()?.nativeElement;
       if (inputEl) inputEl.value = '';
       return;
@@ -34,6 +33,6 @@ export class FileDropZoneComponent {
     if (!file) {
       throw new Error('No file selected.');
     }
-    this.uploadEvent.emit(file);
+    this.upload.emit(file);
   }
 }

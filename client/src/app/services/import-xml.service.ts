@@ -94,18 +94,17 @@ export class ImportXMLService {
       charkey: '_text',
       attrkey: '_attributes',
       explicitRoot: false,
-      tagNameProcessors: [processors.stripPrefix], 
+      tagNameProcessors: [processors.stripPrefix],
       attrNameProcessors: [processors.stripPrefix],
-      valueProcessors: [this._customValueProcessor], 
+      valueProcessors: [this._customValueProcessor],
     };
 
     let result: any;
     parseString(xmlContent, options, (err, res) => {
       if (err) {
         throw new Error(`Error parsing XML: ${err.message}`);
-      } else {
-        result = res;
       }
+      result = res;
     });
     return result;
   }
