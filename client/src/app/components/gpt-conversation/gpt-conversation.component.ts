@@ -1,4 +1,12 @@
-import { Component, input, output, signal, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  input,
+  output,
+  signal,
+  viewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,7 +32,7 @@ import { MessageBubbleComponent } from './message-bubble/message-bubble.componen
   providers: [provideMarkdown()],
   templateUrl: './gpt-conversation.component.html',
   styleUrl: './gpt-conversation.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class GptConversationComponent {
   readonly items =
@@ -38,5 +46,19 @@ export class GptConversationComponent {
     item: GptConversationItem | GptConversationResponse,
   ): item is GptConversationResponse {
     return isGptConversationResponse(item);
+  }
+
+  readonly messagesContainer = viewChild<ElementRef<HTMLElement>>('messages');
+
+  executeSendMessage(): void {
+    if (!this.message()) {
+      return;
+    }
+    this.sendMessage.emit(this.message());
+    this.message.set('');
+    const el = this.messagesContainer()?.nativeElement;
+    if (!el) return;
+
+    setTimeout(() => el.scrollTo({ top: el.scrollHeight }), 0);
   }
 }

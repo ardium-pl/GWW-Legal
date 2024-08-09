@@ -1,5 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import {
+  Injectable,
+  OnDestroy,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
@@ -27,7 +34,7 @@ export class NsaService implements OnDestroy {
   private readonly _rulingError = signal<string[] | null>(null);
   public readonly rulingError = this._rulingError.asReadonly();
 
-  private _caseSignature: string = ''; 
+  private _caseSignature: string = '';
 
   public fetchCourtRuling(caseSignature: string): void {
     this._rulingRequestState.set(RequestState.Pending);
@@ -206,7 +213,7 @@ export class NsaService implements OnDestroy {
     convo.addUserMessage(userMessage);
     convo.addEmptyResponse();
 
-    this.http
+    const sub = this.http
       .post(apiUrl('/nsa/conversation'), {
         courtRuling: this.getCleanCourtRuling(),
         messageHistory: convo.items.map((v) => ({
@@ -214,28 +221,42 @@ export class NsaService implements OnDestroy {
           type: v.type,
         })),
       })
-      .pipe(takeUntil(this.cancel$))
+      .pipe(
+        takeUntil(this.cancel$),
+        catchError((err, caught) => {
+          this._conversations()[index].setLatestResponseContent(err, true);
+          sub.unsubscribe();
+          return caught;
+        }),
+      )
       .subscribe((response) => {
-        convo.setLatestResponseContent(response as string);
+        convo.setLatestResponseContent(response as string, false);
       });
   }
 
   //! independent questions
-  private readonly _independentQuestionsProgress = signal<(boolean | 'ERROR')[]>(
-    [],
-  );
+  private readonly _independentQuestionsProgress = signal<
+    (boolean | 'ERROR')[]
+  >([]);
   public readonly independentQuestionsProgress =
     this._independentQuestionsProgress.asReadonly();
 
-  private readonly _independentQuestionsResponses = signal<(string | null)[]>([]);
+  private readonly _independentQuestionsResponses = signal<(string | null)[]>(
+    [],
+  );
   public readonly independentQuestionsResponses =
     this._independentQuestionsResponses.asReadonly();
-  
-  public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true))
-  
+
+  public readonly independentQuestionsLoaded = computed(() =>
+    this._independentQuestionsProgress().map((v) => v != true),
+  );
+
   effdf = effect(() => {
-    console.log(this._independentQuestionsProgress(), this._independentQuestionsResponses());
-  })
+    console.log(
+      this._independentQuestionsProgress(),
+      this._independentQuestionsResponses(),
+    );
+  });
 
   fetchindependentAnswer(
     systemMessage: string,

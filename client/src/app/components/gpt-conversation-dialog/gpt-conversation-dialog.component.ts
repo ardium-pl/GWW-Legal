@@ -33,6 +33,7 @@ export class GptConversationDialogComponent {
   }
 
   onMessageSend(message: string) {
+    console.log(message);
     this.dialogData.nsaServiceInstance.fetchConversationAnswer(this.dialogData.conversationIndex, message);
   }
 }

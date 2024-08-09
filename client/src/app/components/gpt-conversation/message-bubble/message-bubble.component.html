@@ -1,4 +1,4 @@
-<div class="message-bubble" [class.bubble-left]="left()">
+<div class="message-bubble" [class.bubble-left]="left()" [class.is-error]="isError()">
   <div class="bubble-arrow"></div>
   @if (left()) {
     <markdown> {{ content() }} </markdown>

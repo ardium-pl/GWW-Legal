@@ -50,4 +50,7 @@ $border-radius: 9px;
       }
     }
   }
+  &.is-error {
+    color: var(--error);
+  }
 }

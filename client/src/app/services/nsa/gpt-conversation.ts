@@ -13,7 +13,7 @@ export class GptConversation {
         GptConversationItemType.UserMessage,
         userMessage1,
       ),
-      new GptConversationResponse().setContent(response),
+      new GptConversationResponse().setContent(response, false),
     ];
   }
 
@@ -27,12 +27,12 @@ export class GptConversation {
       new GptConversationResponse(),
     );
   }
-  setLatestResponseContent(content: string): void {
+  setLatestResponseContent(content: string, isError: boolean): void {
     const res = this.items.last(1, (el) =>
       isGptConversationResponse(el),
     ) as GptConversationResponse;
     
-    res.setContent(content);
+    res.setContent(content, isError);
   }
 }
 
@@ -40,6 +40,7 @@ export const GptConversationItemType = {
   SystemMessage: 'system-message',
   UserMessage: 'user-message',
   Response: 'response',
+  ResponseError: 'response-error'
 } as const;
 export type GptConversationItemType =
   (typeof GptConversationItemType)[keyof typeof GptConversationItemType];
@@ -61,9 +62,13 @@ export class GptConversationResponse extends GptConversationItem {
   private readonly _isLoading = signal<boolean>(true);
   public readonly isLoading = this._isLoading.asReadonly();
 
-  setContent(content: string): GptConversationResponse {
+  private readonly _isError = signal<boolean>(false);
+  public readonly isError = this._isError.asReadonly();
+
+  setContent(content: string, isError: boolean): GptConversationResponse {
     this.content = content;
     this._isLoading.set(false);
+    this._isError.set(isError);
     return this;
   }
 }
