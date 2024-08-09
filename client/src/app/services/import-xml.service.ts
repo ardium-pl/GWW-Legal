@@ -94,9 +94,9 @@ export class ImportXMLService {
       charkey: '_text',
       attrkey: '_attributes',
       explicitRoot: false,
-      tagNameProcessors: [processors.stripPrefix], // Removes namespace prefixes from tag names
+      tagNameProcessors: [processors.stripPrefix], 
       attrNameProcessors: [processors.stripPrefix],
-      valueProcessors: [this._customValueProcessor], // Removes namespace prefixes from attribute names
+      valueProcessors: [this._customValueProcessor], 
     };
 
     let result: any;
