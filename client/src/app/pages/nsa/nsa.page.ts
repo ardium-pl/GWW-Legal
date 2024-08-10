@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnDestroy, OnInit, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -84,6 +85,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
   get isFindCaseButtonDisabled(): boolean {
     return this.nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty;
+
   }
 
   ngOnInit() {
