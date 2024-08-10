@@ -1,0 +1,11 @@
+<div
+  class="message-bubble"
+  [class.bubble-left]="left()"
+>
+  <div class="bubble-arrow"></div>
+  @if (left()) {
+    <markdown> {{ content() }} </markdown>
+  } @else {
+    {{ content() }}
+  }
+</div>

@@ -1,6 +1,7 @@
-@import "./variables";
-@import "./assets/theme/standard-backdrop";
-@import "./assets/theme/custom-select.custom";
+@import './variables';
+@import './assets/theme/standard-backdrop';
+@import './assets/theme/custom-select.custom';
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200");
 
 .material-customized {
   &.custom-select {
@@ -14,7 +15,7 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
 //reset styles
@@ -31,12 +32,14 @@ body {
   --detail: #aaa;
   --detail-light: rgba(0, 0, 0, 0.1);
   --border: #333;
+  --text: black;
   --text2: rgba(0, 0, 0, 0.87);
   --bg: #f0eff3;
   --bg2: #fafafa;
   --bg3: #cacaca;
   --bg2-light: #eeeeee;
   --bg-dark: #f5f5f5;
+  --foreground: white;
 
   --red: rgb(239, 53, 29);
   --error: rgb(240, 83, 63);
@@ -58,12 +61,10 @@ body {
   --indigo800: #283593;
   --indigo900: #1a237e;
 
-  --simple-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2),
-    0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-  --simple-shadow2: 0px 2px 4px -1px rgba(0, 0, 0, 0.2),
-    0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-  --simple-shadow3: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
-    0px 8px 10px 1px rgba(0, 0, 0, 0.14), 0px 3px 14px 2px rgba(0, 0, 0, 0.12);
+  --simple-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
+  --simple-shadow2: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  --simple-shadow3: 0px 5px 5px -3px rgba(0, 0, 0, 0.2), 0px 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0px 3px 14px 2px rgba(0, 0, 0, 0.12);
 
   --timing-fn: cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -186,6 +187,19 @@ mat-spinner {
 mat-radio-group {
   display: flex;
   flex-direction: column;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 1,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+app-icon {
+  font-size: 1.5em;
+  max-height: 1em;
+  max-width: 1em;
 }
 
 //! markdown styling
