@@ -5,6 +5,31 @@ import { getCourtRulingID, insertRuling } from "../sql/courtRulingQuerry.js"
 
 const openai = new OpenAI();
 
+export function transformMessages(messages) {
+  return messages.map((message) => {
+    let role;
+
+    switch (message.type) {
+      case "system-message":
+        role = "system";
+        break;
+      case "user-message":
+        role = "user";
+        break;
+      case "response":
+        role = "assistant";
+        break;
+      default:
+        throw new Error("Unknown message type: " + message.type);
+    }
+
+    return {
+      role: role,
+      content: message.content,
+    };
+  });
+}
+
 export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature) {
   const rawResponse = await openai.chat.completions.create({
     model: "gpt-4o",
@@ -20,6 +45,22 @@ export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, ca
   await setGptResponse(courtRulingID, systemMessageID, userMessageID, response);
 
   return response;
+}
+
+export async function followUpDiscussionAboutNSA(formattedChatHistory) {
+  const historyInstruction = {
+    role: "system",
+    content: "Answer based on the following context and chat history.",
+  };
+  formattedChatHistory.unshift(historyInstruction);
+
+  const rawResponse = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: formattedChatHistory,
+    temperature: 0.5,
+  });
+  const textResponse = retrieveGPTMessage(rawResponse);
+  return textResponse;
 }
 
 function retrieveGPTMessage(response) {

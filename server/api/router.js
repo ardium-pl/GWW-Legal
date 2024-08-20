@@ -3,7 +3,7 @@ import { getCourtRulingID, getRulingBySignature } from "../sql/courtRulingQuerry
 import { getGptResponse } from "../sql/gptAnswQuerry.js";
 import { getSystemMessageId, getUserMessageId } from "../sql/messagesQuerry.js";
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
-import { askGptAboutNSA } from "./nsaMain.js";
+import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from "./nsaMain.js";
 import { getCourtRuling } from "./scraper.js";
 export const nsaRouter = express.Router();
 
@@ -66,6 +66,21 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
       await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature);
 
     res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
+});
+
+nsaRouter.post("/api/nsa/conversation", async (req, res) => {
+  try {
+    const receivedMessageHistory = req.body;
+    const formattedMessageHistory = transformMessages(receivedMessageHistory);
+    const chatResponse = await followUpDiscussionAboutNSA(
+      formattedMessageHistory
+    );
+
+    res.status(200).send({ chatResponse: chatResponse });
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: "Internal Server Error" });
