@@ -31,4 +31,7 @@ export class GptConversationDialogComponent {
   onMessageSend(message: string) {
     this.dialogData.nsaServiceInstance.fetchConversationAnswer(this.dialogData.conversationIndex, message);
   }
+  onLoadingCancel() {
+    this.dialogData.nsaServiceInstance.cancelConversationRequest(this.dialogData.conversationIndex);
+  }
 }

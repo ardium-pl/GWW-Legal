@@ -5,7 +5,9 @@
         [content]="item.content()"
         [isError]="isGptConversationResponse(item) && item.isError()"
         [isLoading]="isGptConversationResponse(item) && item.isLoading()"
+        [isCanceled]="isGptConversationResponse(item) && item.isCanceled()"
         [left]="isGptConversationResponse(item)"
+        (cancel)="cancelEvent.emit()"
       />
     }
   </div>

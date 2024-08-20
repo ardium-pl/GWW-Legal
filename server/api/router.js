@@ -71,13 +71,18 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
 });
 
 nsaRouter.post('/api/nsa/conversation', async (req, res) => {
+  const { messageHistory, courtRuling } = req.body;
+  const formattedMessageHistory = transformMessages(messageHistory);
+
   try {
-    const { messageHistory, courtRuling } = req.body;
-    const formattedMessageHistory = transformMessages(messageHistory);
     const chatResponse = await followUpDiscussionAboutNSA(formattedMessageHistory, courtRuling);
 
     res.status(200).send({ chatResponse: chatResponse });
   } catch (error) {
+    if (error?.cause?.code === 'ENOTFOUND') {
+      res.status(500).send({ error: 'Internal Server Error', code: 'ENOTFOUND' });
+      return;
+    }
     console.error(error);
     res.status(500).send({ error: 'Internal Server Error' });
   }

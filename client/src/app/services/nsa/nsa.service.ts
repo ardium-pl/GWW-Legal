@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
@@ -158,6 +158,8 @@ export class NsaService implements OnDestroy {
   private readonly _conversations = signal<GptConversation[]>([]);
   public readonly conversations = this._conversations.asReadonly();
 
+  private readonly cancelConversation$ = new Subject<void>();
+
   resetAndInitializeConversations(amount: number) {
     this._conversations.set(new Array(amount));
   }
@@ -177,7 +179,9 @@ export class NsaService implements OnDestroy {
       .filter(
         (v, index, arr) =>
           v.type !== GptConversationItemType.ResponseError &&
-          arr[index + 1]?.type !== GptConversationItemType.ResponseError
+          v.type !== GptConversationItemType.ResponseCanceled &&
+          arr[index + 1]?.type !== GptConversationItemType.ResponseError &&
+          arr[index + 1]?.type !== GptConversationItemType.ResponseCanceled
       )
       .map(v => ({
         content: v.content(),
@@ -187,22 +191,29 @@ export class NsaService implements OnDestroy {
     convo.addEmptyResponse();
 
     const sub = this.http
-      .post < { chatResponse: string }>(apiUrl('/nsa/conversation'), {
+      .post<{ chatResponse: string }>(apiUrl('/nsa/conversation'), {
         courtRuling: this.getCleanCourtRuling(),
         messageHistory,
       })
       .pipe(
         takeUntil(this.cancel$),
+        takeUntil(this.cancelConversation$),
         catchError((err, caught) => {
-          this._conversations()[index].setLatestResponseContent(err, true);
+          this._conversations()[index].setLatestResponseContent(err?.error?.code, true);
           sub.unsubscribe();
           return caught;
         })
       )
       .subscribe(response => {
-        console.log(response);
         convo.setLatestResponseContent(response.chatResponse, false);
       });
+  }
+  cancelConversationRequest(index: number) {
+    const convo = this.conversations()[index];
+
+    convo.cancelLatestResponse();
+
+    this.cancelConversation$.next();
   }
 
   //! independent questions
@@ -213,10 +224,6 @@ export class NsaService implements OnDestroy {
   public readonly independentQuestionsResponses = this._independentQuestionsResponses.asReadonly();
 
   public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true));
-
-  effdf = effect(() => {
-    console.log(this._independentQuestionsProgress(), this._independentQuestionsResponses());
-  });
 
   fetchindependentAnswer(systemMessage: string, userMessage: string, index: number): void {
     this._independentQuestionsProgress.update(arr => {

@@ -61,6 +61,7 @@ export class GptConversationComponent {
   readonly message = signal<string>('');
 
   readonly sendMessage = output<string>();
+  readonly cancelEvent = output({ alias: 'cancel' });
 
   public isGptConversationResponse(
     item: GptConversationItem | GptConversationResponse

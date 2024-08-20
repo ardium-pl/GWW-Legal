@@ -5,5 +5,5 @@
   </button>
 </h2>
 <mat-dialog-content>
-  <app-gpt-conversation [items]="conversation.items" (sendMessage)="onMessageSend($event)" />
+  <app-gpt-conversation [items]="conversation.items" (sendMessage)="onMessageSend($event)" (cancel)="onLoadingCancel()" />
 </mat-dialog-content>

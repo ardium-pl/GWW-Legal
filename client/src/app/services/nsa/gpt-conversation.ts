@@ -29,6 +29,11 @@ export class GptConversation {
 
     this.items = [...this.items, res];
   }
+  cancelLatestResponse(): void {
+    this.items.pop();
+
+    this.items = [...this.items, new GptConversationResponse().setCanceled()];
+  }
 }
 
 export const GptConversationItemType = {
@@ -36,6 +41,7 @@ export const GptConversationItemType = {
   UserMessage: 'user-message',
   Response: 'response',
   ResponseError: 'response-error',
+  ResponseCanceled: 'response-canceled',
 } as const;
 export type GptConversationItemType = (typeof GptConversationItemType)[keyof typeof GptConversationItemType];
 
@@ -67,11 +73,20 @@ export class GptConversationResponse extends GptConversationItem {
   private readonly _isError = signal<boolean>(false);
   public readonly isError = this._isError.asReadonly();
 
+  private readonly _isCanceled = signal<boolean>(false);
+  public readonly isCanceled = this._isCanceled.asReadonly();
+
   setContent(content: string, isError: boolean): GptConversationResponse {
     this._content.set(content);
     this._isLoading.set(false);
     this._isError.set(isError);
     if (isError) this._type = GptConversationItemType.ResponseError;
+    return this;
+  }
+  setCanceled(): GptConversationResponse {
+    this._isLoading.set(false);
+    this._isCanceled.set(true);
+    this._type = GptConversationItemType.ResponseCanceled;
     return this;
   }
 }
