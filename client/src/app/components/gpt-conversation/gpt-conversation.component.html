@@ -11,7 +11,14 @@
   </div>
   <div class="conversation-input">
     <mat-form-field>
-      <textarea matInput placeholder="Zadaj pytanie..." [(ngModel)]="message" (keydown)="handleEnterKeyPress($event)"></textarea>
+      <textarea
+        #input
+        matInput
+        id="conversation-dialog-input"
+        placeholder="Zadaj pytanie..."
+        [(ngModel)]="message"
+        (keydown)="handleEnterKeyPress($event)"
+      ></textarea>
     </mat-form-field>
     <button mat-fab color="primary" [disabled]="!message()" (click)="executeSendMessage()">
       <img src="assets/images/send.svg" alt="Wyślij" />

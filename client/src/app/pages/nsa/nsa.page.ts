@@ -324,6 +324,7 @@ export class NsaPage implements OnInit, OnDestroy {
   onClickOpenConversation(index: number) {
     this.currentConversation.set(this.nsaService.conversations().at(index));
     this.dialog.open(GptConversationDialogComponent, {
+      autoFocus: '#conversation-dialog-input',
       data: {
         conversationIndex: index,
         nsaServiceInstance: this.nsaService,

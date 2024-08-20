@@ -69,6 +69,7 @@ export class GptConversationComponent {
   }
 
   readonly messagesContainer = viewChild<ElementRef<HTMLElement>>('messages');
+  readonly inputEl = viewChild<ElementRef<HTMLTextAreaElement>>('input');
 
   executeSendMessage(): void {
     if (!this.message()) {
@@ -82,7 +83,7 @@ export class GptConversationComponent {
     if (event.key !== 'Enter') return;
 
     if (event.shiftKey) return;
-    
+
     event.preventDefault();
     this.executeSendMessage();
   }
