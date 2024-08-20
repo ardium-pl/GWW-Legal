@@ -13,6 +13,7 @@ $border-radius: 9px;
   margin-right: 8px + $border-radius;
   max-width: calc(min(calc(100% - 64px), 600px) - $border-radius);
   font-size: 14px;
+  width: max-content;
 
   .bubble-arrow {
     position: absolute;
@@ -53,9 +54,6 @@ $border-radius: 9px;
   }
   &.is-error {
     color: var(--error);
-  }
-  &.is-loading {
-    max-width: max-content;
   }
 
   markdown p:last-child {

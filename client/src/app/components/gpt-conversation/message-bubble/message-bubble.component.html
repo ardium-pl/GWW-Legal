@@ -2,10 +2,10 @@
   <div class="bubble-arrow"></div>
   @if (isLoading()!) {
     <app-three-dots-loader />
+  } @else if (isError()) {
+    Wystąpił błąd podczas przygotowywania odpowiedzi. Spróbuj ponownie.
   } @else if (left()) {
     <markdown> {{ content() }} </markdown>
-  } @else if (isError()) {
-    "Wystąpił błąd podczas przygotowywania odpowiedzi. Spróbuj ponownie."
   } @else {
     {{ content() }}
   }

@@ -1,4 +1,14 @@
-import { Component, effect, ElementRef, input, output, signal, viewChild, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  ElementRef,
+  input,
+  output,
+  signal,
+  viewChild,
+  ViewEncapsulation,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import {
   GptConversationItem,
+  GptConversationItemType,
   GptConversationResponse,
   isGptConversationResponse,
 } from 'app/services/nsa/gpt-conversation';
@@ -32,6 +43,10 @@ import { MessageBubbleComponent } from './message-bubble/message-bubble.componen
 })
 export class GptConversationComponent {
   readonly items = input.required<(GptConversationItem | GptConversationResponse)[]>();
+
+  readonly itemsWithoutSystemMessage = computed(() =>
+    this.items().filter(v => v.type !== GptConversationItemType.SystemMessage)
+  );
 
   constructor() {
     effect(() => {
@@ -61,5 +76,14 @@ export class GptConversationComponent {
     }
     this.sendMessage.emit(this.message());
     this.message.set('');
+  }
+
+  handleEnterKeyPress(event: KeyboardEvent): void {
+    if (event.key !== 'Enter') return;
+
+    if (event.shiftKey) return;
+    
+    event.preventDefault();
+    this.executeSendMessage();
   }
 }
