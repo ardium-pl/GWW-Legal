@@ -1,7 +1,7 @@
 $border-radius: 9px;
 
 .message-bubble {
-  --_current-bg: whitesmoke;
+  --_current-bg: var(--indigo50);
   position: relative;
   margin-bottom: 20px;
   padding: 16px;
@@ -12,6 +12,7 @@ $border-radius: 9px;
   margin-left: auto;
   margin-right: 8px + $border-radius;
   max-width: calc(min(calc(100% - 64px), 600px) - $border-radius);
+  font-size: 14px;
 
   .bubble-arrow {
     position: absolute;
@@ -22,7 +23,7 @@ $border-radius: 9px;
     right: -#{$border-radius * 2};
 
     &::before {
-      content: "";
+      content: '';
       background: transparent;
       position: absolute;
       width: $border-radius * 2;
@@ -34,7 +35,7 @@ $border-radius: 9px;
   }
 
   &.bubble-left {
-    --_current-bg: var(--indigo50);
+    --_current-bg: whitesmoke;
     border-radius: $border-radius;
     border-bottom-left-radius: 0;
     margin-left: 8px + $border-radius;
@@ -52,5 +53,12 @@ $border-radius: 9px;
   }
   &.is-error {
     color: var(--error);
+  }
+  &.is-loading {
+    max-width: max-content;
+  }
+
+  markdown p:last-child {
+    margin-bottom: 0;
   }
 }

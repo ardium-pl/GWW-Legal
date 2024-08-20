@@ -1,7 +1,7 @@
 import OpenAI from "openai";
+import { getCourtRulingID, insertRuling } from "../sql/courtRulingQuerry.js";
 import { setGptResponse } from "../sql/gptAnswQuerry.js";
 import { getSystemMessageId, getUserMessageId, insertSystemMessage, insertUserMessage } from "../sql/messagesQuerry.js";
-import { getCourtRulingID, insertRuling } from "../sql/courtRulingQuerry.js"
 
 const openai = new OpenAI();
 
@@ -47,10 +47,10 @@ export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, ca
   return response;
 }
 
-export async function followUpDiscussionAboutNSA(formattedChatHistory) {
+export async function followUpDiscussionAboutNSA(formattedChatHistory, courtRuling) {
   const historyInstruction = {
     role: "system",
-    content: "Answer based on the following context and chat history.",
+    content: "Answer based on the following context and chat history. You will also base your answer on this court ruling: " + courtRuling,
   };
   formattedChatHistory.unshift(historyInstruction);
 

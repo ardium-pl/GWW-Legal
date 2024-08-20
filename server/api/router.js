@@ -1,20 +1,20 @@
-import express from "express";
-import { getCourtRulingID, getRulingBySignature } from "../sql/courtRulingQuerry.js";
-import { getGptResponse } from "../sql/gptAnswQuerry.js";
-import { getSystemMessageId, getUserMessageId } from "../sql/messagesQuerry.js";
+import express from 'express';
+import { getCourtRulingID, getRulingBySignature } from '../sql/courtRulingQuerry.js';
+import { getGptResponse } from '../sql/gptAnswQuerry.js';
+import { getSystemMessageId, getUserMessageId } from '../sql/messagesQuerry.js';
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
-import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from "./nsaMain.js";
-import { getCourtRuling } from "./scraper.js";
+import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
+import { getCourtRuling } from './scraper.js';
 export const nsaRouter = express.Router();
 
-nsaRouter.post("/api/nsa/query", async (req, res) => {
+nsaRouter.post('/api/nsa/query', async (req, res) => {
   try {
     const { caseSignature } = req.body;
     if (!caseSignature) {
-      return res.status(400).send({ error: "Case signature is required." });
+      return res.status(400).send({ error: 'Case signature is required.' });
     }
 
-    if (/localhost/.test(req.get("origin"))) {
+    if (/localhost/.test(req.get('origin'))) {
       const mockRuling = tryReturningMockRuling(caseSignature);
       if (mockRuling) {
         res.json(mockRuling);
@@ -35,23 +35,20 @@ nsaRouter.post("/api/nsa/query", async (req, res) => {
       res.status(404).send({ error: error.message, code: error.code });
     } else {
       console.error(error);
-      res.status(500).send({ error: error.message || "Internal Server Error" });
+      res.status(500).send({ error: error.message || 'Internal Server Error' });
     }
   }
 });
 
-nsaRouter.post("/api/nsa/question", async (req, res) => {
+nsaRouter.post('/api/nsa/question', async (req, res) => {
   try {
     const { caseSignature, courtRuling, systemMessage, userMessage } = req.body;
     if (!courtRuling) {
-      return res.status(400).send({ error: "Court ruling is required." });
+      return res.status(400).send({ error: 'Court ruling is required.' });
     }
 
-    if (/localhost/.test(req.get("origin"))) {
-      const mockResponse = tryReturningMockUserMessageResponse(
-        userMessage.trim(),
-        courtRuling,
-      );
+    if (/localhost/.test(req.get('origin'))) {
+      const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim(), courtRuling);
       if (mockResponse) {
         res.json(mockResponse);
         return;
@@ -62,27 +59,26 @@ nsaRouter.post("/api/nsa/question", async (req, res) => {
     const systemMessageID = await getSystemMessageId(systemMessage);
     const userMessageID = await getUserMessageId(userMessage);
 
-    const response = await getGptResponse(courtRulingID, systemMessageID, userMessageID) ||
-      await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature);
+    const response =
+      (await getGptResponse(courtRulingID, systemMessageID, userMessageID)) ||
+      (await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature));
 
     res.status(200).json(response);
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(500).send({ error: 'Internal Server Error' });
   }
 });
 
-nsaRouter.post("/api/nsa/conversation", async (req, res) => {
+nsaRouter.post('/api/nsa/conversation', async (req, res) => {
   try {
-    const receivedMessageHistory = req.body;
-    const formattedMessageHistory = transformMessages(receivedMessageHistory);
-    const chatResponse = await followUpDiscussionAboutNSA(
-      formattedMessageHistory
-    );
+    const { messageHistory, courtRuling } = req.body;
+    const formattedMessageHistory = transformMessages(messageHistory);
+    const chatResponse = await followUpDiscussionAboutNSA(formattedMessageHistory, courtRuling);
 
     res.status(200).send({ chatResponse: chatResponse });
   } catch (error) {
     console.error(error);
-    res.status(500).send({ error: "Internal Server Error" });
+    res.status(500).send({ error: 'Internal Server Error' });
   }
 });

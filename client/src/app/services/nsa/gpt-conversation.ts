@@ -1,38 +1,33 @@
 import { signal } from '@angular/core';
 
 export class GptConversation {
-  readonly items!: (GptConversationItem | GptConversationResponse)[];
+  items!: (GptConversationItem | GptConversationResponse)[];
 
-  constructor(public readonly systemMessage: string, userMessage1: string, response: string) {
+  constructor(
+    public readonly systemMessage: string,
+    userMessage1: string,
+    response: string
+  ) {
     this.items = [
-      new GptConversationItem(
-        GptConversationItemType.SystemMessage,
-        systemMessage,
-      ),
-      new GptConversationItem(
-        GptConversationItemType.UserMessage,
-        userMessage1,
-      ),
+      new GptConversationItem(GptConversationItemType.SystemMessage, systemMessage),
+      new GptConversationItem(GptConversationItemType.UserMessage, userMessage1),
       new GptConversationResponse().setContent(response, false),
     ];
   }
 
   addUserMessage(userMessage: string): void {
-    this.items.push(
-      new GptConversationItem(GptConversationItemType.UserMessage, userMessage),
-    );
+    this.items = [...this.items, new GptConversationItem(GptConversationItemType.UserMessage, userMessage)];
   }
   addEmptyResponse(): void {
-    this.items.push(
-      new GptConversationResponse(),
-    );
+    this.items = [...this.items, new GptConversationResponse()];
   }
   setLatestResponseContent(content: string, isError: boolean): void {
-    const res = this.items.last(1, (el) =>
-      isGptConversationResponse(el),
-    ) as GptConversationResponse;
-    
+    this.items.pop();
+
+    const res = new GptConversationResponse();
     res.setContent(content, isError);
+
+    this.items = [...this.items, res];
   }
 }
 
@@ -40,21 +35,28 @@ export const GptConversationItemType = {
   SystemMessage: 'system-message',
   UserMessage: 'user-message',
   Response: 'response',
-  ResponseError: 'response-error'
+  ResponseError: 'response-error',
 } as const;
-export type GptConversationItemType =
-  (typeof GptConversationItemType)[keyof typeof GptConversationItemType];
+export type GptConversationItemType = (typeof GptConversationItemType)[keyof typeof GptConversationItemType];
 
 export class GptConversationItem {
+  protected readonly _content = signal<string>('');
+  public readonly content = this._content.asReadonly();
   constructor(
-    public readonly type: GptConversationItemType,
-    public readonly content: string,
-  ) {}
+    protected _type: GptConversationItemType,
+    content: string
+  ) {
+    this._content.set(content);
+  }
+  public get type() {
+    return this._type;
+  }
+  protected set type(v: GptConversationItemType) {
+    this._type = v;
+  }
 }
 
 export class GptConversationResponse extends GptConversationItem {
-  public override content!: string;
-
   constructor() {
     super(GptConversationItemType.Response, '');
   }
@@ -66,15 +68,14 @@ export class GptConversationResponse extends GptConversationItem {
   public readonly isError = this._isError.asReadonly();
 
   setContent(content: string, isError: boolean): GptConversationResponse {
-    this.content = content;
+    this._content.set(content);
     this._isLoading.set(false);
     this._isError.set(isError);
+    if (isError) this._type = GptConversationItemType.ResponseError;
     return this;
   }
 }
 
-export function isGptConversationResponse(
-  cls: GptConversationItem,
-): cls is GptConversationResponse {
+export function isGptConversationResponse(cls: GptConversationItem): cls is GptConversationResponse {
   return cls instanceof GptConversationResponse;
 }

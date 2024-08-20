@@ -1,7 +1,11 @@
-<div class="message-bubble" [class.bubble-left]="left()" [class.is-error]="isError()">
+<div class="message-bubble" [class.bubble-left]="left()" [class.is-error]="isError()" [class.is-loading]="isLoading()">
   <div class="bubble-arrow"></div>
-  @if (left()) {
+  @if (isLoading()!) {
+    <app-three-dots-loader />
+  } @else if (left()) {
     <markdown> {{ content() }} </markdown>
+  } @else if (isError()) {
+    "Wystąpił błąd podczas przygotowywania odpowiedzi. Spróbuj ponownie."
   } @else {
     {{ content() }}
   }
