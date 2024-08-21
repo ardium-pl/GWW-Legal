@@ -85,7 +85,6 @@ export class NsaPage implements OnInit, OnDestroy {
 
   get isFindCaseButtonDisabled(): boolean {
     return this.nsaService.isRulingLoading() || !this.nsaFormPart1.valid || !this.nsaFormPart1.dirty;
-
   }
 
   ngOnInit() {
@@ -221,9 +220,18 @@ export class NsaPage implements OnInit, OnDestroy {
   private _scrollToCurrentMark(): void {
     this.rulingTextEl()?.nativeElement.querySelector('mark.current')?.scrollIntoView();
   }
+  private _scrollToIndependentQuestion(): void {
+    const el = this.formPart3El()?.nativeElement;
+    console.log(el, this.formPart3El());
+    if (!el) return;
+    console.log(el, el.scrollHeight, el.scrollTop + el.getBoundingClientRect().height);
+
+    el.scrollTo({ behavior: 'smooth', top: el.scrollHeight });
+  }
 
   //! search
   readonly rulingTextEl = viewChild<ElementRef<HTMLElement>>('rulingTextEl');
+  readonly formPart3El = viewChild<ElementRef<HTMLElement>>('formPart3');
 
   onSearchChange(phrase: string): void {
     this.searchService.searchPhrase.set(phrase);
@@ -320,9 +328,12 @@ export class NsaPage implements OnInit, OnDestroy {
   //! adding questions
   onAddButtonClick() {
     this.nsaFormPart3.controls.independentQuestions.push(new FormControl<string>(''));
+    setTimeout(() => {
+      this._scrollToIndependentQuestion();
+    }, 0);
   }
 
-  onindependentQuestionButtonClick(index: number, control: FormControl) {
+  onIndependentQuestionButtonClick(index: number, control: FormControl) {
     this.nsaService.fetchIndependentAnswer(this.nsaFormPart2.controls.systemMessage.value!, control.value!, index);
   }
 
