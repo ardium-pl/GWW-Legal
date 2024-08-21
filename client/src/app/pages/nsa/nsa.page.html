@@ -327,8 +327,8 @@
             <mat-spinner />
             }
           </div>
-          } @if (independentLoaded($index)) {
-          <markdown> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
+          } @else {
+          <markdown class="independent-markdown" [class.error]="independentError($index)"> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
           }
         </mat-card-content>
       </mat-card>

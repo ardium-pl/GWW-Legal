@@ -323,7 +323,7 @@ export class NsaPage implements OnInit, OnDestroy {
   }
 
   onindependentQuestionButtonClick(index: number, control: FormControl) {
-    this.nsaService.fetchindependentAnswer(this.nsaFormPart2.controls.systemMessage.value!, control.value!, index);
+    this.nsaService.fetchIndependentAnswer(this.nsaFormPart2.controls.systemMessage.value!, control.value!, index);
   }
 
   hasClickedFetchindependent(index: number) {
@@ -339,6 +339,9 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   independentLoading(index: number) {
     return this.nsaService.independentQuestionsLoaded()[index] == false;
+  }
+  independentError(index: number) {
+    return this.nsaService.independentQuestionsProgress()[index] == 'ERROR';
   }
 
   //! resetting
