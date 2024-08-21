@@ -239,7 +239,7 @@
         </mat-card-content>
       </mat-card>
       @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) || (showGptResultsImmediately() &&
-      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track response) {
+      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track $index) {
       <mat-card>
         <mat-card-header>
           Odpowiedź na pytanie {{ $index + 1 }}
