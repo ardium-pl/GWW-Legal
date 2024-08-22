@@ -13,13 +13,15 @@ import {
   RP01,
   RP02,
   RP03,
+  SB01toSB08,
+  SB09,
+  TB01toTB06,
+  TB07,
 } from 'app/services/tpr/typeC.types';
 import { AllTransactionTables } from 'app/services/tpr/tpr-input.types';
 import { TransactionCTable } from 'app/services/tpr/tpr-table.types';
 
-export function mapKorektaCenTransferowych(
-  transaction: TransactionCTable,
-): Partial<KC01 | KC02> {
+export function mapKorektaCenTransferowych(transaction: TransactionCTable): Partial<KC01 | KC02> {
   switch (transaction.correction) {
     case 'KC01':
       return {
@@ -40,9 +42,7 @@ export function mapKorektaCenTransferowych(
   }
 }
 
-export function mapZwolnienieArt11n(
-  transaction: TransactionCTable,
-): Partial<ZW01 | ZW02> {
+export function mapZwolnienieArt11n(transaction: TransactionCTable): Partial<ZW01 | ZW02> {
   switch (transaction.Zwolnienie) {
     case 'ZW01':
       return {
@@ -92,9 +92,7 @@ export function mapZW02(transaction: TransactionCTable): Partial<ZW02> {
   return zw2;
 }
 
-export function mapMetodyBadania(
-  transaction: TransactionCTable,
-): Partial<MW00 | MW01toMW06<Korekta>> {
+export function mapMetodyBadania(transaction: TransactionCTable): Partial<MW00 | MW01toMW06<Korekta>> {
   switch (transaction.MetodyBadania) {
     case 'MW00':
       return {
@@ -125,37 +123,50 @@ export function mapMetodyBadania(
   }
 }
 
-export function mapRodzajOprocentowania(
-  transaction: TransactionCTable,
-): Partial<OP01 | OP02 | OP03 | OP04_OP05> {
+export function mapRodzajOprocentowania(transaction: TransactionCTable): Partial<OP01 | OP02 | OP03 | OP04_OP05> {
   switch (transaction.RodzajOprocentowania) {
     case 'OP01':
-      return {
+      const op01Result: Partial<OP01 & SB01toSB08 & SB09 & TB01toTB06 & TB07> = {
         KalkOproc1: 'OP01',
         Marza: transaction.Marza,
-        KodSB1: transaction.NazwaStopyBazowej,
-        TerminSB: transaction.TerminStopyBazowej,
       };
+      if (transaction.NazwaStopyBazowej === 'SB09') {
+        op01Result.InnaSB = transaction.NazwaStopyBazowej;
+      } else {
+        op01Result.KodSB1 = transaction.NazwaStopyBazowej;
+      }
+      if (transaction.TerminStopyBazowej === 'TB07') {
+        op01Result.TerminInny = transaction.TerminStopyBazowej;
+        op01Result.Okres = transaction.Okres;
+      } else {
+        op01Result.TerminSB = transaction.TerminStopyBazowej;
+      }
+      return op01Result;
+
     case 'OP02':
       return {
         KalkOproc2: 'OP02',
         PoziomOproc: transaction.PoziomOprocentowania,
       };
+
     case 'OP03':
       return {
         KalkOproc3: 'OP03',
         PoziomOprocMin: transaction.PoziomOprocentowaniaMinimalny,
         PoziomOprocMax: transaction.PoziomOprocentowaniaMaksymalny,
       };
+
     case 'OP04':
     case 'OP05':
       return {
         KalkOproc4: transaction.RodzajOprocentowania,
       };
+
     default:
       return {};
   }
 }
+
 
 export function mapRodzajPrzedzialu(transaction: TransactionCTable) {
   switch (transaction.RodzajPrzedzialu) {

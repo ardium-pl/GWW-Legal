@@ -4,6 +4,7 @@ import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
 import { GptConversation, GptConversationItemType } from './gpt-conversation';
+
 import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
 
 @Injectable({
@@ -266,6 +267,40 @@ export class NsaService implements OnDestroy {
           newArr[index] = res as string;
           return newArr;
         });
+      });
+  }
+
+  //! conversations
+  private readonly _conversations = signal<GptConversation[]>([]);
+  public readonly conversations = this._conversations.asReadonly();
+
+  resetAndInitializeConversations(amount: number) {
+    this._conversations.set(new Array(amount));
+  }
+  createConversation(index: number, systemMessage: string, userMessage: string, response: string) {
+    this._conversations.update(arr => {
+      const newArr = [...arr];
+      newArr[index] = new GptConversation(systemMessage, userMessage, response);
+      return newArr;
+    });
+  }
+  fetchConversationAnswer(index: number, userMessage: string): void {
+    const convo = this.conversations()[index];
+
+    convo.addUserMessage(userMessage);
+    convo.addEmptyResponse();
+
+    this.http
+      .post(apiUrl('/nsa/conversation'), {
+        courtRuling: this.getCleanCourtRuling(),
+        messageHistory: convo.items.map(v => ({
+          content: v.content,
+          type: v.type,
+        })),
+      })
+      .pipe(takeUntil(this.cancel$))
+      .subscribe(response => {
+        convo.setLatestResponseContent(response as string);
       });
   }
 

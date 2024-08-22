@@ -1,0 +1,40 @@
+<div class="tpr-file">
+    <div class="icon-container">
+      @if (tprFile().state() === _states.NoFile) {
+      <div class="no-file-icon">
+        {{ tprFile().fileType | uppercase }}
+      </div>
+      } @else if (tprFile().state() === _states.Loading) {
+      <mat-spinner diameter="40" />
+      } @else if (tprFile().state() === _states.Error) {
+      <span class="material-symbols-outlined error-icon">cancel</span>
+      } @else if (tprFile().state() === _states.OK) {
+      <span class="material-symbols-outlined ok-icon">check_circle</span>
+      } @else if (tprFile().state() === _states.Warning) {
+      <span class="material-symbols-outlined warning-icon">exclamation</span>
+      }
+    </div>
+    <div class="text-container">
+      <div class="strong-text">{{ tprFile().fileDisplayName }}</div>
+      <div class="sub-text">
+        @if (tprFile().state() === _states.NoFile) {
+        <span>Plik jeszcze nie został dodany</span>
+        } @else if (tprFile().state() === _states.Loading) {
+        <span>Weryfikowanie...</span>
+        } @else if (tprFile().state() === _states.Error) {
+        <span>{{ validationDataString() }}</span>
+        } @else if (tprFile().state() === _states.OK) {
+        <span>Gotowy!</span>
+        } @else if (tprFile().state() === _states.Warning) {
+        <span>Sprawdź, czy dodany plik na pewno jest odpowiedni.</span>
+        }
+      </div>
+    </div>
+    <div class="file-container">
+      <div class="file-name">{{ tprFile().fileName() }}</div>
+      @if (tprFile().fileSize()) {
+      <div class="file-size">{{ tprFile().fileSize()! | filesize }}</div>
+      }
+    </div>
+  </div>
+  

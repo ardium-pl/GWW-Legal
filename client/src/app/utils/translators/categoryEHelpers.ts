@@ -1,17 +1,7 @@
-import {
-  KC01,
-  KC02,
-  ZW01,
-  ZW02,
-  MW00,
-  MW01toMW06,
-  Korekta,
-} from 'app/services/tpr/typeE.types';
+import { KC01, KC02, ZW01, ZW02, MW00, MW01toMW06, Korekta } from 'app/services/tpr/typeE.types';
 import { TransactionETable } from 'app/services/tpr/tpr-table.types';
 
-export function mapKorektaCenTransferowych(
-  transaction: TransactionETable,
-): Partial<KC01 | KC02> {
+export function mapKorektaCenTransferowych(transaction: TransactionETable): Partial<KC01 | KC02> {
   switch (transaction.correction) {
     case 'KC01':
       return {
@@ -32,9 +22,7 @@ export function mapKorektaCenTransferowych(
   }
 }
 
-export function mapZwolnienieArt11n(
-  transaction: TransactionETable,
-): Partial<ZW01 | ZW02> {
+export function mapZwolnienieArt11n(transaction: TransactionETable): Partial<ZW01 | ZW02> {
   switch (transaction.Zwolnienie) {
     case 'ZW01':
       return {
@@ -84,9 +72,7 @@ function mapZW02(transaction: TransactionETable): Partial<ZW02> {
   return zw2;
 }
 
-export function mapMetodyBadania(
-  transaction: TransactionETable,
-): Partial<MW00 | MW01toMW06<Korekta>> {
+export function mapMetodyBadania(transaction: TransactionETable): Partial<MW00 | MW01toMW06<Korekta>> {
   switch (transaction.MetodyBadania) {
     case 'MW00':
       return {

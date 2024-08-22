@@ -4,6 +4,4 @@ import { appConfig } from './app/app.config';
 
 import 'first-last';
 
-bootstrapApplication(AppComponent, appConfig).catch((err) =>
-  console.error(err),
-);
+bootstrapApplication(AppComponent, appConfig).catch(err => console.error(err));

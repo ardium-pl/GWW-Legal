@@ -3,20 +3,7 @@ export type TransakcjaKategoriaA1<
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania,
 > = {
-  KategoriaA1:
-    | '3001'
-    | '3002'
-    | '3003'
-    | '3004'
-    | '3005'
-    | '3006'
-    | '3007'
-    | '3008'
-    | '3009'
-    | '3010'
-    | '3011'
-    | '3012'
-    | '3013';
+  KategoriaA1: '3001' | '3002' | '3003' | '3004' | '3005' | '3006' | '3007' | '3008' | '3009' | '3010' | '3011' | '3012' | '3013';
   WynRestrukt: WynagrodzenieZaRestrukturyzację;
   PrzedmiotA1: string;
   WartoscA1: [
@@ -100,10 +87,7 @@ type MW00 = {
   Metoda00: 'MW00';
 };
 
-type MW01<
-  KP extends Korekta = Korekta,
-  CK extends SposobUjeciaCeny = SposobUjeciaCeny,
-> = {
+type MW01<KP extends Korekta = Korekta, CK extends SposobUjeciaCeny = SposobUjeciaCeny> = {
   Metoda01: 'MW01';
   Weryfikacja: SposobWeryfikacjiEynkowegoPoziomuCeny;
 } & (KP extends 'KP01' ? KP01 : {}) &
@@ -255,9 +239,7 @@ type TW01_TW02_for_MW06<TB extends OkresPrognozy = OkresPrognozy> = {
   TechWyceny1: 'TW01' | 'TW02';
   WspDyskont: number;
   SupporterVarOkresPrognozy: OkresPrognozy;
-} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06'
-  ? TB_for_TW01_TW02
-  : {}) &
+} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB_for_TW01_TW02 : {}) &
   (TB extends 'TB07' ? TB07_for_TW01_TW02 : {});
 
 type TB_for_TW01_TW02 = {
@@ -282,14 +264,7 @@ type KorektaCenTransferowych = 'KC01' | 'KC02';
 type Kompensata = 'KS01' | 'KS02' | 'KS03';
 type ZwolnienieArt11n = 'ZW01' | 'ZW02';
 type RodzajTransakcji = 'TK01' | 'TK02';
-type MetodyBadania =
-  | 'MW00'
-  | 'MW01'
-  | 'MW02'
-  | 'MW03'
-  | 'MW04'
-  | 'MW05'
-  | 'MW06';
+type MetodyBadania = 'MW00' | 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
 type SposobWeryfikacjiEynkowegoPoziomuCeny = 'SW01' | 'SW02' | 'SW03' | 'SW04';
 type Korekta = 'KP01' | 'KP02';
 type SposobUjeciaCeny = 'CK01' | 'CK02';
@@ -315,36 +290,23 @@ type WskaznikFinansowy =
   | 'WF17';
 type RodzajPorownania = 'PR01' | 'PR02' | 'PR03';
 type PodmiotBadany = 'PB01' | 'PB02';
-type KryteriumGeograficzne =
-  | 'KG01'
-  | 'KG02'
-  | 'KG03'
-  | 'KG04'
-  | 'KG05'
-  | 'KG06';
+type KryteriumGeograficzne = 'KG01' | 'KG02' | 'KG03' | 'KG04' | 'KG05' | 'KG06';
 type TechWyceny = 'TW01' | 'TW02' | 'TW03' | 'TW04' | 'TW05' | 'TW06' | 'TW07';
-type OkresPrognozy =
-  | 'TB01'
-  | 'TB02'
-  | 'TB03'
-  | 'TB04'
-  | 'TB05'
-  | 'TB06'
-  | 'TB07';
-type ZrodloDanychZgodnosci =
-  | 'AZ01'
-  | 'AZ02'
-  | 'AZ03'
-  | 'AZ04'
-  | 'AZ05'
-  | 'AZ06'
-  | 'AZ07'
-  | 'AZ08'
-  | 'AZ09';
+type OkresPrognozy = 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' | 'TB07';
+type ZrodloDanychZgodnosci = 'AZ01' | 'AZ02' | 'AZ03' | 'AZ04' | 'AZ05' | 'AZ06' | 'AZ07' | 'AZ08' | 'AZ09';
 type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
-export type WynagrodzenieZaRestrukturyzację =
-  | 'RM01'
-  | 'RM02'
-  | 'RM03'
-  | 'RM04'
-  | 'RM05';
+export type WynagrodzenieZaRestrukturyzację = 'RM01' | 'RM02' | 'RM03' | 'RM04' | 'RM05';
+
+export type TransakcjaA1 = {
+  KategoriaA1: '3001' | '3002' | '3003' | '3004' | '3005' | '3006' | '3007' | '3008' | '3009' | '3010' | '3011' | '3012' | '3013';
+  WynRestrukt: WynagrodzenieZaRestrukturyzację;
+  PrzedmiotA: string;
+  WartoscA: 
+    {
+      _attributes: {
+        kodWaluty: string;
+      };
+    _text: number,
+  },
+  Kompensata: Kompensata;
+}

@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  computed,
-  inject,
-  input,
-  signal,
-} from '@angular/core';
+import { Component, computed, inject, input, ViewEncapsulation } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   CellEditRequestEvent,
@@ -19,13 +11,11 @@ import {
 } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
-import { columnTypes } from './column-types';
 import { TprDataService } from 'app/services/tpr/tpr-data.service';
-import {
-  getColumnDefUtil,
-  getKeysToCheck,
-} from 'app/utils/get-column-def.util';
+import { CategorizedTransaction } from 'app/services/tpr/tpr-input.types';
+import { getColumnDefUtil, getKeysToCheck } from 'app/utils/get-column-def.util';
+import { isDefined } from 'simple-bool';
+import { columnTypes } from './column-types';
 
 @Component({
   selector: 'app-transaction-table',
@@ -33,17 +23,14 @@ import {
   imports: [AgGridAngular],
   templateUrl: './transaction-table.component.html',
   styleUrls: ['./transaction-table.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class TransactionTableComponent {
   private readonly tprDataService = inject(TprDataService);
   public readonly transactionType = input<string>('');
   public readonly inputData = input.required<CategorizedTransaction[]>();
-  public readonly defaultKeys = computed(() =>
-    getKeysToCheck(this.transactionType()),
-  );
-  public readonly colDefs = computed(() =>
-    getColumnDefUtil(this.transactionType()),
-  );
+  public readonly defaultKeys = computed(() => getKeysToCheck(this.transactionType()));
+  public readonly colDefs = computed(() => getColumnDefUtil(this.transactionType()));
   public readonly defaultColDef: ColDef = {
     editable: true,
   };
@@ -51,6 +38,7 @@ export class TransactionTableComponent {
 
   onGridReady(params: GridReadyEvent<any>) {
     this.gridApi = params.api;
+    this.getRawData();
   }
 
   public columnTypes: {
@@ -67,10 +55,11 @@ export class TransactionTableComponent {
     };
     event.api.applyTransaction(tx);
     this.gridApi.redrawRows();
+    this.getRawData();
   }
 
   public sendData() {
-    this.tprDataService.updateData(this.getRawData());
+    this.tprDataService.appendTransactionData(this.getRawData());
   }
 
   getRawData(): any[] {
@@ -91,40 +80,33 @@ export class TransactionTableComponent {
     }
     keysToCheck = [...keysToCheck, ...this.defaultKeys()];
 
+    this.tprDataService.setIsError(false);
     colDefs &&
       colDefs.forEach((colDef: any) => {
-        const isEditable =
-          typeof colDef.editable === 'function'
-            ? colDef.editable({ data: result })
-            : colDef.editable;
-        if (isEditable) {
-          //sprawdzenie czy są wymagane pola uzupełnione
-          const isObjectIncomplete = keysToCheck.some((key) => {
-            return !objectKeys.some((objectKey) => {
-              const keyValid = objectKey === key;
-              const hasValue = result[objectKey] !== null;
-              return keyValid && hasValue;
-            });
+        const isEditable = typeof colDef.editable === 'function' ? colDef.editable({ data: result }) : colDef.editable;
+        if (!isEditable) return;
+        //sprawdzenie czy wymagane pola są uzupełnione
+        const isObjectIncomplete = keysToCheck.some(key => {
+          return !objectKeys.some(objectKey => {
+            const keyValid = objectKey === key;
+            const hasValue = result[objectKey] !== null;
+            return keyValid && hasValue;
           });
-          if (isObjectIncomplete) {
-            this.tprDataService.setIsError();
-          } else {
-            for (const key in objectKeys) {
-              if (
-                result[objectKeys[key]] === null ||
-                result[objectKeys[key]] === '' ||
-                result[objectKeys[key]] === undefined
-              ) {
-                this.tprDataService.setIsError();
-              }
-            }
+        });
+        if (isObjectIncomplete) {
+          this.tprDataService.setIsError(true);
+          return;
+        }
+        for (const key of objectKeys) {
+          if (!isDefined(result[key]) || result[key] === '') {
+            this.tprDataService.setIsError(true);
+            return;
           }
         }
       });
   }
 
-  public readonly getRowId: GetRowIdFunc = (params: GetRowIdParams) =>
-    params.data.Id;
+  public readonly getRowId: GetRowIdFunc = (params: GetRowIdParams) => params.data.Id;
 
   public resetValuesForNonEditableColumns(oldData: any) {
     const newRow: any = { ...oldData };
