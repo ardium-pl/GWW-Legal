@@ -1,16 +1,9 @@
 <h2 mat-dialog-title>
   Porozmawiaj z AI
-  <button
-    class="close-btn"
-    mat-icon-button
-    (click)="onCloseClick()"
-  >
+  <button class="close-btn" mat-icon-button (click)="onCloseClick()">
     <mat-icon fontIcon="close" />
   </button>
 </h2>
 <mat-dialog-content>
-  <app-gpt-conversation
-    [items]="conversation.items"
-    (sendMessage)="onMessageSend($event)"
-  />
+  <app-gpt-conversation [items]="conversation.items" (sendMessage)="onMessageSend($event)" (cancel)="onLoadingCancel()" />
 </mat-dialog-content>

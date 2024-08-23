@@ -1,7 +1,8 @@
 import { signal } from '@angular/core';
 
 export class GptConversation {
-  readonly items!: (GptConversationItem | GptConversationResponse)[];
+  items!: (GptConversationItem | GptConversationResponse)[];
+
 
   constructor(
     public readonly systemMessage: string,
@@ -11,20 +12,28 @@ export class GptConversation {
     this.items = [
       new GptConversationItem(GptConversationItemType.SystemMessage, systemMessage),
       new GptConversationItem(GptConversationItemType.UserMessage, userMessage1),
-      new GptConversationResponse().setContent(response),
+      new GptConversationResponse().setContent(response, false),
     ];
   }
 
   addUserMessage(userMessage: string): void {
-    this.items.push(new GptConversationItem(GptConversationItemType.UserMessage, userMessage));
+    this.items = [...this.items, new GptConversationItem(GptConversationItemType.UserMessage, userMessage)];
   }
   addEmptyResponse(): void {
-    this.items.push(new GptConversationResponse());
+    this.items = [...this.items, new GptConversationResponse()];
   }
-  setLatestResponseContent(content: string): void {
-    const res = this.items.last(1, el => isGptConversationResponse(el)) as GptConversationResponse;
+  setLatestResponseContent(content: string, isError: boolean): void {
+    this.items.pop();
 
-    res.setContent(content);
+    const res = new GptConversationResponse();
+    res.setContent(content, isError);
+
+    this.items = [...this.items, res];
+  }
+  cancelLatestResponse(): void {
+    this.items.pop();
+
+    this.items = [...this.items, new GptConversationResponse().setCanceled()];
   }
 }
 
@@ -32,19 +41,30 @@ export const GptConversationItemType = {
   SystemMessage: 'system-message',
   UserMessage: 'user-message',
   Response: 'response',
+  ResponseError: 'response-error',
+  ResponseCanceled: 'response-canceled',
+
 } as const;
 export type GptConversationItemType = (typeof GptConversationItemType)[keyof typeof GptConversationItemType];
 
 export class GptConversationItem {
+  protected readonly _content = signal<string>('');
+  public readonly content = this._content.asReadonly();
   constructor(
-    public readonly type: GptConversationItemType,
-    public readonly content: string
-  ) {}
+    protected _type: GptConversationItemType,
+    content: string
+  ) {
+    this._content.set(content);
+  }
+  public get type() {
+    return this._type;
+  }
+  protected set type(v: GptConversationItemType) {
+    this._type = v;
+  }
 }
 
 export class GptConversationResponse extends GptConversationItem {
-  public override content!: string;
-
   constructor() {
     super(GptConversationItemType.Response, '');
   }
@@ -52,9 +72,23 @@ export class GptConversationResponse extends GptConversationItem {
   private readonly _isLoading = signal<boolean>(true);
   public readonly isLoading = this._isLoading.asReadonly();
 
-  setContent(content: string): GptConversationResponse {
-    this.content = content;
+  private readonly _isError = signal<boolean>(false);
+  public readonly isError = this._isError.asReadonly();
+
+  private readonly _isCanceled = signal<boolean>(false);
+  public readonly isCanceled = this._isCanceled.asReadonly();
+
+  setContent(content: string, isError: boolean): GptConversationResponse {
+    this._content.set(content);
     this._isLoading.set(false);
+    this._isError.set(isError);
+    if (isError) this._type = GptConversationItemType.ResponseError;
+    return this;
+  }
+  setCanceled(): GptConversationResponse {
+    this._isLoading.set(false);
+    this._isCanceled.set(true);
+    this._type = GptConversationItemType.ResponseCanceled;
     return this;
   }
 }

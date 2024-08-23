@@ -1,6 +1,8 @@
 $close-btn-size: 48px;
 
 h2 {
+  width: calc(100% - #{$close-btn-size});
+
   position: relative;
   margin-right: $close-btn-size;
   margin-bottom: 0;
@@ -10,4 +12,9 @@ h2 {
   position: absolute;
   top: 4px;
   right: calc(4px - #{$close-btn-size});
+}
+
+mat-dialog-content {
+  box-sizing: content-box !important;
+  padding-right: 0 !important;
 }

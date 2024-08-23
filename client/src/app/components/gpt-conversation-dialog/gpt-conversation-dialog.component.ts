@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogContent, MatDialogRef, MatDialogTitle } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,6 +16,7 @@ export interface GptConversationDialogData {
   imports: [MatButtonModule, MatDialogTitle, MatDialogContent, MatIconModule, GptConversationComponent],
   templateUrl: './gpt-conversation-dialog.component.html',
   styleUrl: './gpt-conversation-dialog.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class GptConversationDialogComponent {
   readonly dialogRef = inject(MatDialogRef<GptConversationDialogComponent>);
@@ -29,5 +30,8 @@ export class GptConversationDialogComponent {
 
   onMessageSend(message: string) {
     this.dialogData.nsaServiceInstance.fetchConversationAnswer(this.dialogData.conversationIndex, message);
+  }
+  onLoadingCancel() {
+    this.dialogData.nsaServiceInstance.cancelConversationRequest(this.dialogData.conversationIndex);
   }
 }
