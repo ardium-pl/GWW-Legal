@@ -37,7 +37,8 @@ async function fetchIDs(caseSignature, userMessage, systemMessage, courtRuling) 
 
 
   if (!rulingID) {
-    rulingID = await insertRuling(caseSignature, courtRuling);;
+    const classification = classifyCase(courtRuling)
+    rulingID = await insertRuling(caseSignature, courtRuling, classification);;
   }
 
   if (!userMessageID) {
@@ -54,4 +55,36 @@ async function fetchIDs(caseSignature, userMessage, systemMessage, courtRuling) 
   }
 
   return [rulingID, userMessageID, systemMessageID];
+}
+
+export async function classifyCase(courtRuling) {
+  const systemMessage = `Napisz jedną literą: R (jeśli NSA rozstrzygnął sprawę merytorycznie),
+                          P (jeśli przekazał ją do WSA) lub N(jeśli nie da się tego określić).
+                           Orzeczenie: `;
+
+  const rawResponse = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages: [
+      { role: "system", content: systemMessage },
+      { role: "user", content: `${courtRuling}` },
+    ],
+    temperature: 0.5,
+  });
+  const response = retrieveGPTMessage(rawResponse);
+  return validateClassificationResult(response);
+}
+
+function validateClassificationResult(response) {
+  const trimmedResponse = response.trim();
+  const resultMap = {
+    'R': true,
+    'P': false,
+    'N': null
+  };
+
+  if (resultMap.hasOwnProperty(trimmedResponse)) {
+    return resultMap[trimmedResponse];
+  } else {
+    return 'Error: Invalid input or unmapped response detected.';
+  }
 }

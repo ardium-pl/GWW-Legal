@@ -6,9 +6,9 @@ export async function getRulingBySignature(caseSignature) {
     return results.length > 0 ? results[0].ruling : null;
 }
 
-export async function insertRuling(caseSignature, caseContent) {
+export async function insertRuling(caseSignature, caseContent, classification) {
     const connection = await createTCPConnection();
-    const [insertResult] = await connection.query(`INSERT INTO rulings (signature, ruling) VALUES (?, ?)`, [caseSignature, caseContent]);
+    const [insertResult] = await connection.query(`INSERT INTO rulings (signature, ruling, solved) VALUES (?, ?, ?)`, [caseSignature, caseContent, classification]);
     return insertResult.insertId;
 }
 
