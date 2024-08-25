@@ -3,7 +3,6 @@ import { signal } from '@angular/core';
 export class GptConversation {
   items!: (GptConversationItem | GptConversationResponse)[];
 
-
   constructor(
     public readonly systemMessage: string,
     userMessage1: string,
@@ -43,7 +42,6 @@ export const GptConversationItemType = {
   Response: 'response',
   ResponseError: 'response-error',
   ResponseCanceled: 'response-canceled',
-
 } as const;
 export type GptConversationItemType = (typeof GptConversationItemType)[keyof typeof GptConversationItemType];
 

@@ -28,16 +28,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConfirmationDialogComponent, ConfirmationDialogData, IconComponent, RequiredStarComponent } from 'app/components';
-import {
-  MAT_TOOLTIP_DEFAULT_OPTIONS,
-  MatTooltipModule,
-} from '@angular/material/tooltip';
-import {
-  ConfirmationDialogComponent,
-  ConfirmationDialogData,
-  IconComponent,
-  RequiredStarComponent,
-} from 'app/components';
 import { GptConversationDialogComponent, GptConversationDialogData } from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
@@ -276,7 +266,6 @@ export class NsaPage implements OnInit, OnDestroy {
     this.wasShowGptResultsImmediatelyChangedDuringPending.set(
       this.nsaService.isAtLeastOneGptAnswerReady(),
     );
-
   }
 
   //! additional conversation

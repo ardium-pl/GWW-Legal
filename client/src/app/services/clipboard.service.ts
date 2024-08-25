@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ClipboardBlockDialogComponent } from 'app/components/clipboard-block-dialog/clipboard-block-dialog.component';
-import { TPR_input } from './tpr/tpr-input.types';
+import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
 
 const ACCESS_DENIED_MESSAGE = 'Zablokowano dostęp do schowka. Udziel dostępu, żeby kontynuować';
 const WRONG_TYPE_MESSAGE = 'W schowku znajdują się dane nieprawidłowego typu. Skopiuj dane z arkusza TPR i spróbuj ponownie';
@@ -31,8 +31,8 @@ export class ClipboardService {
     let object: object;
     try {
       if (!clipboardValue) throw new Error();
-      const object = JSON.parse(clipboardValue);
-      const keysToCheck: (keyof TPR_input)[] = [
+      object = JSON.parse(clipboardValue);
+      const keysToCheck: (keyof TPRCompanyData)[] = [
         'countryCode',
         'fullName',
         'operatingMargin',
@@ -50,11 +50,10 @@ export class ClipboardService {
         return !objectKeys.some((objectKey) => objectKey === key);
       });
       if (isObjectIncomplete) this.openDialog(WRONG_TYPE_MESSAGE);
-      return object;
     } catch (err) {
       this.openDialog(WRONG_DATA_MESSAGE);
     }
-    return object;
+    return object!;
   }
 
   private openDialog(
