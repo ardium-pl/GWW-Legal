@@ -57,7 +57,7 @@ export type TransakcjaKategoriaD<
       }
   );
 
-type KC01 = {
+export type KC01 = {
   KorektaCT5: 'KC01';
   WartKorektyCT5: {
     _attributes: {
@@ -67,11 +67,11 @@ type KC01 = {
   };
 };
 
-type KC02 = {
+export type KC02 = {
   BrakKorektyCT5: 'KC02';
 };
 
 // Common types
-type KorektaCenTransferowych = 'KC01' | 'KC02';
-type Kompensata = 'KS01' | 'KS02' | 'KS03';
-type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
+export type KorektaCenTransferowych = 'KC01' | 'KC02';
+export type Kompensata = 'KS01' | 'KS02' | 'KS03';
+export type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';

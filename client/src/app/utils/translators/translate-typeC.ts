@@ -1,13 +1,10 @@
-import { TransakcjaKategoriaC } from 'app/services/tpr/typeC.types';
-import { AllTransactionTables } from 'app/services/tpr/tpr-input.types';
+import { TransactionCTable } from 'app/services/tpr/tpr-table.types';
 import {
   mapKorektaCenTransferowych,
-  mapZwolnienieArt11n,
   mapMetodyBadania,
-  mapRodzajOprocentowania,
   mapRodzajPrzedzialu,
+  mapZwolnienieArt11n
 } from './categoryC';
-import { TransactionCTable } from 'app/services/tpr/tpr-table.types';
 
 export function translateCategoryC(transaction: TransactionCTable) {
   const baseTransakcja = {
@@ -64,5 +61,5 @@ export function translateCategoryC(transaction: TransactionCTable) {
   const rodzajPrzedzialu = mapRodzajPrzedzialu(transaction);
   Object.assign(transakcja, rodzajPrzedzialu);
 
-  return transakcja as TransakcjaKategoriaC;
+  return transakcja;
 }

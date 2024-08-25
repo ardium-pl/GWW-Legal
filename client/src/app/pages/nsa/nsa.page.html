@@ -11,13 +11,22 @@
     (clickPrev)="searchService.prev()"
   />
 </div>
-<div class="pager-container" [style]="'--_pager-page:' + currentPagerPage()">
+<div
+  class="pager-container"
+  [style]="'--_pager-page:' + currentPagerPage()"
+>
   <div class="page-container">
-    <form [formGroup]="nsaFormPart1" (ngSubmit)="getCourtRuling()">
+    <form
+      [formGroup]="nsaFormPart1"
+      (ngSubmit)="getCourtRuling()"
+    >
       <mat-card>
         <div class="indigo-stripe"></div>
         <div class="image-container">
-          <img src="assets\images\GWW-logo.png" class="logo" />
+          <img
+            src="assets\images\GWW-logo.png"
+            class="logo"
+          />
         </div>
         <div class="gray-stripe"></div>
         <span class="image-text">Aplikacja do orzeczeń sądowych</span>
@@ -171,7 +180,13 @@
     </form>
     <div class="buttons-container">
       <div>
-        <button mat-button type="button" (click)="prevPage()">Wróć</button>
+        <button
+          mat-button
+          type="button"
+          (click)="prevPage()"
+        >
+          Wróć
+        </button>
       </div>
       <div>
         <button
@@ -187,14 +202,20 @@
     </div>
   </div>
   <div class="page-container">
-    <form [formGroup]="nsaFormPart3" (ngSubmit)="fetchAdditionalAnswer()">
+    <form
+      [formGroup]="nsaFormPart3"
+      (ngSubmit)="fetchAdditionalAnswer()"
+    >
       <mat-card>
         <mat-card-header> Postęp odpowiedzi od AI </mat-card-header>
         <mat-card-content class="divided-card">
           <div class="progress-container">
             @for (progress of nsaService.gptAnswersProgress(); track $index) {
             <div class="progress-indicator">
-              <div class="loading-icon" [class]="'is-loaded-'+progress">
+              <div
+                class="loading-icon"
+                [class]="'is-loaded-'+progress"
+              >
                 @if (progress === true) {
                 <app-icon icon="check_circle" />
                 } @else if (progress === 'ERROR') {
@@ -205,8 +226,7 @@
               </div>
               Pytanie {{ $index + 1 }}
             </div>
-            @if (nsaService.areGptAnswersError()) { Wystąpił niespodziewany
-            błąd. } }
+            @if (nsaService.areGptAnswersError()) { Wystąpił niespodziewany błąd. } }
           </div>
           <div class="checkbox-container">
             <mat-checkbox
@@ -218,10 +238,8 @@
           </div>
         </mat-card-content>
       </mat-card>
-      @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError())
-      || (showGptResultsImmediately() &&
-      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of
-      nsaService.gptAnswersResponse(); track response) {
+      @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) || (showGptResultsImmediately() &&
+      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track response) {
       <mat-card>
         <mat-card-header>
           Odpowiedź na pytanie {{ $index + 1 }}
@@ -242,13 +260,11 @@
           }
         </mat-card-content>
       </mat-card>
-      } @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()
-      ) {
+      } @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError() ) {
       <mat-card>
         <mat-card-header> Zadaj AI dodatkowe pytanie </mat-card-header>
         <mat-card-content>
-          Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego
-          napisz proszę jak NSA uargumentował:
+          Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jak NSA uargumentował:
           <mat-radio-group
             aria-label="Wybierz opcję"
             formControlName="additionalQuestion"
@@ -277,8 +293,7 @@
             </div>
             }
           </mat-card-actions>
-          @if (nsaService.additionalAnswerResponse() &&
-          !nsaService.isAdditionalAnswerLoading()) {
+          @if (nsaService.additionalAnswerResponse() && !nsaService.isAdditionalAnswerLoading()) {
           <mat-card-footer>
             <strong>Odpowiedź od AI:</strong>
             <markdown> {{ nsaService.additionalAnswerResponse() }} </markdown>
@@ -286,8 +301,7 @@
           }
         </mat-card-content>
       </mat-card>
-      } } @for (control of nsaFormPart3.controls.independentQuestions.controls;
-      track $index) {
+      } } @for (control of nsaFormPart3.controls.independentQuestions.controls; track $index) {
       <mat-card>
         <mat-card-header>Niezależne pytanie</mat-card-header>
         <mat-card-content>
@@ -318,14 +332,15 @@
             }
           </div>
           } @if (independentLoaded($index)) {
-          <markdown>
-            {{ nsaService.independentQuestionsResponses()[$index] }}
-          </markdown>
+          <markdown> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
           }
         </mat-card-content>
       </mat-card>
       } @if (isVisibleAddButton()) {
-      <button class="add-question-btn" (click)="onAddButtonClick()">
+      <button
+        class="add-question-btn"
+        (click)="onAddButtonClick()"
+      >
         <mat-icon fontIcon="add" />
         <span>Dodaj niezależne pytanie</span>
       </button>
@@ -333,7 +348,13 @@
     </form>
     <div class="buttons-container">
       <div>
-        <button mat-button type="button" (click)="prevPage()">Wróć</button>
+        <button
+          mat-button
+          type="button"
+          (click)="prevPage()"
+        >
+          Wróć
+        </button>
       </div>
       @if (nsaService.areGptAnswersReady()) {
       <div>

@@ -1,7 +1,7 @@
 export class SearchResult {
   constructor(
     public text: string,
-    public isCurrent: boolean,
+    public isCurrent: boolean
   ) {}
 
   toString() {
