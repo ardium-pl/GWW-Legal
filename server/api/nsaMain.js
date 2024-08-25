@@ -79,12 +79,12 @@ function validateClassificationResult(response) {
   const resultMap = {
     'R': true,
     'P': false,
-    'N': null
+    'N': null // chat can't anserw
   };
 
   if (resultMap.hasOwnProperty(trimmedResponse)) {
     return resultMap[trimmedResponse];
-  } else {
-    return 'Error: Invalid input or unmapped response detected.';
+  } else { 
+    return null; //This null comes for an unexpected response
   }
 }
