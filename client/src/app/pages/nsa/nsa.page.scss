@@ -1,4 +1,4 @@
-@import "../../../variables";
+@import '../../../variables';
 
 $gap: 12px;
 
@@ -246,4 +246,24 @@ mat-card-actions {
 }
 mat-checkbox {
   user-select: none;
+}
+.fab-container {
+  position: absolute;
+  right: 0;
+  top: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+//! conversations
+.pager-container {
+  mat-card-header {
+    position: relative;
+  }
+  .conversation-button {
+    position: absolute;
+    right: -8px;
+    top: 8px;
+  }
 }

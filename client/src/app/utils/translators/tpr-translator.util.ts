@@ -1,5 +1,5 @@
-import { translateCategoryE } from './translators/translate-typeE.utilss';
-import { translateCategoryC } from './translators/translate-typeC';
+import { translateCategoryE } from './translate-typeE.utilss';
+import { translateCategoryC } from './translate-typeC';
 import {
   TransactionATable,
   TransactionBTable,
@@ -8,13 +8,10 @@ import {
   TransactionETable,
   TransactionFTable,
 } from 'app/services/tpr/tpr-table.types';
-import {
-  translateCategoryA,
-  translateCategoryA1,
-  translateCategoryA2,
-} from './translators/translate-typeA.util';
+import { translateCategoryA, translateCategoryA1, translateCategoryA2 } from './translate-typeA.util';
+import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
 
-export function translateToTPR(tprInput: any) {
+export function translateToTPR(tprInput: TPRCompanyData) {
   const translatedTransactions = translateTransactions(tprInput.transactions);
 
   const tpr = {
@@ -37,6 +34,7 @@ export function translateToTPR(tprInput: any) {
         CelZlozenia: 1,
         OkresOd: tprInput.periodFrom,
         OkresDo: tprInput.periodUntil,
+        KodUrzedu: tprInput.irsCode,
       },
       Podmiot1: {
         _attributes: {
@@ -48,9 +46,7 @@ export function translateToTPR(tprInput: any) {
         KodPKD: tprInput.pkdCode,
       },
       PozycjeSzczegolowe: {
-        ...(tprInput.taxCategory === 'ZK01'
-          ? { PodmiotNZ: tprInput.taxCategory }
-          : { PodmiotKZ: tprInput.taxCategory }),
+        ...(tprInput.taxCategory === 'ZK01' ? { PodmiotNZ: tprInput.taxCategory } : { PodmiotKZ: tprInput.taxCategory }),
         InnyPodmiot: {
           MarzaOper: tprInput.operatingMargin,
           MarzaZysku: tprInput.profitMargin,
@@ -65,7 +61,7 @@ export function translateToTPR(tprInput: any) {
 
   return tpr;
 }
-type AllTables = TransactionATable &
+export type AllTables = TransactionATable &
   TransactionBTable &
   TransactionCTable &
   TransactionDTable &

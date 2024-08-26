@@ -13,14 +13,7 @@ export interface DropdownCellParams extends ICellRendererParams {
 @Component({
   selector: 'app-dropdown-cell',
   standalone: true,
-  imports: [
-    MatCheckboxModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatInputModule,
-  ],
+  imports: [MatCheckboxModule, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatSelectModule, MatInputModule],
   templateUrl: './dropdown-cell.component.html',
 })
 export class DropdownCellComponent implements ICellRendererAngularComp {

@@ -1,0 +1,81 @@
+$border-radius: 9px;
+
+.message-bubble {
+  --_current-bg: var(--indigo50);
+  position: relative;
+  margin-bottom: 20px;
+  padding: 16px;
+  color: var(--text);
+  background: var(--_current-bg);
+  border-radius: $border-radius;
+  border-bottom-right-radius: 0;
+  margin-left: auto;
+  margin-right: 8px + $border-radius;
+  max-width: calc(min(calc(100% - 64px), 600px) - $border-radius);
+  font-size: 14px;
+  width: max-content;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  .bubble-arrow {
+    position: absolute;
+    width: $border-radius * 2;
+    height: $border-radius * 2;
+    overflow: hidden;
+    bottom: 0;
+    right: -#{$border-radius * 2};
+
+    &::before {
+      content: '';
+      background: transparent;
+      position: absolute;
+      width: $border-radius * 2;
+      height: calc(2 * #{$border-radius * 2});
+      border-bottom-left-radius: $border-radius * 2;
+      bottom: 0;
+      box-shadow: 0 $border-radius * 2 0 0 var(--_current-bg);
+    }
+  }
+
+  &.bubble-left {
+    --_current-bg: whitesmoke;
+    border-radius: $border-radius;
+    border-bottom-left-radius: 0;
+    margin-left: 8px + $border-radius;
+    margin-right: auto;
+
+    .bubble-arrow {
+      right: unset;
+      left: -#{$border-radius * 2};
+
+      &::before {
+        border-radius: 0;
+        border-bottom-right-radius: $border-radius * 2;
+      }
+    }
+  }
+  &.is-error {
+    color: var(--error);
+  }
+  &.is-canceled {
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 0.875em;
+    text-decoration: none;
+    padding: 0.25em;
+
+    &:hover, &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+  markdown p:last-child {
+    margin-bottom: 0;
+  }
+}

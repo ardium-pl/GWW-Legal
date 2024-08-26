@@ -1,37 +1,38 @@
-import { Injectable, inject } from '@angular/core';
-import { DialogService } from './dialog.service';
-import { TPR_input } from './tpr/tpr-input.types';
+import { inject, Injectable } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ClipboardBlockDialogComponent } from 'app/components/clipboard-block-dialog/clipboard-block-dialog.component';
+import { TPRCompanyData } from 'app/services/tpr/tpr-input.types';
 
-const ACCESS_DENIED_MESSAGE =
-  'Zablokowano dostęp do schowka. Udziel dostępu, żeby kontynuować';
-const WRONG_TYPE_MESSAGE =
-  'W schowku znajdują się dane nieprawidłowego typu. Skopiuj dane z arkusza TPR i spróbuj ponownie';
-const WRONG_DATA_MESSAGE =
-  'W schowku znajdują się nieprawidłowe dane. Skopiuj dane z arkusza TPR i spróbuj ponownie';
+const ACCESS_DENIED_MESSAGE = 'Zablokowano dostęp do schowka. Udziel dostępu, żeby kontynuować';
+const WRONG_TYPE_MESSAGE = 'W schowku znajdują się dane nieprawidłowego typu. Skopiuj dane z arkusza TPR i spróbuj ponownie';
+const WRONG_DATA_MESSAGE = 'W schowku znajdują się nieprawidłowe dane. Skopiuj dane z arkusza TPR i spróbuj ponownie';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ClipboardService {
   constructor() {}
-  readonly dialogService = inject(DialogService);
+  readonly dialog = inject(MatDialog);
 
   public async readClipboard() {
+    let copiedData!: string;
     try {
-      const copiedData = await navigator.clipboard.readText();
-      const input = await this.getJsonFromClipboard(copiedData);
-      return input;
+      copiedData = await navigator.clipboard.readText();
+      if (!copiedData) {
+        throw 'NO_COPIED_DATA_ERR';
+      }
     } catch (error) {
-      this.dialogService.openDialog(ACCESS_DENIED_MESSAGE);
+      this.openDialog(ACCESS_DENIED_MESSAGE);
     }
-    return null;
+    return await this._getJsonFromClipboard(copiedData);
   }
 
-  public async getJsonFromClipboard(clipboardValue: string) {
+  private _getJsonFromClipboard(clipboardValue: string): object {
+    let object: object;
     try {
       if (!clipboardValue) throw new Error();
-      const object = JSON.parse(clipboardValue);
-      const keysToCheck: (keyof TPR_input)[] = [
+      object = JSON.parse(clipboardValue);
+      const keysToCheck: (keyof TPRCompanyData)[] = [
         'countryCode',
         'fullName',
         'operatingMargin',
@@ -48,10 +49,23 @@ export class ClipboardService {
       const isObjectIncomplete = keysToCheck.some((key) => {
         return !objectKeys.some((objectKey) => objectKey === key);
       });
-      if (isObjectIncomplete) this.dialogService.openDialog(WRONG_TYPE_MESSAGE);
-      return object;
+      if (isObjectIncomplete) this.openDialog(WRONG_TYPE_MESSAGE);
     } catch (err) {
-      this.dialogService.openDialog(WRONG_DATA_MESSAGE);
+      this.openDialog(WRONG_DATA_MESSAGE);
     }
+    return object!;
+  }
+
+  private openDialog(
+    warningMessage: string,
+  ): MatDialogRef<ClipboardBlockDialogComponent> {
+    const dialogRef = this.dialog.open(ClipboardBlockDialogComponent, {
+      data: warningMessage,
+      height: '15%',
+      width: '35%',
+      disableClose: true,
+      backdropClass: 'standard-backdrop-class',
+    });
+    return dialogRef;
   }
 }

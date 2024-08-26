@@ -1,8 +1,9 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy, computed, effect, inject, signal } from '@angular/core';
+import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
+import { GptConversation, GptConversationItemType } from './gpt-conversation';
 import { NsaFormPart2, RulingErrorCode, SignatureBrowserData, rulingErrorToText } from './nsa.utils';
 
 @Injectable({
@@ -76,7 +77,9 @@ export class NsaService implements OnDestroy {
     const courtRuling = this.getCleanCourtRuling();
     const caseSignature = this._caseSignature;
 
-    const streams = [formOutput.userMessage1, formOutput.userMessage2, formOutput.userMessage3].map(userMessage =>
+    const userMessages = [formOutput.userMessage1, formOutput.userMessage2, formOutput.userMessage3];
+
+    const streams = userMessages.map(userMessage =>
       this.http.post(apiUrl('/nsa/question'), {
         caseSignature,
         courtRuling,
@@ -87,6 +90,7 @@ export class NsaService implements OnDestroy {
 
     this._gptAnswersProgress.set(new Array(streams.length).fill(false));
     this._gptAnswersResponse.set(new Array(streams.length).fill(''));
+    this.resetAndInitializeConversations(streams.length);
 
     streams.forEach((stream, i) => {
       const sub = stream
@@ -118,6 +122,7 @@ export class NsaService implements OnDestroy {
             newArr[i] = response as string;
             return newArr;
           });
+          this.createConversation(i, formOutput.systemMessage!, userMessages[i]!, response as string);
         });
     });
   }
@@ -149,6 +154,68 @@ export class NsaService implements OnDestroy {
       });
   }
 
+  //! conversations
+  private readonly _conversations = signal<GptConversation[]>([]);
+  public readonly conversations = this._conversations.asReadonly();
+
+  private readonly cancelConversation$ = new Subject<void>();
+
+  resetAndInitializeConversations(amount: number) {
+    this._conversations.set(new Array(amount));
+  }
+  createConversation(index: number, systemMessage: string, userMessage: string, response: string) {
+    this._conversations.update(arr => {
+      const newArr = [...arr];
+      newArr[index] = new GptConversation(systemMessage, userMessage, response);
+      return newArr;
+    });
+  }
+  fetchConversationAnswer(index: number, userMessage: string): void {
+    const convo = this.conversations()[index];
+
+    convo.addUserMessage(userMessage);
+
+    const messageHistory = convo.items
+      .filter(
+        (v, index, arr) =>
+          v.type !== GptConversationItemType.ResponseError &&
+          v.type !== GptConversationItemType.ResponseCanceled &&
+          arr[index + 1]?.type !== GptConversationItemType.ResponseError &&
+          arr[index + 1]?.type !== GptConversationItemType.ResponseCanceled
+      )
+      .map(v => ({
+        content: v.content(),
+        type: v.type,
+      }));
+
+    convo.addEmptyResponse();
+
+    const sub = this.http
+      .post<{ chatResponse: string }>(apiUrl('/nsa/conversation'), {
+        courtRuling: this.getCleanCourtRuling(),
+        messageHistory,
+      })
+      .pipe(
+        takeUntil(this.cancel$),
+        takeUntil(this.cancelConversation$),
+        catchError((err, caught) => {
+          this._conversations()[index].setLatestResponseContent(err?.error?.code, true);
+          sub.unsubscribe();
+          return caught;
+        })
+      )
+      .subscribe(response => {
+        convo.setLatestResponseContent(response.chatResponse, false);
+      });
+  }
+  cancelConversationRequest(index: number) {
+    const convo = this.conversations()[index];
+
+    convo.cancelLatestResponse();
+
+    this.cancelConversation$.next();
+  }
+
   //! independent questions
   private readonly _independentQuestionsProgress = signal<(boolean | 'ERROR')[]>([]);
   public readonly independentQuestionsProgress = this._independentQuestionsProgress.asReadonly();
@@ -157,10 +224,6 @@ export class NsaService implements OnDestroy {
   public readonly independentQuestionsResponses = this._independentQuestionsResponses.asReadonly();
 
   public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true));
-
-  effdf = effect(() => {
-    console.log(this._independentQuestionsProgress(), this._independentQuestionsResponses());
-  });
 
   fetchindependentAnswer(systemMessage: string, userMessage: string, index: number): void {
     this._independentQuestionsProgress.update(arr => {

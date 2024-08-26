@@ -1,21 +1,15 @@
-import { Parser } from '@angular/compiler';
-import {
-  INumberCellEditorParams,
-  ISelectCellEditorParams,
-  ITooltipParams,
-} from 'ag-grid-community';
+import { INumberCellEditorParams, ISelectCellEditorParams, ITooltipParams } from 'ag-grid-community';
 import { ColDef } from 'ag-grid-community/dist/types/core/entities/colDef';
+import { getCellClass } from '../column-types';
 
 // Utility function to generate reverse mappings
-function createReverseMapping(
-  mapping: Record<string, string>,
-): Record<string, string> {
+function createReverseMapping(mapping: Record<string, string>): Record<string, string> {
   return Object.keys(mapping).reduce(
     (reverseMapping, key) => {
       reverseMapping[mapping[key]] = key;
       return reverseMapping;
     },
-    {} as Record<string, string>,
+    {} as Record<string, string>
   );
 }
 
@@ -139,7 +133,7 @@ export const transactionEColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(correctionCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => correctionCodeMapping[params.value],
+    valueFormatter: params => correctionCodeMapping[params.value],
   },
   {
     field: 'WartoscKorekty',
@@ -169,7 +163,7 @@ export const transactionEColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(compensationCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => compensationCodeMapping[params.value],
+    valueFormatter: params => compensationCodeMapping[params.value],
   },
   {
     field: 'RodzajWartosciNiematerialnych',
@@ -178,12 +172,9 @@ export const transactionEColDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellDataType: 'text',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(RodzajWartosciNiematerialnychCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(RodzajWartosciNiematerialnychCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) =>
-      RodzajWartosciNiematerialnychCodeMapping[params.value],
+    valueFormatter: params => RodzajWartosciNiematerialnychCodeMapping[params.value],
   },
   {
     field: 'Zwolnienie',
@@ -194,7 +185,7 @@ export const transactionEColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(ZwolnienieCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => ZwolnienieCodeMapping[params.value],
+    valueFormatter: params => ZwolnienieCodeMapping[params.value],
   },
   {
     field: 'PodstawaZwolnienia',
@@ -243,7 +234,7 @@ export const transactionEColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(RodzajTransakcjiCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => RodzajTransakcjiCodeMapping[params.value],
+    valueFormatter: params => RodzajTransakcjiCodeMapping[params.value],
   },
   {
     field: 'KodKrajuTransakcji',
@@ -281,7 +272,7 @@ export const transactionEColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(MetodyBadaniaCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => MetodyBadaniaCodeMapping[params.value],
+    valueFormatter: params => MetodyBadaniaCodeMapping[params.value],
   },
   {
     field: 'RodzajAnalizy',
@@ -292,7 +283,7 @@ export const transactionEColDefs: ColDef[] = [
     cellEditorParams: {
       values: Object.values(createReverseMapping(RodzajAnalizyCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => RodzajAnalizyCodeMapping[params.value],
+    valueFormatter: params => RodzajAnalizyCodeMapping[params.value],
   },
   {
     field: 'SposobWyrazeniaCeny',
@@ -309,11 +300,9 @@ export const transactionEColDefs: ColDef[] = [
     type: 'MetodyBadaniaType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(SposobKalkulacjiOplatyCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(SposobKalkulacjiOplatyCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => SposobKalkulacjiOplatyCodeMapping[params.value],
+    valueFormatter: params => SposobKalkulacjiOplatyCodeMapping[params.value],
   },
   {
     field: 'PoziomOplaty',
@@ -355,11 +344,9 @@ export const transactionEColDefs: ColDef[] = [
     type: 'exemptionSecondType',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(KorektaPorownywalnosciCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(KorektaPorownywalnosciCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) => KorektaPorownywalnosciCodeMapping[params.value],
+    valueFormatter: params => KorektaPorownywalnosciCodeMapping[params.value],
   },
   {
     field: 'KorektaPorownywalnosciProg',
@@ -367,21 +354,11 @@ export const transactionEColDefs: ColDef[] = [
     headerTooltip: 'Korekta porównywalności próg',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      values: Object.values(
-        createReverseMapping(KorektaPorownywalnosciProgCodeMapping),
-      ),
+      values: Object.values(createReverseMapping(KorektaPorownywalnosciProgCodeMapping)),
     } as ISelectCellEditorParams,
-    valueFormatter: (params) =>
-      KorektaPorownywalnosciProgCodeMapping[params.value],
-    editable: ({ data }) =>
-      data.MetodyBadania !== 'MW00' &&
-      data.Zwolnienie === 'ZW02' &&
-      data.KorektaPorownywalnosci === 'KP02',
-    cellStyle: ({ data }) =>
-      data.Zwolnienie !== 'ZW02' ||
-      data.MetodyBadania === 'MW00' ||
-      data.KorektaPorownywalnosci !== 'KP02'
-        ? { backgroundColor: 'var(--bg2-light)' }
-        : { backgroundColor: '#fff' },
+    valueFormatter: params => KorektaPorownywalnosciProgCodeMapping[params.value],
+    editable: ({ data }) => data.MetodyBadania !== 'MW00' && data.Zwolnienie === 'ZW02' && data.KorektaPorownywalnosci === 'KP02',
+    cellClass: ({ data }) =>
+      getCellClass(data.Zwolnienie !== 'ZW02' || data.MetodyBadania === 'MW00' || data.KorektaPorownywalnosci !== 'KP02'),
   },
 ];

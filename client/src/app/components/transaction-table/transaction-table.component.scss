@@ -1,4 +1,4 @@
-@use "ag-grid-community/styles" as ag;
+@use 'ag-grid-community/styles' as ag;
 @include ag.grid-styles(
   (
     theme: quartz,
@@ -8,4 +8,22 @@
 .ag-theme-quartz {
   width: 100%;
   margin: auto;
+  --ag-cell-horizontal-border: solid var(--bg3);
+}
+
+.cell-disabled {
+  background: var(--bg2-light);
+  opacity: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--detail);
+  cursor: not-allowed;
+
+  &::after {
+    content: "ø";
+  }
+  .ag-checkbox-cell {
+    display: none;
+  }
 }

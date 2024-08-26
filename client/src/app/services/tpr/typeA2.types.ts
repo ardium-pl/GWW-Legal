@@ -3,37 +3,7 @@ export type TransakcjaKategoriaA2<
   ZW extends ZwolnienieArt11n = ZwolnienieArt11n,
   MW extends MetodyBadania = MetodyBadania,
   UD extends Udział = Udział,
-> = {
-  KategoriaA2: '3101';
-  RodzajUm: RodzajUmowy;
-  PrzedmiotA2: string;
-  WartoscA2: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number,
-  ];
-  Wklad: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number,
-  ];
-  WkladOgolny: [
-    {
-      _attributes: {
-        kodWaluty: string;
-      };
-    },
-    number,
-  ];
-  Kompensata: Kompensata;
-  SupportVarMetoda: MW;
-} & (UD extends 'UD01' ? UD01 : {}) &
+> = & (UD extends 'UD01' ? UD01 : {}) &
   (UD extends 'UD02' ? UD02 : {}) &
   (UD extends 'UD03' ? UD03 : {}) &
   (K extends 'KC01' ? KC01 : {}) &
@@ -46,17 +16,17 @@ export type TransakcjaKategoriaA2<
   (MW extends 'MW06' ? MW06 : {}) &
   (MW extends 'MW02' | 'MW03' | 'MW05' ? MW02_MW03_MW05 : {});
 
-type UD01 = {
+export type UD01 = {
   Udzial1: 'UD01';
   ProcentUdzial1: number;
 };
 
-type UD02 = {
+export type UD02 = {
   Udzial2: 'UD02';
   ProcentUdzial2: number;
 };
 
-type UD03 = {
+export type UD03 = {
   Udzial3: 'UD03';
   ProcentUdzial3: number;
 };
@@ -121,10 +91,7 @@ type MW00 = {
   Metoda00: 'MW00';
 };
 
-type MW01<
-  KP extends Korekta = Korekta,
-  CK extends SposobUjeciaCeny = SposobUjeciaCeny,
-> = {
+type MW01<KP extends Korekta = Korekta, CK extends SposobUjeciaCeny = SposobUjeciaCeny> = {
   Metoda01: 'MW01';
   Weryfikacja: SposobWeryfikacjiEynkowegoPoziomuCeny;
 } & (KP extends 'KP01' ? KP01 : {}) &
@@ -276,9 +243,7 @@ type TW01_TW02_for_MW06<TB extends OkresPrognozy = OkresPrognozy> = {
   TechWyceny1: 'TW01' | 'TW02';
   WspDyskont: number;
   SupporterVarOkresPrognozy: OkresPrognozy;
-} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06'
-  ? TB_for_TW01_TW02
-  : {}) &
+} & (TB extends 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' ? TB_for_TW01_TW02 : {}) &
   (TB extends 'TB07' ? TB07_for_TW01_TW02 : {});
 
 type TB_for_TW01_TW02 = {
@@ -303,14 +268,7 @@ type KorektaCenTransferowych = 'KC01' | 'KC02';
 type Kompensata = 'KS01' | 'KS02' | 'KS03';
 type ZwolnienieArt11n = 'ZW01' | 'ZW02';
 type RodzajTransakcji = 'TK01' | 'TK02';
-type MetodyBadania =
-  | 'MW00'
-  | 'MW01'
-  | 'MW02'
-  | 'MW03'
-  | 'MW04'
-  | 'MW05'
-  | 'MW06';
+type MetodyBadania = 'MW00' | 'MW01' | 'MW02' | 'MW03' | 'MW04' | 'MW05' | 'MW06';
 type SposobWeryfikacjiEynkowegoPoziomuCeny = 'SW01' | 'SW02' | 'SW03' | 'SW04';
 type Korekta = 'KP01' | 'KP02';
 type SposobUjeciaCeny = 'CK01' | 'CK02';
@@ -336,32 +294,40 @@ type WskaznikFinansowy =
   | 'WF17';
 type RodzajPorownania = 'PR01' | 'PR02' | 'PR03';
 type PodmiotBadany = 'PB01' | 'PB02';
-type KryteriumGeograficzne =
-  | 'KG01'
-  | 'KG02'
-  | 'KG03'
-  | 'KG04'
-  | 'KG05'
-  | 'KG06';
+type KryteriumGeograficzne = 'KG01' | 'KG02' | 'KG03' | 'KG04' | 'KG05' | 'KG06';
 type TechWyceny = 'TW01' | 'TW02' | 'TW03' | 'TW04' | 'TW05' | 'TW06' | 'TW07';
-type OkresPrognozy =
-  | 'TB01'
-  | 'TB02'
-  | 'TB03'
-  | 'TB04'
-  | 'TB05'
-  | 'TB06'
-  | 'TB07';
-type ZrodloDanychZgodnosci =
-  | 'AZ01'
-  | 'AZ02'
-  | 'AZ03'
-  | 'AZ04'
-  | 'AZ05'
-  | 'AZ06'
-  | 'AZ07'
-  | 'AZ08'
-  | 'AZ09';
+type OkresPrognozy = 'TB01' | 'TB02' | 'TB03' | 'TB04' | 'TB05' | 'TB06' | 'TB07';
+type ZrodloDanychZgodnosci = 'AZ01' | 'AZ02' | 'AZ03' | 'AZ04' | 'AZ05' | 'AZ06' | 'AZ07' | 'AZ08' | 'AZ09';
 type PodstawaZwolnienia = '11n1' | '11n1a' | '11n2';
 export type RodzajUmowy = 'RT01' | 'RT02';
 export type Udział = 'UD01' | 'UD02' | 'UD03';
+
+export type TransakcjaA2 = {
+  KategoriaA2: '3101';
+  RodzajUm: RodzajUmowy;
+  PrzedmiotA: string;
+  WartoscA: 
+    {
+      _attributes: {
+        kodWaluty: string;
+      };
+    _text: number,
+  },
+  Wklad: 
+    {
+      _attributes: {
+        kodWaluty: string;
+      };
+    
+    _text: number,
+  },
+  WkladOgolny: 
+    {
+      _attributes: {
+        kodWaluty: string;
+      };
+    
+    _text: number,
+  },
+  Kompensata: Kompensata;
+}
