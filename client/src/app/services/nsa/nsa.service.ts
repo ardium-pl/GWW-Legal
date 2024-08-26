@@ -292,7 +292,7 @@ export class NsaService implements OnDestroy {
       }))
       .subscribe(res => {
         this._signatureBrowserDataLoading.set(false);
-        this._signatureBrowserData.update(old => [...old, ...res.map(v => ({ ...v, solved: Math.random() > 0.5 }))]);
+        this._signatureBrowserData.update(old => [...old, ...res]);
       });
   }
 

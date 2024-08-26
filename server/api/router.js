@@ -1,10 +1,16 @@
 import express from 'express';
-import { getCourtRulingID, getRulingBySignature } from '../sql/courtRulingQuerry.js';
+import {
+  getCourtRulingID,
+  getDetailedRulingInfo,
+  getPaginatedSignatures,
+  getRulingBySignature,
+} from '../sql/courtRulingQuerry.js';
 import { getGptResponse } from '../sql/gptAnswQuerry.js';
 import { getSystemMessageId, getUserMessageId } from '../sql/messagesQuerry.js';
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
 import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
 import { getCourtRuling } from './scraper.js';
+
 export const nsaRouter = express.Router();
 
 nsaRouter.post('/api/nsa/query', async (req, res) => {
