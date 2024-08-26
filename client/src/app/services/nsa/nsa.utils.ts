@@ -30,3 +30,9 @@ const DEFAULT_RULING_ERROR_TEXT = [
 export function rulingErrorToText(error: RulingErrorCode): string[] {
   return RULING_ERROR_CODE_MAP[error] || DEFAULT_RULING_ERROR_TEXT;
 }
+
+export interface SignatureBrowserData {
+  signature: string;
+  solved: boolean | null;
+  summary: string;
+}

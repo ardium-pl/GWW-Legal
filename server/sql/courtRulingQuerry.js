@@ -13,7 +13,7 @@ export async function insertRuling(caseSignature, caseContent) {
 export async function getPaginatedSignatures(page, pageSize) {
   const offset = (page - 1) * pageSize;
   const query = `
-    SELECT signature, solved
+    SELECT signature, solved, summary
     FROM rulings
     ORDER BY id
     LIMIT ${pageSize} OFFSET ${offset}

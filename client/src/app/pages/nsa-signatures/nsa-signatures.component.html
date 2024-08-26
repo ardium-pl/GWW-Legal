@@ -1,0 +1,35 @@
+<div class="header-row">
+  <div class="signature">Sygnatura</div>
+  <div class="summary">Podsumowanie treści orzeczenia</div>
+  <div class="solved">Status</div>
+  <div></div>
+</div>
+<div
+  class="signature-browser"
+  ardInfScroll
+  [(ardInfScrollActive)]="infiniteScrollActive"
+  (ardInfScrollReachThreshold)="onInfiniteScrollTrigger()"
+>
+  @for (dataItem of nsaService.signatureBrowserData(); track $index) {
+    <div class="list-row" (click)="onLoadDataClick(dataItem.signature)">
+      <div class="signature">
+        {{ dataItem.signature }}
+      </div>
+      <div class="summary">
+        {{ dataItem.summary }}
+      </div>
+      <div class="solved" [ngClass]="'solved-' + dataItem.solved">
+        @if (dataItem.solved === true) {
+          Rozstrzygnięto
+        } @else if (dataItem.solved === false) {
+          Przekazano
+        } @else {
+          Nieznany
+        }
+      </div>
+      <div class="action">
+        <button mat-button>Załaduj</button>
+      </div>
+    </div>
+  }
+</div>

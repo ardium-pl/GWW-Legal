@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
   ConfirmationDialogComponent,
   ConfirmationDialogData,
@@ -57,6 +57,7 @@ const DEFAULT_USER_MESSAGES = [
     MatCheckboxModule,
     SearchFabComponent,
     MatIconModule,
+    RouterModule,
   ],
 })
 export class NsaPage implements OnInit, OnDestroy {
@@ -93,6 +94,8 @@ export class NsaPage implements OnInit, OnDestroy {
     this.showGptResultsImmediately.set(localStorage.getItem('showGptResultsImmediately') === 'true');
   }
 
+  readonly isFromBrowser = signal<boolean>(false);
+
   readonly additionalQuestions = [
     {
       value:
@@ -127,8 +130,8 @@ export class NsaPage implements OnInit, OnDestroy {
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
     this.mixpanelService.track('Odpowiedzi chatu');
-    const values = this.nsaFormPart2.value;
-    this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+    const values = this.nsaFormPart2.value as NsaFormPart2;
+    this.nsaService.fetchGptAnswers(values);
     this.nsaFormPart3.reset();
     this.nextPage();
   }
@@ -217,6 +220,12 @@ export class NsaPage implements OnInit, OnDestroy {
     });
 
     this.route.queryParams.subscribe(params => {
+      const isFromBrowser = params['isFromBrowser'];
+      if (isFromBrowser) {
+        this.isFromBrowser.set(true);
+        this.router.navigate([], { queryParams: { isFromBrowser: null }, queryParamsHandling: 'merge' });
+        return;
+      }
       const signature = params['signature'];
       if (!signature) return;
 
