@@ -108,8 +108,8 @@ export async function getCourtRulingID(signature) {
 export async function getRulingBySignature(signature) {
   const connection = await createTCPConnection();
   try {
-    const [rows] = await connection.execute('SELECT * FROM rulings WHERE signature = ?', [signature]);
-    return rows.length > 0 ? rows[0] : null;
+    const [rows] = await connection.execute('SELECT ruling FROM rulings WHERE signature = ? LIMIT 1', [signature]);
+    return rows.length > 0 ? rows[0].ruling : null;
   } finally {
     await connection.end();
   }
