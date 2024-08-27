@@ -1,5 +1,4 @@
-.signature-browser,
-.header-row {
+:host > div {
   width: 100%;
   max-width: 60rem;
   margin: 0 auto;
@@ -22,6 +21,7 @@
   padding-top: 1rem;
   padding-bottom: 1.5rem;
   position: sticky;
+  text-align: center;
   top: 0;
   background: var(--bg);
   z-index: 10;
@@ -31,16 +31,20 @@
   cursor: pointer;
 
   .solved {
-    border-radius: 9999px;
-    border: 1px solid transparent;
-    border-color: currentColor;
     height: 1.625rem;
-    padding: 0 0.625rem;
     width: max-content;
+    padding: 0 0.625rem;
+    margin: 0 auto;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid transparent;
+    border-color: currentColor;
+    border-radius: 9999px;
 
+    &.solved-null {
+      background-color: rgba(0, 0, 0, 0.06);
+    }
     &.solved-true {
       color: var(--green);
       background-color: var(--green2);
@@ -66,4 +70,8 @@
       appearance: initial;
     }
   }
+}
+.spinner-container {
+  display: flex;
+  justify-content: center;
 }

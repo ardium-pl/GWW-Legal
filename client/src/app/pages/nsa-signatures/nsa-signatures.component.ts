@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
 import { ArdiumInfiniteScrollModule } from '@ardium-ui/devkit';
 import { NsaService } from 'app/services';
@@ -8,7 +9,7 @@ import { NsaService } from 'app/services';
 @Component({
   selector: 'app-nsa-signatures',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, ArdiumInfiniteScrollModule],
+  imports: [CommonModule, MatButtonModule, ArdiumInfiniteScrollModule, MatProgressSpinnerModule],
   templateUrl: './nsa-signatures.component.html',
   styleUrl: './nsa-signatures.component.scss',
 })
