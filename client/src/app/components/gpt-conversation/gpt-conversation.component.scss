@@ -1,0 +1,34 @@
+.conversation-container {
+  height: 65vh;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr max-content;
+  gap: 12px;
+}
+.conversation-messages {
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+.conversation-input {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  align-items: center;
+  gap: 12px;
+  padding-right: 12px;
+
+  button {
+    position: relative;
+    bottom: 11px;
+
+    .mdc-button__label {
+      height: 28px;
+    }
+    img {
+      height: 28px;
+      width: 28px;
+      filter: invert(1);
+    }
+  }
+}

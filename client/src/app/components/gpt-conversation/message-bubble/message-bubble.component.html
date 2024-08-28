@@ -1,9 +1,22 @@
 <div
   class="message-bubble"
   [class.bubble-left]="left()"
+  [class.is-error]="isError()"
+  [class.is-canceled]="isCanceled()"
 >
   <div class="bubble-arrow"></div>
-  @if (left()) {
+  @if (isLoading()) {
+    <app-three-dots-loader />
+    <button (click)="cancelEvent.emit()">Anuluj</button>
+  } @else if (isError()) {
+    @if (content() === 'ENOTFOUND') {
+      Nie udało się połączyć z serwerem OpenAI. Spróbuj ponownie wkrótce.
+    } @else {
+      Wystąpił błąd podczas przygotowywania odpowiedzi. Spróbuj ponownie.
+    }
+  } @else if (isCanceled()) {
+    Anulowano odpowiedź
+  } @else if (left()) {
     <markdown> {{ content() }} </markdown>
   } @else {
     {{ content() }}

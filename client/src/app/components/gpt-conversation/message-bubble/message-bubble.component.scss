@@ -1,7 +1,7 @@
 $border-radius: 9px;
 
 .message-bubble {
-  --_current-bg: whitesmoke;
+  --_current-bg: var(--indigo50);
   position: relative;
   margin-bottom: 20px;
   padding: 16px;
@@ -11,7 +11,12 @@ $border-radius: 9px;
   border-bottom-right-radius: 0;
   margin-left: auto;
   margin-right: 8px + $border-radius;
-  max-width: calc(min(100%, 600px) - $border-radius);
+  max-width: calc(min(calc(100% - 64px), 600px) - $border-radius);
+  font-size: 14px;
+  width: max-content;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 
   .bubble-arrow {
     position: absolute;
@@ -34,7 +39,7 @@ $border-radius: 9px;
   }
 
   &.bubble-left {
-    --_current-bg: var(--indigo50);
+    --_current-bg: whitesmoke;
     border-radius: $border-radius;
     border-bottom-left-radius: 0;
     margin-left: 8px + $border-radius;
@@ -49,5 +54,28 @@ $border-radius: 9px;
         border-bottom-right-radius: $border-radius * 2;
       }
     }
+  }
+  &.is-error {
+    color: var(--error);
+  }
+  &.is-canceled {
+    color: var(--text3);
+    font-style: italic;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 0.875em;
+    text-decoration: none;
+    padding: 0.25em;
+
+    &:hover, &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+  markdown p:last-child {
+    margin-bottom: 0;
   }
 }

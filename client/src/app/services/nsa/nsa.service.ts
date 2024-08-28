@@ -3,7 +3,7 @@ import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
-import { GptConversation } from './gpt-conversation';
+import { GptConversation, GptConversationItemType } from './gpt-conversation';
 import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
 
 @Injectable({
@@ -154,6 +154,68 @@ export class NsaService implements OnDestroy {
       });
   }
 
+  //! conversations
+  private readonly _conversations = signal<GptConversation[]>([]);
+  public readonly conversations = this._conversations.asReadonly();
+
+  private readonly cancelConversation$ = new Subject<void>();
+
+  resetAndInitializeConversations(amount: number) {
+    this._conversations.set(new Array(amount));
+  }
+  createConversation(index: number, systemMessage: string, userMessage: string, response: string) {
+    this._conversations.update(arr => {
+      const newArr = [...arr];
+      newArr[index] = new GptConversation(systemMessage, userMessage, response);
+      return newArr;
+    });
+  }
+  fetchConversationAnswer(index: number, userMessage: string): void {
+    const convo = this.conversations()[index];
+
+    convo.addUserMessage(userMessage);
+
+    const messageHistory = convo.items
+      .filter(
+        (v, index, arr) =>
+          v.type !== GptConversationItemType.ResponseError &&
+          v.type !== GptConversationItemType.ResponseCanceled &&
+          arr[index + 1]?.type !== GptConversationItemType.ResponseError &&
+          arr[index + 1]?.type !== GptConversationItemType.ResponseCanceled
+      )
+      .map(v => ({
+        content: v.content(),
+        type: v.type,
+      }));
+
+    convo.addEmptyResponse();
+
+    const sub = this.http
+      .post<{ chatResponse: string }>(apiUrl('/nsa/conversation'), {
+        courtRuling: this.getCleanCourtRuling(),
+        messageHistory,
+      })
+      .pipe(
+        takeUntil(this.cancel$),
+        takeUntil(this.cancelConversation$),
+        catchError((err, caught) => {
+          this._conversations()[index].setLatestResponseContent(err?.error?.code, true);
+          sub.unsubscribe();
+          return caught;
+        })
+      )
+      .subscribe(response => {
+        convo.setLatestResponseContent(response.chatResponse, false);
+      });
+  }
+  cancelConversationRequest(index: number) {
+    const convo = this.conversations()[index];
+
+    convo.cancelLatestResponse();
+
+    this.cancelConversation$.next();
+  }
+
   //! independent questions
   private readonly _independentQuestionsProgress = signal<(boolean | 'ERROR')[]>([]);
   public readonly independentQuestionsProgress = this._independentQuestionsProgress.asReadonly();
@@ -204,40 +266,6 @@ export class NsaService implements OnDestroy {
           newArr[index] = res as string;
           return newArr;
         });
-      });
-  }
-
-  //! conversations
-  private readonly _conversations = signal<GptConversation[]>([]);
-  public readonly conversations = this._conversations.asReadonly();
-
-  resetAndInitializeConversations(amount: number) {
-    this._conversations.set(new Array(amount));
-  }
-  createConversation(index: number, systemMessage: string, userMessage: string, response: string) {
-    this._conversations.update(arr => {
-      const newArr = [...arr];
-      newArr[index] = new GptConversation(systemMessage, userMessage, response);
-      return newArr;
-    });
-  }
-  fetchConversationAnswer(index: number, userMessage: string): void {
-    const convo = this.conversations()[index];
-
-    convo.addUserMessage(userMessage);
-    convo.addEmptyResponse();
-
-    this.http
-      .post(apiUrl('/nsa/conversation'), {
-        courtRuling: this.getCleanCourtRuling(),
-        messageHistory: convo.items.map(v => ({
-          content: v.content,
-          type: v.type,
-        })),
-      })
-      .pipe(takeUntil(this.cancel$))
-      .subscribe(response => {
-        convo.setLatestResponseContent(response as string);
       });
   }
 

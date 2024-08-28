@@ -1,6 +1,22 @@
-import { Component, ElementRef, OnDestroy, OnInit, computed, effect, inject, signal, viewChild } from '@angular/core';
-import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-
+import {
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  computed,
+  effect,
+  inject,
+  signal,
+  viewChild
+} from '@angular/core';
+import {
+  FormArray,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,10 +28,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ConfirmationDialogComponent, ConfirmationDialogData, IconComponent, RequiredStarComponent } from 'app/components';
-import {
-  GptConversationDialogComponent,
-  GptConversationDialogData,
-} from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
+import { GptConversationDialogComponent, GptConversationDialogData } from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
 import { MixpanelService } from 'app/services/mixpanel.service';
@@ -250,7 +263,9 @@ export class NsaPage implements OnInit, OnDestroy {
     if (this.nsaService.isAtLeastOneGptAnswerReady()) {
       this.showGptResultsImmediately.set(value);
     }
-    this.wasShowGptResultsImmediatelyChangedDuringPending.set(this.nsaService.isAtLeastOneGptAnswerReady());
+    this.wasShowGptResultsImmediatelyChangedDuringPending.set(
+      this.nsaService.isAtLeastOneGptAnswerReady(),
+    );
   }
 
   //! additional conversation
@@ -258,6 +273,7 @@ export class NsaPage implements OnInit, OnDestroy {
   onClickOpenConversation(index: number) {
     this.currentConversation.set(this.nsaService.conversations().at(index));
     this.dialog.open(GptConversationDialogComponent, {
+      autoFocus: '#conversation-dialog-input',
       data: {
         conversationIndex: index,
         nsaServiceInstance: this.nsaService,
