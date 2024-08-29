@@ -22,7 +22,7 @@ export async function getPaginatedSignatures(page, pageSize) {
   try {
     connection = await createTCPConnection();
     const [rows] = await connection.query(query);
-    return rows.map(v => ({ ...v, solved: v === null ? null : v === 1 }));
+    return rows.map(v => ({ ...v, solved: v.solved === -1 ? null : v.solved === 1 }));
   } catch (error) {
     console.error('Error in getPaginatedSignatures:', error);
     throw error;

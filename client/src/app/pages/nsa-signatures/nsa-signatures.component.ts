@@ -27,12 +27,6 @@ export class NsaSignaturesComponent implements OnInit {
     this.clickedSignatureButtonIndex.set(index);
     const res = await this.nsaService.fetchSignatureExtendedData(signature);
 
-    console.log({
-      signature,
-      isFromBrowser: true,
-      systemMessage: res.systemMessage,
-      messages: res.mainMessages.concat(res.independentMessages),
-    });
     this.router.navigate(['nsa'], {
       queryParams: {
         signature,
