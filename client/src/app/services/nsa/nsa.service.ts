@@ -332,33 +332,6 @@ export class NsaService implements OnDestroy {
     });
   }
 
-  //! loading NSA app from url data
-  async loadDataFromUrl(params: Record<string, string | string[]>): Promise<string[] | null> {
-    const { signature, systemMessage, messages } = params;
-
-    if (typeof signature !== 'string' || typeof systemMessage !== 'string' || !messages) return null;
-
-    const messagesArr = typeof messages === 'string' ? [messages] : messages;
-
-    const isRulingResponseOk = await this.fetchCourtRuling(signature);
-
-    if (!isRulingResponseOk) return null;
-
-    this.fetchGptAnswers({
-      systemMessage,
-      userMessage1: messagesArr[0],
-      userMessage2: messagesArr[1],
-      userMessage3: messagesArr[2],
-    });
-
-    for (let i = 3; i < messagesArr.length; i++) {
-      const msg = messagesArr[i];
-      this.fetchIndependentAnswer(signature, systemMessage, msg, i);
-    }
-
-    return messagesArr;
-  }
-
   //! resetting
   public resetData() {
     this._rulingRequestState.set(RequestState.Undefined);
