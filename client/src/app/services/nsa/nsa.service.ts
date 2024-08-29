@@ -4,7 +4,13 @@ import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
 import { GptConversation, GptConversationItemType } from './gpt-conversation';
-import { NsaFormPart2, RulingErrorCode, SignatureBrowserData, rulingErrorToText } from './nsa.utils';
+import {
+  NsaFormPart2,
+  RulingErrorCode,
+  SignatureBrowserData,
+  SignatureExtendedData,
+  rulingErrorToText,
+} from './nsa.utils';
 
 @Injectable({
   providedIn: 'root',
@@ -25,28 +31,32 @@ export class NsaService implements OnDestroy {
 
   private _caseSignature: string = '';
 
-  public fetchCourtRuling(caseSignature: string): void {
-    this._rulingRequestState.set(RequestState.Pending);
-    this._caseSignature = caseSignature;
-    const sub = this.http
-      .post(apiUrl('/nsa/query'), { caseSignature })
-      .pipe(
-        takeUntil(this.cancel$),
-        catchError((err, caught) => {
-          this._rulingRequestState.set(RequestState.Error);
-          const errorCode = (err.error as { code: RulingErrorCode }).code;
+  public async fetchCourtRuling(caseSignature: string): Promise<boolean> {
+    return new Promise(resolve => {
+      this._rulingRequestState.set(RequestState.Pending);
+      this._caseSignature = caseSignature;
+      const sub = this.http
+        .post(apiUrl('/nsa/query'), { caseSignature })
+        .pipe(
+          takeUntil(this.cancel$),
+          catchError((err, caught) => {
+            this._rulingRequestState.set(RequestState.Error);
+            const errorCode = (err.error as { code: RulingErrorCode }).code;
 
-          if (errorCode in RulingErrorCode) {
-            this._rulingError.set(rulingErrorToText(errorCode));
-          }
-          sub.unsubscribe();
-          return caught;
-        })
-      )
-      .subscribe(res => {
-        this._rulingResponse.set(res as string[]);
-        this._rulingRequestState.set(RequestState.Success);
-      });
+            if (errorCode in RulingErrorCode) {
+              this._rulingError.set(rulingErrorToText(errorCode));
+            }
+            sub.unsubscribe();
+            resolve(false);
+            return caught;
+          })
+        )
+        .subscribe(res => {
+          this._rulingResponse.set(res as string[]);
+          this._rulingRequestState.set(RequestState.Success);
+          resolve(true);
+        });
+    });
   }
   public setManualCourtRuling(rulingText: string): void {
     this._rulingResponse.set([rulingText]);
@@ -225,7 +235,7 @@ export class NsaService implements OnDestroy {
 
   public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true));
 
-  fetchindependentAnswer(systemMessage: string, userMessage: string, index: number): void {
+  fetchIndependentAnswer(caseSignature: string, systemMessage: string, userMessage: string, index: number): void {
     this._independentQuestionsProgress.update(arr => {
       const newArr = [...arr];
       newArr[index] = true;
@@ -234,6 +244,7 @@ export class NsaService implements OnDestroy {
 
     const sub = this.http
       .post(apiUrl('/nsa/question'), {
+        caseSignature,
         courtRuling: this.getCleanCourtRuling(),
         systemMessage,
         userMessage,
@@ -285,15 +296,67 @@ export class NsaService implements OnDestroy {
 
     const sub = this.http
       .get<SignatureBrowserData[]>(apiUrl('/nsa/signatures'), { params: { page } })
-      .pipe(takeUntil(this.cancel$), catchError((_, caught) => {
-        this._signatureBrowserDataLoading.set(false);
-        sub.unsubscribe();
-        return caught;
-      }))
+      .pipe(
+        takeUntil(this.cancel$),
+        catchError((_, caught) => {
+          this._signatureBrowserDataLoading.set(false);
+          sub.unsubscribe();
+          return caught;
+        })
+      )
       .subscribe(res => {
         this._signatureBrowserDataLoading.set(false);
         this._signatureBrowserData.update(old => [...old, ...res]);
       });
+  }
+
+  private readonly _signatureExtendedDataLoading = signal<boolean>(false);
+  public readonly signatureExtendedDataLoading = this._signatureExtendedDataLoading.asReadonly();
+
+  public async fetchSignatureExtendedData(signature: string): Promise<SignatureExtendedData> {
+    return new Promise(resolve => {
+      const sub = this.http
+        .get<SignatureExtendedData>(apiUrl('/nsa/ruling/' + encodeURIComponent(signature)))
+        .pipe(
+          takeUntil(this.cancel$),
+          catchError((_, caught) => {
+            this._signatureBrowserDataLoading.set(false);
+            sub.unsubscribe();
+            return caught;
+          })
+        )
+        .subscribe(res => {
+          this._signatureBrowserDataLoading.set(false);
+          resolve(res);
+        });
+    });
+  }
+
+  //! loading NSA app from url data
+  async loadDataFromUrl(params: Record<string, string | string[]>): Promise<string[] | null> {
+    const { signature, systemMessage, messages } = params;
+
+    if (typeof signature !== 'string' || typeof systemMessage !== 'string' || !messages) return null;
+
+    const messagesArr = typeof messages === 'string' ? [messages] : messages;
+
+    const isRulingResponseOk = await this.fetchCourtRuling(signature);
+
+    if (!isRulingResponseOk) return null;
+
+    this.fetchGptAnswers({
+      systemMessage,
+      userMessage1: messagesArr[0],
+      userMessage2: messagesArr[1],
+      userMessage3: messagesArr[2],
+    });
+
+    for (let i = 3; i < messagesArr.length; i++) {
+      const msg = messagesArr[i];
+      this.fetchIndependentAnswer(signature, systemMessage, msg, i);
+    }
+
+    return messagesArr;
   }
 
   //! resetting

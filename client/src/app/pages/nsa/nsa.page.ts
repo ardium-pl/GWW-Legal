@@ -211,6 +211,19 @@ export class NsaPage implements OnInit, OnDestroy {
         this._scrollToCurrentMark();
       }, 0);
     });
+    effect(
+      () => {
+        if (
+          this.isFromBrowser() &&
+          (this.nsaService.rulingRequestState() == RequestState.Success ||
+            this.nsaService.rulingRequestState() == RequestState.Error) &&
+          this.nsaService.gptAnswersProgress().length > 0
+        ) {
+          this.currentPagerPage.set(2);
+        }
+      },
+      { allowSignalWrites: true }
+    );
     //subscribe to ctrl+f
     effect(onCleanup => {
       const sub = this.searchService.ctrlFObservable()?.subscribe(() => {
@@ -225,7 +238,7 @@ export class NsaPage implements OnInit, OnDestroy {
       });
     });
 
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.subscribe(async params => {
       const isFromBrowser = params['isFromBrowser'];
       if (isFromBrowser) {
         this.isFromBrowser.set(true);
@@ -237,8 +250,36 @@ export class NsaPage implements OnInit, OnDestroy {
 
       this.nsaFormPart1.setValue({ caseSignature: signature, rulingText: null });
       this.mixpanelService.track('Orzeczenia');
-      this.nsaService.fetchCourtRuling(this.nsaFormPart1.controls.caseSignature.value!);
       this.nsaFormPart1.markAsPristine();
+      const isRulingResponseOk = await this.nsaService.fetchCourtRuling(
+        this.nsaFormPart1.controls.caseSignature.value!
+      );
+
+      if (!this.isFromBrowser() || !isRulingResponseOk) {
+        return;
+      }
+
+      const { systemMessage, messages } = params;
+
+      this.router.navigate([], { queryParams: { systemMessage: null, messages: null }, queryParamsHandling: 'merge' });
+      if (typeof systemMessage !== 'string' || !messages) return null;
+
+      const messagesArr = typeof messages === 'string' ? [messages] : messages;
+
+      this.nsaFormPart2.controls.systemMessage.setValue(systemMessage);
+      this.nsaFormPart2.controls.userMessage1.setValue(messagesArr[0]);
+      this.nsaFormPart2.controls.userMessage2.setValue(messagesArr[1]);
+      this.nsaFormPart2.controls.userMessage3.setValue(messagesArr[2]);
+
+      this.fetchGptAnswers();
+
+      if (messagesArr.length <= 2) return;
+
+      for (let i = 3; i < messagesArr.length; i++) {
+        this._addIndependentQuestion(messagesArr[i]);
+        this.fetchIndependentAnswer(i - 3, messagesArr[i]);
+      }
+      return;
     });
   }
 
@@ -346,11 +387,20 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   //! adding questions
   onAddButtonClick() {
-    this.nsaFormPart3.controls.independentQuestions.push(new FormControl<string>(''));
+    this._addIndependentQuestion();
   }
 
-  onindependentQuestionButtonClick(index: number, control: FormControl) {
-    this.nsaService.fetchindependentAnswer(this.nsaFormPart2.controls.systemMessage.value!, control.value!, index);
+  private _addIndependentQuestion(initialValue: string = '') {
+    this.nsaFormPart3.controls.independentQuestions.push(new FormControl<string>(initialValue));
+  }
+
+  fetchIndependentAnswer(index: number, controlOrValue: FormControl | string) {
+    this.nsaService.fetchIndependentAnswer(
+      this.nsaFormPart1.controls.caseSignature.value!,
+      this.nsaFormPart2.controls.systemMessage.value!,
+      controlOrValue instanceof FormControl ? controlOrValue.value! : controlOrValue,
+      index
+    );
   }
 
   hasClickedFetchindependent(index: number) {

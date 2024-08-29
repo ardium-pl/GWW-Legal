@@ -61,15 +61,11 @@ export async function getPaginatedSignatures(page, pageSize) {
 
 export async function getDetailedRulingInfo(signature) {
   const query = `
-        SELECT r.signature,
-               r.ruling,
-               GROUP_CONCAT(DISTINCT gq.user_message_id) AS user_message_ids,
-               GROUP_CONCAT(DISTINCT gq.answer)          AS gpt_answers
-        FROM rulings r
-                 LEFT JOIN gpt_queries gq ON r.id = gq.ruling_id
-        WHERE r.signature = ?
-        GROUP BY r.id
-    `;
+  SELECT gq.system_message_id, gq.user_message_id
+  FROM gpt_queries gq
+  JOIN rulings r ON gq.ruling_id = r.id
+  WHERE r.signature = ?
+  ORDER BY gq.system_message_id ASC, gq.user_message_id ASC;`;
 
   const connection = await createTCPConnection();
   try {
@@ -79,20 +75,43 @@ export async function getDetailedRulingInfo(signature) {
       return null;
     }
 
-    const row = rows[0];
-    return {
-      signature: row.signature,
-      ruling: row.ruling,
-      gptQueries: row.user_message_ids
-        ? row.user_message_ids.split(',').map((id, index) => ({
-            userMessageId: parseInt(id),
-            answer: row.gpt_answers.split(',')[index],
-          }))
-        : [],
-    };
+    const filteredRows = rows
+      .filter(v => v.system_message_id === rows[0].system_message_id)
+      .map(v => ({ um: v.user_message_id, answer: v.answer }));
+
+    const systemMessage = await _getSystemMessageById(rows[0].system_message_id);
+
+    const userMessageIds = filteredRows.map(v => v.um);
+    const userMessages = await _getUserMessagesById(userMessageIds);
+
+    const independentMessages = userMessages.splice(3, userMessages.length);
+
+    return { systemMessage, mainMessages: userMessages, independentMessages };
   } finally {
     await connection.end();
   }
+}
+
+async function _getSystemMessageById(id) {
+  const connection = await createTCPConnection();
+  try {
+    return (await connection.execute(`SELECT content FROM system_messages WHERE id = ? LIMIT 1;`, [id]))?.[0]?.[0]
+      ?.content;
+  } finally {
+    await connection.end();
+  }
+}
+async function _getUserMessagesById(ids) {
+  const connection = await createTCPConnection();
+  const results = [];
+  for (const id of ids) {
+    const message = (
+      await connection.execute(`SELECT content FROM user_messages WHERE id = ? LIMIT 1;`, [id])
+    )?.[0]?.[0]?.content;
+    results.push(message);
+  }
+  await connection.end();
+  return results;
 }
 
 export async function getCourtRulingID(signature) {

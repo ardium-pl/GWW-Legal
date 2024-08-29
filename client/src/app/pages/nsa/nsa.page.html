@@ -214,7 +214,7 @@
         </mat-card-content>
       </mat-card>
       @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) || (showGptResultsImmediately() &&
-      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track response) {
+      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track $index) {
       <mat-card>
         <mat-card-header>
           Odpowiedź na pytanie {{ $index + 1 }}
@@ -298,7 +298,7 @@
               color="primary"
               type="submit"
               [disabled]="!control.value || independentLoading($index)"
-              (click)="onindependentQuestionButtonClick($index, control)"
+              (click)="fetchIndependentAnswer($index, control)"
             >
               Zapytaj
             </button>
@@ -306,7 +306,7 @@
             <mat-spinner />
             }
           </div>
-          } @if (independentLoaded($index)) {
+          } @else {
           <markdown> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
           }
         </mat-card-content>

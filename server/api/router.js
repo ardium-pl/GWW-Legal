@@ -52,6 +52,9 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
     if (!courtRuling) {
       return res.status(400).send({ error: 'Court ruling is required.' });
     }
+    if (!caseSignature) {
+      return res.status(400).send({ error: 'Case signature is required.' });
+    }
 
     if (/localhost/.test(req.get('origin'))) {
       const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim(), courtRuling);

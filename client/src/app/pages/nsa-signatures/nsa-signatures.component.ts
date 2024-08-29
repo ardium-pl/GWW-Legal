@@ -21,8 +21,23 @@ export class NsaSignaturesComponent implements OnInit {
 
   private readonly _currentPage = signal<number>(1);
 
-  onLoadDataClick(signature: string): void {
-    this.router.navigate(['nsa'], { queryParams: { signature, isFromBrowser: true } })
+  async onLoadDataClick(signature: string) {
+    const res = await this.nsaService.fetchSignatureExtendedData(signature);
+
+    console.log({
+      signature,
+      isFromBrowser: true,
+      systemMessage: res.systemMessage,
+      messages: res.mainMessages.concat(res.independentMessages),
+    });
+    this.router.navigate(['nsa'], {
+      queryParams: {
+        signature,
+        isFromBrowser: true,
+        systemMessage: res.systemMessage,
+        messages: res.mainMessages.concat(res.independentMessages),
+      },
+    });
   }
 
   onInfiniteScrollTrigger(): void {
