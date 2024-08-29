@@ -205,6 +205,7 @@
     <form
       [formGroup]="nsaFormPart3"
       (ngSubmit)="fetchAdditionalAnswer()"
+      #formPart3
     >
       <mat-card>
         <mat-card-header> Postęp odpowiedzi od AI </mat-card-header>
@@ -239,7 +240,7 @@
         </mat-card-content>
       </mat-card>
       @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) || (showGptResultsImmediately() &&
-      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track response) {
+      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track $index) {
       <mat-card>
         <mat-card-header>
           Odpowiedź na pytanie {{ $index + 1 }}
@@ -323,7 +324,7 @@
               color="primary"
               type="submit"
               [disabled]="!control.value || independentLoading($index)"
-              (click)="onindependentQuestionButtonClick($index, control)"
+              (click)="onIndependentQuestionButtonClick($index, control)"
             >
               Zapytaj
             </button>
@@ -331,8 +332,8 @@
             <mat-spinner />
             }
           </div>
-          } @if (independentLoaded($index)) {
-          <markdown> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
+          } @else {
+          <markdown class="independent-markdown" [class.error]="independentError($index)"> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
           }
         </mat-card-content>
       </mat-card>
