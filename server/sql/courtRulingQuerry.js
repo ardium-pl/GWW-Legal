@@ -1,11 +1,16 @@
 import { createTCPConnection } from './sqlConnect.js';
 
-export async function insertRuling(caseSignature, caseContent) {
+export async function getRulingBySignature(caseSignature) {
+  const connection = await createTCPConnection();
+  const [results] = await connection.query(`SELECT * FROM rulings WHERE signature = ?`, [caseSignature]);
+  return results.length > 0 ? results[0].ruling : null;
+}
+
+export async function insertRuling(caseSignature, caseContent, classification, summary) {
   const connection = await createTCPConnection();
   const [insertResult] = await connection.query(
-    `INSERT INTO rulings (signature, ruling)
-     VALUES (?, ?)`,
-    [caseSignature, caseContent]
+    `INSERT INTO rulings (signature, ruling, solved, summary) VALUES (?, ?, ?, ?)`,
+    [caseSignature, caseContent, classification, summary]
   );
   return insertResult.insertId;
 }
