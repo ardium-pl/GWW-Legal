@@ -1,11 +1,5 @@
 import { createTCPConnection } from './sqlConnect.js';
 
-export async function getRulingBySignature(caseSignature) {
-  const connection = await createTCPConnection();
-  const [results] = await connection.query(`SELECT * FROM rulings WHERE signature = ?`, [caseSignature]);
-  return results.length > 0 ? results[0].ruling : null;
-}
-
 export async function insertRuling(caseSignature, caseContent, classification, summary) {
   const connection = await createTCPConnection();
   const [insertResult] = await connection.query(
@@ -38,31 +32,6 @@ export async function getPaginatedSignatures(page, pageSize) {
     }
   }
 }
-
-// export async function getPaginatedSignatures(page, pageSize) {
-//     const offset = (page - 1) * pageSize;
-//     const query = `
-//         SELECT signature
-//         FROM rulings
-//         ORDER BY id
-//             LIMIT ? OFFSET ?
-//     `;
-//
-//     let connection;
-//     try {
-//         connection = await createTCPConnection();
-//         // Convert pageSize and offset to numbers explicitly
-//         const [rows] = await connection.execute(query, [Number(pageSize), Number(offset)]);
-//         return rows.map(row => row.signature);
-//     } catch (error) {
-//         console.error('Error in getPaginatedSignatures:', error);
-//         throw error;
-//     } finally {
-//         if (connection) {
-//             await connection.end();
-//         }
-//     }
-// }
 
 export async function getDetailedRulingInfo(signature) {
   const query = `
