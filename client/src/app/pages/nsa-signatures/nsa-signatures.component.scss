@@ -57,6 +57,13 @@
   .action {
     opacity: 0;
     appearance: none;
+    position: relative;
+
+    mat-spinner {
+      position: absolute;
+      left: calc(100% + 0.75rem);
+      top: 0;
+    }
   }
   button {
     margin-left: auto;
@@ -64,7 +71,10 @@
   &:hover,
   &:has(:focus-visible) {
     background-color: rgba(0, 0, 0, 0.03);
-
+  }
+  &:hover,
+  &:has(:focus-visible),
+  &:has(.mat-mdc-button-disabled) {
     .action {
       opacity: 1;
       appearance: initial;

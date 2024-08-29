@@ -315,6 +315,7 @@ export class NsaService implements OnDestroy {
 
   public async fetchSignatureExtendedData(signature: string): Promise<SignatureExtendedData> {
     return new Promise(resolve => {
+      this._signatureExtendedDataLoading.set(true);
       const sub = this.http
         .get<SignatureExtendedData>(apiUrl('/nsa/ruling/' + encodeURIComponent(signature)))
         .pipe(

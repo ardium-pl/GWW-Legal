@@ -21,7 +21,10 @@ export class NsaSignaturesComponent implements OnInit {
 
   private readonly _currentPage = signal<number>(1);
 
-  async onLoadDataClick(signature: string) {
+  readonly clickedSignatureButtonIndex = signal<number | null>(null);
+
+  async onLoadDataClick(signature: string, index: number) {
+    this.clickedSignatureButtonIndex.set(index);
     const res = await this.nsaService.fetchSignatureExtendedData(signature);
 
     console.log({
