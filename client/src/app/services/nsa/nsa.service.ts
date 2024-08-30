@@ -252,12 +252,12 @@ export class NsaService implements OnDestroy {
       .pipe(
         takeUntil(this.cancel$),
         catchError((err, caught) => {
-          this._gptAnswersProgress.update(v => {
+          this._independentQuestionsProgress.update(v => {
             const newProgress = [...v];
             newProgress[index] = 'ERROR';
             return newProgress;
           });
-          this._gptAnswersResponse.update(v => {
+          this._independentQuestionsResponses.update(v => {
             const newArr = v ? [...v] : [];
             newArr[index] = typeof err.error === 'string' ? err.error : 'Error: ' + err.status + ' ' + err.statusText;
             return newArr;

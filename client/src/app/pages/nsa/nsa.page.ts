@@ -286,9 +286,18 @@ export class NsaPage implements OnInit, OnDestroy {
   private _scrollToCurrentMark(): void {
     this.rulingTextEl()?.nativeElement.querySelector('mark.current')?.scrollIntoView();
   }
+  private _scrollToIndependentQuestion(): void {
+    const el = this.formPart3El()?.nativeElement;
+    console.log(el, this.formPart3El());
+    if (!el) return;
+    console.log(el, el.scrollHeight, el.scrollTop + el.getBoundingClientRect().height);
+
+    el.scrollTo({ behavior: 'smooth', top: el.scrollHeight });
+  }
 
   //! search
   readonly rulingTextEl = viewChild<ElementRef<HTMLElement>>('rulingTextEl');
+  readonly formPart3El = viewChild<ElementRef<HTMLElement>>('formPart3');
 
   onSearchChange(phrase: string): void {
     this.searchService.searchPhrase.set(phrase);
@@ -388,6 +397,9 @@ export class NsaPage implements OnInit, OnDestroy {
   //! adding questions
   onAddButtonClick() {
     this._addIndependentQuestion();
+    setTimeout(() => {
+      this._scrollToIndependentQuestion();
+    }, 0);
   }
 
   private _addIndependentQuestion(initialValue: string = '') {
@@ -417,6 +429,9 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   independentLoading(index: number) {
     return this.nsaService.independentQuestionsLoaded()[index] == false;
+  }
+  independentError(index: number) {
+    return this.nsaService.independentQuestionsProgress()[index] == 'ERROR';
   }
 
   //! resetting

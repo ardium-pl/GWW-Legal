@@ -267,3 +267,42 @@ mat-checkbox {
     top: 8px;
   }
 }
+//! independent question
+.search-button-container {
+  display: flex;
+  gap: 24px;
+}
+.add-question-btn {
+  width: 100%;
+  min-height: 80px;
+  border-radius: 6px;
+  border: 2px dashed var(--border);
+  display: flex;
+  gap: 1ch;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  letter-spacing: 0.3px;
+  background-color: transparent;
+  transition: background-color 0.15s ease;
+  outline: none;
+  
+  span {
+    opacity: 0.8;
+  }
+  mat-icon {
+    font-size: 24px !important;
+  }
+  &:hover {
+    background-color: rgba(0,0,0, 0.04);
+  }
+  &:focus-visible {
+    background-color: rgba(0,0,0, 0.12);
+  }
+  &:active {
+    background-color: rgba(0,0,0, 0.08);
+  }
+}
+.independent-markdown.error {
+  color: var(--error);
+}
