@@ -17,12 +17,14 @@ export async function getPaginatedSignatures(page, pageSize) {
     ORDER BY id
     LIMIT ${pageSize} OFFSET ${offset}
   `;
+  const totalQuery = `SELECT COUNT(*) AS amount FROM rulings;`
 
   let connection;
   try {
     connection = await createTCPConnection();
     const [rows] = await connection.query(query);
-    return rows.map(v => ({ ...v, solved: v.solved === -1 ? null : v.solved === 1 }));
+    const [total] = await connection.query(totalQuery);
+    return { data: rows.map(v => ({ ...v, solved: v.solved === -1 ? null : v.solved === 1 })), total: total[0].amount };
   } catch (error) {
     console.error('Error in getPaginatedSignatures:', error);
     throw error;

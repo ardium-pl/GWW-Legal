@@ -71,7 +71,7 @@ export class NsaPage implements OnInit, OnDestroy {
   readonly searchService = inject(SearchService);
   readonly dialog = inject(MatDialog);
   readonly mixpanelService = inject(MixpanelService);
-
+  
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
 
@@ -466,6 +466,8 @@ export class NsaPage implements OnInit, OnDestroy {
 
   private _resetForm() {
     this.nsaService.resetData();
+
+    this.router.navigate([], { queryParams: { signature: null }, queryParamsHandling: 'replace' });
 
     this.nsaFormPart1.controls.rulingText.reset();
     this.nsaFormPart2.reset({

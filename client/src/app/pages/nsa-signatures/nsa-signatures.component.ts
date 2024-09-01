@@ -38,6 +38,8 @@ export class NsaSignaturesComponent implements OnInit {
   }
 
   onInfiniteScrollTrigger(): void {
+    if (this.nsaService.isSignatureBrowserPageAvailable()(this._currentPage())) return;
+
     this._currentPage.update(v => v + 1);
 
     this.nsaService.fetchSignatureBrowserData(this._currentPage());

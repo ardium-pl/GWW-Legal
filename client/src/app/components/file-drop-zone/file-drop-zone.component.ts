@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Output, computed, input, output, viewChild } from '@angular/core';
-import { coerceArrayProperty, coerceBooleanProperty, coerceNumberProperty } from '@ardium-ui/devkit';
+import { Component, ElementRef, computed, input, output, viewChild } from '@angular/core';
+import { coerceArrayProperty, coerceNumberProperty } from '@ardium-ui/devkit';
 import { IconComponent } from '../icon/icon.component';
 
 @Component({
@@ -14,7 +14,7 @@ export class FileDropZoneComponent {
   readonly upload = output<File | File[]>();
   readonly accept = input<string, any>('*', { transform: v => coerceArrayProperty(v).join(',') });
   readonly acceptString = computed(() => this.accept().replaceAll(',', ', '));
-  readonly maxFiles = input<number, any>(1, { transform: v => (v === 'any' ? Infinity : coerceNumberProperty(v)) });
+  readonly maxFiles = input<number, any>(1, { transform: v => (v === 'any' ? Infinity : coerceNumberProperty(v, 1)) });
 
   readonly inputEl = viewChild<undefined, ElementRef<HTMLInputElement>>('inputEl', { read: ElementRef });
 

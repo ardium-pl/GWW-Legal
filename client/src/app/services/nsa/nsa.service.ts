@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
@@ -17,6 +18,7 @@ import {
 })
 export class NsaService implements OnDestroy {
   private readonly http = inject(HttpClient);
+  private readonly titleService = inject(Title);
 
   //! court ruling
   private readonly _rulingRequestState = signal<RequestState>(RequestState.Undefined);
@@ -34,6 +36,8 @@ export class NsaService implements OnDestroy {
   public async fetchCourtRuling(caseSignature: string): Promise<boolean> {
     return new Promise(resolve => {
       this._rulingRequestState.set(RequestState.Pending);
+      const oldTitle = this.titleService.getTitle();
+      this.titleService.setTitle(`${oldTitle} - Wyszukiwanie...`);
       this._caseSignature = caseSignature;
       const sub = this.http
         .post(apiUrl('/nsa/query'), { caseSignature })
@@ -47,6 +51,7 @@ export class NsaService implements OnDestroy {
               this._rulingError.set(rulingErrorToText(errorCode));
             }
             sub.unsubscribe();
+            this.titleService.setTitle(oldTitle);
             resolve(false);
             return caught;
           })
@@ -54,6 +59,7 @@ export class NsaService implements OnDestroy {
         .subscribe(res => {
           this._rulingResponse.set(res as string[]);
           this._rulingRequestState.set(RequestState.Success);
+          this.titleService.setTitle(oldTitle);
           resolve(true);
         });
     });
@@ -287,15 +293,28 @@ export class NsaService implements OnDestroy {
   private readonly _signatureBrowserData = signal<SignatureBrowserData[]>([]);
   public readonly signatureBrowserData = this._signatureBrowserData.asReadonly();
 
+  private readonly _signatureBrowserTotal = signal<number | undefined>(undefined);
+  public readonly signatureBrowserTotal = this._signatureBrowserTotal.asReadonly();
+
+  readonly signatureBrowserPageSize = 20;
+
+  public readonly isSignatureBrowserPageAvailable = computed(() => {
+    const total = this._signatureBrowserTotal();
+    return (page: number) => total && total <= (page - 1) * this.signatureBrowserPageSize;
+  })
+
   public fetchSignatureBrowserData(page: number): void {
     if (page === 1) {
       this._signatureBrowserData.set([]);
     }
+    if (this.isSignatureBrowserPageAvailable()(page)) return;
 
     this._signatureBrowserDataLoading.set(true);
 
     const sub = this.http
-      .get<SignatureBrowserData[]>(apiUrl('/nsa/signatures'), { params: { page } })
+      .get<{ data: SignatureBrowserData[]; total: number }>(apiUrl('/nsa/signatures'), {
+        params: { page, pageSize: this.signatureBrowserPageSize },
+      })
       .pipe(
         takeUntil(this.cancel$),
         catchError((_, caught) => {
@@ -306,7 +325,8 @@ export class NsaService implements OnDestroy {
       )
       .subscribe(res => {
         this._signatureBrowserDataLoading.set(false);
-        this._signatureBrowserData.update(old => [...old, ...res]);
+        this._signatureBrowserData.update(old => [...old, ...res.data]);
+        this._signatureBrowserTotal.set(res.total);
       });
   }
 
