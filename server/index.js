@@ -7,7 +7,7 @@ import {clientRouter} from "./client.js";
 import chalk from "chalk";
 
 const app = express();
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -50,15 +50,11 @@ app.listen(port, () => {
 // Obsługa nieobsłużonych odrzuceń Promise
 process.on('unhandledRejection', (reason, promise) => {
     console.error(chalk.red('Unhandled Rejection at:'), promise, chalk.red('reason:'), reason);
-    // W środowisku produkcyjnym możemy rozważyć zamknięcie serwera
-    // server.close(() => process.exit(1));
 });
 
 // Obsługa nieobsłużonych wyjątków
 process.on('uncaughtException', (error) => {
     console.error(chalk.red('Uncaught Exception:'), error);
-    // W środowisku produkcyjnym -> zamknąć serwer
-    // server.close(() => process.exit(1));
 });
 
 export default app;
