@@ -1,22 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  computed,
-  effect,
-  inject,
-  signal,
-  viewChild
-} from '@angular/core';
-import {
-  FormArray,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { Component, ElementRef, OnDestroy, OnInit, computed, effect, inject, signal, viewChild } from '@angular/core';
+import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -26,9 +9,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { ConfirmationDialogComponent, ConfirmationDialogData, IconComponent, RequiredStarComponent } from 'app/components';
-import { GptConversationDialogComponent, GptConversationDialogData } from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
+import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import {
+  ConfirmationDialogComponent,
+  ConfirmationDialogData,
+  IconComponent,
+  RequiredStarComponent,
+} from 'app/components';
+import {
+  GptConversationDialogComponent,
+  GptConversationDialogData,
+} from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
 import { NsaService } from 'app/services';
 import { MixpanelService } from 'app/services/mixpanel.service';
@@ -51,7 +43,7 @@ const DEFAULT_USER_MESSAGES = [
 @Component({
   selector: 'app-nsa',
   standalone: true,
-  providers: [NsaService, provideMarkdown()],
+  providers: [NsaService, provideMarkdown(), { provide: MAT_TOOLTIP_DEFAULT_OPTIONS, useValue: { showDelay: 600 } }],
   templateUrl: './nsa.page.html',
   styleUrl: './nsa.page.scss',
   imports: [
@@ -71,6 +63,7 @@ const DEFAULT_USER_MESSAGES = [
     MatCheckboxModule,
     SearchFabComponent,
     MatIconModule,
+    RouterModule,
   ],
 })
 export class NsaPage implements OnInit, OnDestroy {
@@ -78,6 +71,9 @@ export class NsaPage implements OnInit, OnDestroy {
   readonly searchService = inject(SearchService);
   readonly dialog = inject(MatDialog);
   readonly mixpanelService = inject(MixpanelService);
+  
+  readonly route = inject(ActivatedRoute);
+  readonly router = inject(Router);
 
   readonly nsaFormPart1 = new FormGroup({
     caseSignature: new FormControl<string>('', [Validators.required]),
@@ -103,6 +99,8 @@ export class NsaPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.showGptResultsImmediately.set(localStorage.getItem('showGptResultsImmediately') === 'true');
   }
+
+  readonly isFromBrowser = signal<boolean>(false);
 
   readonly additionalQuestions = [
     {
@@ -132,16 +130,14 @@ export class NsaPage implements OnInit, OnDestroy {
     if (!this.nsaFormPart1.controls.caseSignature.valid) {
       return;
     }
-    this.mixpanelService.track('Orzeczenia');
-    this.nsaService.fetchCourtRuling(this.nsaFormPart1.controls.caseSignature.value!);
-    this.nsaFormPart1.markAsPristine();
+    this.router.navigate([], { queryParams: { signature: this.nsaFormPart1.controls.caseSignature.value } });
   }
 
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
     this.mixpanelService.track('Odpowiedzi chatu');
-    const values = this.nsaFormPart2.value;
-    this.nsaService.fetchGptAnswers(values as NsaFormPart2);
+    const values = this.nsaFormPart2.value as NsaFormPart2;
+    this.nsaService.fetchGptAnswers(values);
     this.nsaFormPart3.reset();
     this.nextPage();
   }
@@ -215,6 +211,19 @@ export class NsaPage implements OnInit, OnDestroy {
         this._scrollToCurrentMark();
       }, 0);
     });
+    effect(
+      () => {
+        if (
+          this.isFromBrowser() &&
+          (this.nsaService.rulingRequestState() == RequestState.Success ||
+            this.nsaService.rulingRequestState() == RequestState.Error) &&
+          this.nsaService.gptAnswersProgress().length > 0
+        ) {
+          this.currentPagerPage.set(2);
+        }
+      },
+      { allowSignalWrites: true }
+    );
     //subscribe to ctrl+f
     effect(onCleanup => {
       const sub = this.searchService.ctrlFObservable()?.subscribe(() => {
@@ -227,6 +236,50 @@ export class NsaPage implements OnInit, OnDestroy {
       onCleanup(() => {
         sub?.unsubscribe();
       });
+    });
+
+    this.route.queryParams.subscribe(async params => {
+      const isFromBrowser = params['isFromBrowser'];
+      if (isFromBrowser) {
+        this.isFromBrowser.set(true);
+        this.router.navigate([], { queryParams: { isFromBrowser: null }, queryParamsHandling: 'merge' });
+        return;
+      }
+      const signature = params['signature'];
+      if (!signature) return;
+
+      this.nsaFormPart1.setValue({ caseSignature: signature, rulingText: null });
+      this.mixpanelService.track('Orzeczenia');
+      this.nsaFormPart1.markAsPristine();
+      const isRulingResponseOk = await this.nsaService.fetchCourtRuling(
+        this.nsaFormPart1.controls.caseSignature.value!
+      );
+
+      if (!this.isFromBrowser() || !isRulingResponseOk) {
+        return;
+      }
+
+      const { systemMessage, messages } = params;
+
+      this.router.navigate([], { queryParams: { systemMessage: null, messages: null }, queryParamsHandling: 'merge' });
+      if (typeof systemMessage !== 'string' || !messages) return null;
+
+      const messagesArr = typeof messages === 'string' ? [messages] : messages;
+
+      this.nsaFormPart2.controls.systemMessage.setValue(systemMessage);
+      this.nsaFormPart2.controls.userMessage1.setValue(messagesArr[0]);
+      this.nsaFormPart2.controls.userMessage2.setValue(messagesArr[1]);
+      this.nsaFormPart2.controls.userMessage3.setValue(messagesArr[2]);
+
+      this.fetchGptAnswers();
+
+      if (messagesArr.length <= 2) return;
+
+      for (let i = 3; i < messagesArr.length; i++) {
+        this._addIndependentQuestion(messagesArr[i]);
+        this.fetchIndependentAnswer(i - 3, messagesArr[i]);
+      }
+      return;
     });
   }
 
@@ -271,9 +324,7 @@ export class NsaPage implements OnInit, OnDestroy {
     if (this.nsaService.isAtLeastOneGptAnswerReady()) {
       this.showGptResultsImmediately.set(value);
     }
-    this.wasShowGptResultsImmediatelyChangedDuringPending.set(
-      this.nsaService.isAtLeastOneGptAnswerReady(),
-    );
+    this.wasShowGptResultsImmediatelyChangedDuringPending.set(this.nsaService.isAtLeastOneGptAnswerReady());
   }
 
   //! additional conversation
@@ -312,7 +363,9 @@ export class NsaPage implements OnInit, OnDestroy {
     const page = this.currentPagerPage();
     switch (page) {
       case 0:
-        return this.nsaService.rulingRequestState() !== RequestState.Success && !this.nsaFormPart1.controls.rulingText.value;
+        return (
+          this.nsaService.rulingRequestState() !== RequestState.Success && !this.nsaFormPart1.controls.rulingText.value
+        );
       case 1:
         return !this.nsaFormPart2.valid;
       case 2:
@@ -343,14 +396,23 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   //! adding questions
   onAddButtonClick() {
-    this.nsaFormPart3.controls.independentQuestions.push(new FormControl<string>(''));
+    this._addIndependentQuestion();
     setTimeout(() => {
       this._scrollToIndependentQuestion();
     }, 0);
   }
 
-  onIndependentQuestionButtonClick(index: number, control: FormControl) {
-    this.nsaService.fetchIndependentAnswer(this.nsaFormPart2.controls.systemMessage.value!, control.value!, index);
+  private _addIndependentQuestion(initialValue: string = '') {
+    this.nsaFormPart3.controls.independentQuestions.push(new FormControl<string>(initialValue));
+  }
+
+  fetchIndependentAnswer(index: number, controlOrValue: FormControl | string) {
+    this.nsaService.fetchIndependentAnswer(
+      this.nsaFormPart1.controls.caseSignature.value!,
+      this.nsaFormPart2.controls.systemMessage.value!,
+      controlOrValue instanceof FormControl ? controlOrValue.value! : controlOrValue,
+      index
+    );
   }
 
   hasClickedFetchindependent(index: number) {
@@ -358,7 +420,8 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   isVisibleAddButton() {
     return (
-      this.nsaService.independentQuestionsProgress().length == this.nsaFormPart3.controls.independentQuestions.controls.length
+      this.nsaService.independentQuestionsProgress().length ==
+      this.nsaFormPart3.controls.independentQuestions.controls.length
     );
   }
   independentLoaded(index: number) {
@@ -382,14 +445,17 @@ export class NsaPage implements OnInit, OnDestroy {
   }
 
   showResetConfirmDialog() {
-    const dialogRef = this.dialog.open<ConfirmationDialogComponent, ConfirmationDialogData>(ConfirmationDialogComponent, {
-      data: {
-        title: 'rozpocząć od nowa?',
-        swapButtonColors: true,
-        description:
-          'Niektóre odpowiedzi od AI nie zostały jeszcze załadowane. Po rozpoczęciu od nowa wszelkie prośby o odpowiedź zostaną anulowane.',
-      },
-    });
+    const dialogRef = this.dialog.open<ConfirmationDialogComponent, ConfirmationDialogData>(
+      ConfirmationDialogComponent,
+      {
+        data: {
+          title: 'rozpocząć od nowa?',
+          swapButtonColors: true,
+          description:
+            'Niektóre odpowiedzi od AI nie zostały jeszcze załadowane. Po rozpoczęciu od nowa wszelkie prośby o odpowiedź zostaną anulowane.',
+        },
+      }
+    );
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (!confirmed) return;
@@ -400,6 +466,8 @@ export class NsaPage implements OnInit, OnDestroy {
 
   private _resetForm() {
     this.nsaService.resetData();
+
+    this.router.navigate([], { queryParams: { signature: null }, queryParamsHandling: 'replace' });
 
     this.nsaFormPart1.controls.rulingText.reset();
     this.nsaFormPart2.reset({

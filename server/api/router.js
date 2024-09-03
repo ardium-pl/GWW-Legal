@@ -1,10 +1,16 @@
 import express from 'express';
-import { getCourtRulingID, getRulingBySignature } from '../sql/courtRulingQuerry.js';
+import {
+  getCourtRulingID,
+  getDetailedRulingInfo,
+  getPaginatedSignatures,
+  getRulingBySignature,
+} from '../sql/courtRulingQuerry.js';
 import { getGptResponse } from '../sql/gptAnswQuerry.js';
 import { getSystemMessageId, getUserMessageId } from '../sql/messagesQuerry.js';
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
 import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
 import { getCourtRuling } from './scraper.js';
+
 export const nsaRouter = express.Router();
 
 nsaRouter.post('/api/nsa/query', async (req, res) => {
@@ -46,6 +52,9 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
     if (!courtRuling) {
       return res.status(400).send({ error: 'Court ruling is required.' });
     }
+    if (!caseSignature) {
+      return res.status(400).send({ error: 'Case signature is required.' });
+    }
 
     if (/localhost/.test(req.get('origin'))) {
       const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim(), courtRuling);
@@ -83,6 +92,37 @@ nsaRouter.post('/api/nsa/conversation', async (req, res) => {
       res.status(500).send({ error: 'Internal Server Error', code: 'ENOTFOUND' });
       return;
     }
+    console.error(error);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
+});
+
+nsaRouter.get('/api/nsa/signatures', async (req, res) => {
+  try {
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const pageSize = Math.max(1, Math.min(100, parseInt(req.query.pageSize) || 20));
+
+    const signatures = await getPaginatedSignatures(page, pageSize);
+
+    res.json(signatures);
+  } catch (error) {
+    console.error('Error in /api/nsa/signatures endpoint:', error);
+    res.status(500).send({ error: 'Internal Server Error', details: error.message });
+  }
+});
+
+nsaRouter.get('/api/nsa/ruling/:signature', async (req, res) => {
+  try {
+    const { signature } = req.params;
+
+    const rulingInfo = await getDetailedRulingInfo(signature);
+
+    if (!rulingInfo) {
+      return res.status(404).send({ error: 'Ruling not found' });
+    }
+
+    res.json(rulingInfo);
+  } catch (error) {
     console.error(error);
     res.status(500).send({ error: 'Internal Server Error' });
   }

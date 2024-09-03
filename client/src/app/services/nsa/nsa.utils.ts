@@ -26,3 +26,19 @@ const DEFAULT_RULING_ERROR_TEXT = ['Wystąpił nieznany błąd.', 'Spróbuj wysz
 export function rulingErrorToText(error: RulingErrorCode): string[] {
   return RULING_ERROR_CODE_MAP[error] || DEFAULT_RULING_ERROR_TEXT;
 }
+
+export interface SignatureBrowserData {
+  signature: string;
+  solved: boolean | null;
+  summary: string;
+}
+
+type MessagesData = {
+  message: string;
+  answer: string;
+}
+export type SignatureExtendedData = {
+  systemMessage: string,
+  mainMessages: string[],
+  independentMessages: string[],
+}

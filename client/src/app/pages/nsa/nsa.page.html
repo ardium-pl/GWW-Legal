@@ -11,22 +11,13 @@
     (clickPrev)="searchService.prev()"
   />
 </div>
-<div
-  class="pager-container"
-  [style]="'--_pager-page:' + currentPagerPage()"
->
+<div class="pager-container" [style]="'--_pager-page:' + currentPagerPage()">
   <div class="page-container">
-    <form
-      [formGroup]="nsaFormPart1"
-      (ngSubmit)="getCourtRuling()"
-    >
+    <form [formGroup]="nsaFormPart1" (ngSubmit)="getCourtRuling()">
       <mat-card>
         <div class="indigo-stripe"></div>
         <div class="image-container">
-          <img
-            src="assets\images\GWW-logo.png"
-            class="logo"
-          />
+          <img src="assets\images\GWW-logo.png" class="logo" />
         </div>
         <div class="gray-stripe"></div>
         <span class="image-text">Aplikacja do orzeczeń sądowych</span>
@@ -38,12 +29,7 @@
         </mat-card-header>
         <mat-card-content>
           <mat-form-field>
-            <input
-              matInput
-              placeholder="np. III FSK 4005/21"
-              formControlName="caseSignature"
-              #caseSigntaureInput
-            />
+            <input matInput placeholder="np. III FSK 4005/21" formControlName="caseSignature" #caseSigntaureInput />
             <mat-error>To pole jest wymagane</mat-error>
           </mat-form-field>
           @if (nsaService.rulingRequestState() === 'error') {
@@ -54,23 +40,14 @@
             }
             <div class="ruling-text">
               <mat-form-field class="full-size">
-                <textarea
-                  matInput
-                  placeholder="Treść orzeczenia"
-                  formControlName="rulingText"
-                ></textarea>
+                <textarea matInput placeholder="Treść orzeczenia" formControlName="rulingText"></textarea>
               </mat-form-field>
             </div>
           </div>
           } @if (nsaService.rulingRequestState() !== 'error') {
           <mat-card-actions>
             <div [matTooltip]="getCourtRulingButtonTooltip()">
-              <button
-                mat-flat-button
-                color="primary"
-                type="submit"
-                [disabled]="isFindCaseButtonDisabled"
-              >
+              <button mat-flat-button color="primary" type="submit" [disabled]="isFindCaseButtonDisabled">
                 Wyszukaj
               </button>
             </div>
@@ -78,15 +55,16 @@
             <div class="spinner-container">
               <mat-spinner />
             </div>
+            } @if (!isFromBrowser()) {
+            <button mat-button color="primary" class="browser-button" routerLink="./signatures">
+              Przeglądaj orzeczenia
+            </button>
             }
           </mat-card-actions>
           } @if (nsaService.rulingRequestState() === 'success') {
           <mat-card-footer>
             <strong>Znaleziono orzeczenie:</strong>
-            <div
-              #rulingTextEl
-              [innerHTML]="searchService.highlightedText()"
-            ></div>
+            <div #rulingTextEl [innerHTML]="searchService.highlightedText()"></div>
           </mat-card-footer>
           }
         </mat-card-content>
@@ -155,38 +133,20 @@
             </button>
           </div>
           <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Pytanie 1"
-              formControlName="userMessage1"
-            ></textarea>
+            <textarea matInput placeholder="Pytanie 1" formControlName="userMessage1"></textarea>
           </mat-form-field>
           <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Pytanie 2"
-              formControlName="userMessage2"
-            ></textarea>
+            <textarea matInput placeholder="Pytanie 2" formControlName="userMessage2"></textarea>
           </mat-form-field>
           <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Pytanie 3"
-              formControlName="userMessage3"
-            ></textarea>
+            <textarea matInput placeholder="Pytanie 3" formControlName="userMessage3"></textarea>
           </mat-form-field>
         </mat-card-content>
       </mat-card>
     </form>
     <div class="buttons-container">
       <div>
-        <button
-          mat-button
-          type="button"
-          (click)="prevPage()"
-        >
-          Wróć
-        </button>
+        <button mat-button type="button" (click)="prevPage()">Wróć</button>
       </div>
       <div>
         <button
@@ -202,21 +162,14 @@
     </div>
   </div>
   <div class="page-container">
-    <form
-      [formGroup]="nsaFormPart3"
-      (ngSubmit)="fetchAdditionalAnswer()"
-      #formPart3
-    >
+    <form [formGroup]="nsaFormPart3" (ngSubmit)="fetchAdditionalAnswer()" #formPart3>
       <mat-card>
         <mat-card-header> Postęp odpowiedzi od AI </mat-card-header>
         <mat-card-content class="divided-card">
           <div class="progress-container">
             @for (progress of nsaService.gptAnswersProgress(); track $index) {
             <div class="progress-indicator">
-              <div
-                class="loading-icon"
-                [class]="'is-loaded-'+progress"
-              >
+              <div class="loading-icon" [class]="'is-loaded-'+progress">
                 @if (progress === true) {
                 <app-icon icon="check_circle" />
                 } @else if (progress === 'ERROR') {
@@ -266,10 +219,7 @@
         <mat-card-header> Zadaj AI dodatkowe pytanie </mat-card-header>
         <mat-card-content>
           Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jak NSA uargumentował:
-          <mat-radio-group
-            aria-label="Wybierz opcję"
-            formControlName="additionalQuestion"
-          >
+          <mat-radio-group aria-label="Wybierz opcję" formControlName="additionalQuestion">
             <mat-radio-button [value]="additionalQuestions[0].value">
               {{ additionalQuestions[0].label }}
             </mat-radio-button>
@@ -324,7 +274,7 @@
               color="primary"
               type="submit"
               [disabled]="!control.value || independentLoading($index)"
-              (click)="onIndependentQuestionButtonClick($index, control)"
+              (click)="fetchIndependentAnswer($index, control)"
             >
               Zapytaj
             </button>
@@ -333,15 +283,14 @@
             }
           </div>
           } @else {
-          <markdown class="independent-markdown" [class.error]="independentError($index)"> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
+          <markdown class="independent-markdown" [class.error]="independentError($index)">
+            {{ nsaService.independentQuestionsResponses()[$index] }}
+          </markdown>
           }
         </mat-card-content>
       </mat-card>
       } @if (isVisibleAddButton()) {
-      <button
-        class="add-question-btn"
-        (click)="onAddButtonClick()"
-      >
+      <button class="add-question-btn" (click)="onAddButtonClick()">
         <mat-icon fontIcon="add" />
         <span>Dodaj niezależne pytanie</span>
       </button>
@@ -349,24 +298,11 @@
     </form>
     <div class="buttons-container">
       <div>
-        <button
-          mat-button
-          type="button"
-          (click)="prevPage()"
-        >
-          Wróć
-        </button>
+        <button mat-button type="button" (click)="prevPage()">Wróć</button>
       </div>
       @if (nsaService.areGptAnswersReady()) {
       <div>
-        <button
-          mat-button
-          type="button"
-          color="primary"
-          (click)="onClickResetButton()"
-        >
-          Zacznij od nowa
-        </button>
+        <button mat-button type="button" color="primary" (click)="onClickResetButton()">Zacznij od nowa</button>
       </div>
       }
     </div>

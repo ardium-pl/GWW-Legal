@@ -1,16 +1,24 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
 import { GptConversation, GptConversationItemType } from './gpt-conversation';
-import { NsaFormPart2, RulingErrorCode, rulingErrorToText } from './nsa.utils';
+import {
+  NsaFormPart2,
+  RulingErrorCode,
+  SignatureBrowserData,
+  SignatureExtendedData,
+  rulingErrorToText,
+} from './nsa.utils';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NsaService implements OnDestroy {
   private readonly http = inject(HttpClient);
+  private readonly titleService = inject(Title);
 
   //! court ruling
   private readonly _rulingRequestState = signal<RequestState>(RequestState.Undefined);
@@ -25,28 +33,36 @@ export class NsaService implements OnDestroy {
 
   private _caseSignature: string = '';
 
-  public fetchCourtRuling(caseSignature: string): void {
-    this._rulingRequestState.set(RequestState.Pending);
-    this._caseSignature = caseSignature;
-    const sub = this.http
-      .post(apiUrl('/nsa/query'), { caseSignature })
-      .pipe(
-        takeUntil(this.cancel$),
-        catchError((err, caught) => {
-          this._rulingRequestState.set(RequestState.Error);
-          const errorCode = (err.error as { code: RulingErrorCode }).code;
+  public async fetchCourtRuling(caseSignature: string): Promise<boolean> {
+    return new Promise(resolve => {
+      this._rulingRequestState.set(RequestState.Pending);
+      const oldTitle = this.titleService.getTitle();
+      this.titleService.setTitle(`${oldTitle} - Wyszukiwanie...`);
+      this._caseSignature = caseSignature;
+      const sub = this.http
+        .post(apiUrl('/nsa/query'), { caseSignature })
+        .pipe(
+          takeUntil(this.cancel$),
+          catchError((err, caught) => {
+            this._rulingRequestState.set(RequestState.Error);
+            const errorCode = (err.error as { code: RulingErrorCode }).code;
 
-          if (errorCode in RulingErrorCode) {
-            this._rulingError.set(rulingErrorToText(errorCode));
-          }
-          sub.unsubscribe();
-          return caught;
-        })
-      )
-      .subscribe(res => {
-        this._rulingResponse.set(res as string[]);
-        this._rulingRequestState.set(RequestState.Success);
-      });
+            if (errorCode in RulingErrorCode) {
+              this._rulingError.set(rulingErrorToText(errorCode));
+            }
+            sub.unsubscribe();
+            this.titleService.setTitle(oldTitle);
+            resolve(false);
+            return caught;
+          })
+        )
+        .subscribe(res => {
+          this._rulingResponse.set(res as string[]);
+          this._rulingRequestState.set(RequestState.Success);
+          this.titleService.setTitle(oldTitle);
+          resolve(true);
+        });
+    });
   }
   public setManualCourtRuling(rulingText: string): void {
     this._rulingResponse.set([rulingText]);
@@ -225,7 +241,7 @@ export class NsaService implements OnDestroy {
 
   public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true));
 
-  fetchIndependentAnswer(systemMessage: string, userMessage: string, index: number): void {
+  fetchIndependentAnswer(caseSignature: string, systemMessage: string, userMessage: string, index: number): void {
     this._independentQuestionsProgress.update(arr => {
       const newArr = [...arr];
       newArr[index] = true;
@@ -234,6 +250,7 @@ export class NsaService implements OnDestroy {
 
     const sub = this.http
       .post(apiUrl('/nsa/question'), {
+        caseSignature,
         courtRuling: this.getCleanCourtRuling(),
         systemMessage,
         userMessage,
@@ -267,6 +284,73 @@ export class NsaService implements OnDestroy {
           return newArr;
         });
       });
+  }
+
+  //! signature browser
+  private readonly _signatureBrowserDataLoading = signal<boolean>(false);
+  public readonly signatureBrowserDataLoading = this._signatureBrowserDataLoading.asReadonly();
+
+  private readonly _signatureBrowserData = signal<SignatureBrowserData[]>([]);
+  public readonly signatureBrowserData = this._signatureBrowserData.asReadonly();
+
+  private readonly _signatureBrowserTotal = signal<number | undefined>(undefined);
+  public readonly signatureBrowserTotal = this._signatureBrowserTotal.asReadonly();
+
+  readonly signatureBrowserPageSize = 20;
+
+  public readonly isSignatureBrowserPageAvailable = computed(() => {
+    const total = this._signatureBrowserTotal();
+    return (page: number) => total && total <= (page - 1) * this.signatureBrowserPageSize;
+  })
+
+  public fetchSignatureBrowserData(page: number): void {
+    if (page === 1) {
+      this._signatureBrowserData.set([]);
+    }
+    if (this.isSignatureBrowserPageAvailable()(page)) return;
+
+    this._signatureBrowserDataLoading.set(true);
+
+    const sub = this.http
+      .get<{ data: SignatureBrowserData[]; total: number }>(apiUrl('/nsa/signatures'), {
+        params: { page, pageSize: this.signatureBrowserPageSize },
+      })
+      .pipe(
+        takeUntil(this.cancel$),
+        catchError((_, caught) => {
+          this._signatureBrowserDataLoading.set(false);
+          sub.unsubscribe();
+          return caught;
+        })
+      )
+      .subscribe(res => {
+        this._signatureBrowserDataLoading.set(false);
+        this._signatureBrowserData.update(old => [...old, ...res.data]);
+        this._signatureBrowserTotal.set(res.total);
+      });
+  }
+
+  private readonly _signatureExtendedDataLoading = signal<boolean>(false);
+  public readonly signatureExtendedDataLoading = this._signatureExtendedDataLoading.asReadonly();
+
+  public async fetchSignatureExtendedData(signature: string): Promise<SignatureExtendedData> {
+    return new Promise(resolve => {
+      this._signatureExtendedDataLoading.set(true);
+      const sub = this.http
+        .get<SignatureExtendedData>(apiUrl('/nsa/ruling/' + encodeURIComponent(signature)))
+        .pipe(
+          takeUntil(this.cancel$),
+          catchError((_, caught) => {
+            this._signatureBrowserDataLoading.set(false);
+            sub.unsubscribe();
+            return caught;
+          })
+        )
+        .subscribe(res => {
+          this._signatureBrowserDataLoading.set(false);
+          resolve(res);
+        });
+    });
   }
 
   //! resetting

@@ -1,7 +1,7 @@
 import OpenAI from 'openai';
+import { getCourtRulingID, insertRuling } from '../sql/courtRulingQuerry.js';
 import { setGptResponse } from '../sql/gptAnswQuerry.js';
 import { getSystemMessageId, getUserMessageId, insertSystemMessage, insertUserMessage } from '../sql/messagesQuerry.js';
-import { getCourtRulingID, insertRuling } from '../sql/courtRulingQuerry.js';
 
 const openai = new OpenAI();
 
@@ -89,18 +89,18 @@ async function fetchIDs(caseSignature, userMessage, systemMessage, courtRuling) 
 }
 
 export async function classifyCase(courtRuling) {
-  const systemMessage = `Napisz jedną literą: R (jeśli NSA rozstrzygnął sprawę merytorycznie), P (jeśli przekazał ją do WSA) lub N(jeśli nie da się tego określić). Orzeczenie: `;
+  const systemMessage = `Napisz jedną literą: R (jeśli NSA rozstrzygnął sprawę merytorycznie), P (jeśli przekazał ją do WSA) lub N (jeśli nie da się tego określić). Orzeczenie: `;
   const response = await getGptResponse(systemMessage, courtRuling);
   return validateClassificationResult(response);
 }
 
 function validateClassificationResult(response) {
   const trimmedResponse = response?.trim();
-  return { R: 1, P: 0, N: null }[trimmedResponse] ?? null;
+  return { R: 1, P: 0, N: -1 }[trimmedResponse] ?? -1;
 }
 
 export async function getCaseSummary(courtRuling) {
-  const systemMessage = `Na podstawie poniższego orzeczenia opisz krótko jaka była decyzja NSA odnośnie zastosowania art. 70 §. Czy postępowanie zostało według sądu wszczęte instrumentalnie? Twoja odpowiedź musi mieć mniej niż 165 znaków. Orzeczenie: `;
+  const systemMessage = `Na podstawie poniższego orzeczenia sformułuj krótkie podsumowanie treści orzeczenia NSA. Czy postępowanie zostało według sądu wszczęte instrumentalnie? Twoja odpowiedź musi mieć mniej niż 165 znaków. Orzeczenie: `;
   const response = await getGptResponse(systemMessage, courtRuling);
   return validateSummaryResult(response);
 }

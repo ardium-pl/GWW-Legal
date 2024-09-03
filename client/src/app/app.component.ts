@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ButtonComponent } from './components/button/button.component';
+import { NsaService } from './services';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,9 @@ import { ButtonComponent } from './components/button/button.component';
     RouterOutlet,
     ClipboardModule,
     ButtonComponent,
+  ],
+  providers: [
+    NsaService
   ],
   templateUrl: './app.component.html',
 })
