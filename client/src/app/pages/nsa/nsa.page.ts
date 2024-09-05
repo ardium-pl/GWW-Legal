@@ -4,11 +4,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
@@ -52,9 +55,12 @@ const DEFAULT_USER_MESSAGES = [
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatExpansionModule,
+    MatDividerModule,
     MatProgressSpinnerModule,
     RequiredStarComponent,
     FormsModule,
+    MatSelectModule,
     ReactiveFormsModule,
     MatRadioModule,
     IconComponent,
@@ -71,7 +77,7 @@ export class NsaPage implements OnInit, OnDestroy {
   readonly searchService = inject(SearchService);
   readonly dialog = inject(MatDialog);
   readonly mixpanelService = inject(MixpanelService);
-  
+
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
 
@@ -81,6 +87,7 @@ export class NsaPage implements OnInit, OnDestroy {
   });
   readonly nsaFormPart2 = new FormGroup({
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE, [Validators.required]),
+    userMessages: new FormArray<FormControl<string | null>>([]),
     userMessage1: new FormControl<string>(DEFAULT_USER_MESSAGES[0], [Validators.required]),
     userMessage2: new FormControl<string>(DEFAULT_USER_MESSAGES[1], [Validators.required]),
     userMessage3: new FormControl<string>(DEFAULT_USER_MESSAGES[2], [Validators.required]),
@@ -98,6 +105,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.showGptResultsImmediately.set(localStorage.getItem('showGptResultsImmediately') === 'true');
+    this.isSystemMessagePanelExpanded.set(localStorage.getItem('isSystemMessagePanelExpanded') === 'true');
   }
 
   readonly isFromBrowser = signal<boolean>(false);
@@ -174,6 +182,9 @@ export class NsaPage implements OnInit, OnDestroy {
     //store last value of showGptResultsImmediately in localStorage
     effect(() => {
       localStorage.setItem('showGptResultsImmediately', this.showGptResultsImmediately().toString());
+    });
+    effect(() => {
+      localStorage.setItem('isSystemMessagePanelExpanded', this.isSystemMessagePanelExpanded().toString());
     });
     //reset wasShowGptResultsImmediatelyChangedDuringPending when results are loaded
     effect(
@@ -295,6 +306,16 @@ export class NsaPage implements OnInit, OnDestroy {
     el.scrollTo({ behavior: 'smooth', top: el.scrollHeight });
   }
 
+  //! questions
+  readonly isSystemMessagePanelExpanded = signal<boolean>(false);
+
+  onAddQuestionClick() {
+    this.nsaFormPart2.controls.userMessages.push(new FormControl<string>(''));
+  }
+  test(v: any) {
+    console.log(v);
+  }
+
   //! search
   readonly rulingTextEl = viewChild<ElementRef<HTMLElement>>('rulingTextEl');
   readonly formPart3El = viewChild<ElementRef<HTMLElement>>('formPart3');
@@ -395,7 +416,7 @@ export class NsaPage implements OnInit, OnDestroy {
     this.nextPage();
   }
   //! adding questions
-  onAddButtonClick() {
+  onAddIndependentClick() {
     this._addIndependentQuestion();
     setTimeout(() => {
       this._scrollToIndependentQuestion();
@@ -467,7 +488,7 @@ export class NsaPage implements OnInit, OnDestroy {
   private _resetForm() {
     this.nsaService.resetData();
 
-    this.router.navigate([], { queryParams: { signature: null }, queryParamsHandling: 'replace' });
+    this.router.navigate([], { queryParams: { signature: null } });
 
     this.nsaFormPart1.controls.rulingText.reset();
     this.nsaFormPart2.reset({

@@ -207,6 +207,14 @@ app-icon {
   max-width: 1em;
 }
 
+mat-accordion {
+  width: 100%;
+}
+mat-panel-title {
+  font-size: 1.125rem;
+  padding-left: 0.5rem;
+}
+
 //! markdown styling
 markdown {
   ol,
