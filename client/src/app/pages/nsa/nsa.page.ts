@@ -312,6 +312,12 @@ export class NsaPage implements OnInit, OnDestroy {
   onAddQuestionClick() {
     this.nsaFormPart2.controls.userMessages.push(new FormControl<string>(''));
   }
+  onDeleteQuestionClick(index: number) {
+    this.nsaFormPart2.controls.userMessages.removeAt(index);
+  }
+  onEditQuestionClick(index: number) {
+    console.log(index);
+  }
   test(v: any) {
     console.log(v);
   }

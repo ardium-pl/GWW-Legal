@@ -43,6 +43,7 @@ body {
   --foreground: white;
 
   --red: rgb(239, 53, 29);
+  --red-dark: rgb(199, 40, 18);
   --error: rgb(240, 83, 63);
   --warning: rgb(235, 85, 15);
   --green: rgb(68, 162, 72);
@@ -194,12 +195,8 @@ mat-radio-group {
   flex-direction: column;
 }
 
-.material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24
+.mat-mdc-tooltip-panel {
+  pointer-events: none;
 }
 app-icon {
   font-size: 1.5em;

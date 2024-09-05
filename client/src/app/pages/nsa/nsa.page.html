@@ -124,16 +124,39 @@
         <mat-card-content class="compact"> Wybierz co najmniej jedno pytanie. </mat-card-content>
       </mat-card>
       @for (control of nsaFormPart2.controls.userMessages.controls; track $index) {
-      <mat-card>
+      <mat-card class="question-card">
         <mat-card-content class="question-card-content">
-          <mat-form-field class="full-size">
-            <mat-label>Pytanie {{ $index + 1 }}</mat-label>
-            <mat-select [formControl]="control">
-              <mat-option value="A">A</mat-option>
-              <mat-option value="B">B</mat-option>
-              <mat-option value="C">C</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <div class="select-container">
+            <mat-form-field class="full-size">
+              <mat-label>Pytanie {{ $index + 1 }}</mat-label>
+              <mat-select [formControl]="control">
+                <mat-option value="A">A</mat-option>
+                <mat-option value="B">B</mat-option>
+                <mat-option value="C">C</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="question-buttons-container">
+            <button
+              class="edit-button"
+              mat-icon-button
+              matTooltip="Edytuj pytanie"
+              (click)="onEditQuestionClick($index)"
+            >
+              <mat-icon fontIcon="edit" />
+            </button>
+            <div
+                [matTooltip]="nsaFormPart2.controls.userMessages.controls.length === 1 ? 'Przynajmniej jedno pytanie musi być zdefiniowane' : 'Usuń pytanie'">
+              <button
+                class="delete-button"
+                mat-icon-button
+                [disabled]="nsaFormPart2.controls.userMessages.controls.length === 1"
+                (click)="onDeleteQuestionClick($index)"
+              >
+                <mat-icon fontIcon="delete" />
+              </button>
+            </div>
+          </div>
         </mat-card-content>
       </mat-card>
       }

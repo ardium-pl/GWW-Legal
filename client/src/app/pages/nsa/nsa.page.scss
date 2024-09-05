@@ -174,8 +174,44 @@ mat-card-content {
     padding-top: 0.25rem;
   }
   &.question-card-content {
-    padding-top: 1.25rem;
-    padding-bottom: 0;
+    padding: 1.25rem 0 0 1rem;
+    display: flex;
+    justify-content: stretch;
+    flex-direction: row;
+    gap: 0.25rem;
+  }
+}
+.question-card {
+  &:hover {
+    .select-container {
+      padding-right: 0;
+    }
+    .question-buttons-container {
+      display: flex;
+    }
+  }
+}
+.select-container {
+  flex-grow: 1;
+  padding-right: 1rem;
+}
+.question-buttons-container {
+  width: max-content;
+  padding-bottom: 22px;
+  align-items: center;
+  display: none;
+
+  .edit-button {
+    &:hover,
+    &:focus-visible {
+      color: var(--indigo700);
+    }
+  }
+  .delete-button {
+    &:hover,
+    &:focus-visible {
+      color: var(--red-dark);
+    }
   }
 }
 mat-form-field {
@@ -280,7 +316,7 @@ mat-checkbox {
   background-color: transparent;
   transition: background-color 0.15s ease;
   outline: none;
-  
+
   span {
     opacity: 0.8;
   }
@@ -288,13 +324,13 @@ mat-checkbox {
     font-size: 24px !important;
   }
   &:hover {
-    background-color: rgba(0,0,0, 0.04);
+    background-color: rgba(0, 0, 0, 0.04);
   }
   &:focus-visible {
-    background-color: rgba(0,0,0, 0.12);
+    background-color: rgba(0, 0, 0, 0.12);
   }
   &:active {
-    background-color: rgba(0,0,0, 0.08);
+    background-color: rgba(0, 0, 0, 0.08);
   }
   &.small {
     min-height: 60px;
