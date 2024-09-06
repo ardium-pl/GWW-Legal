@@ -31,6 +31,7 @@ import { GptConversation } from 'app/services/nsa/gpt-conversation';
 import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
+import { CustomValidators } from 'app/utils/validators';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
 import { isNull } from 'simple-bool';
 
@@ -87,10 +88,10 @@ export class NsaPage implements OnInit, OnDestroy {
   });
   readonly nsaFormPart2 = new FormGroup({
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE, [Validators.required]),
-    userMessages: new FormArray<FormControl<string | null>>([]),
-    userMessage1: new FormControl<string>(DEFAULT_USER_MESSAGES[0], [Validators.required]),
-    userMessage2: new FormControl<string>(DEFAULT_USER_MESSAGES[1], [Validators.required]),
-    userMessage3: new FormControl<string>(DEFAULT_USER_MESSAGES[2], [Validators.required]),
+    userMessages: new FormArray<FormControl<string | null>>(
+      [],
+      [CustomValidators.minChildren(1), CustomValidators.minChildrenFilled(1)]
+    ),
   });
   readonly nsaFormPart3 = new FormGroup({
     additionalQuestion: new FormControl<string | null>(null, [Validators.required]),
@@ -125,13 +126,6 @@ export class NsaPage implements OnInit, OnDestroy {
 
   get isResetButtonActiveSystem(): boolean {
     return this.nsaFormPart2.controls.systemMessage.value !== DEFAULT_SYSTEM_MESSAGE;
-  }
-  get isResetButtonActiveUser(): boolean {
-    return (
-      this.nsaFormPart2.controls.userMessage1.value !== DEFAULT_USER_MESSAGES[0] ||
-      this.nsaFormPart2.controls.userMessage2.value !== DEFAULT_USER_MESSAGES[1] ||
-      this.nsaFormPart2.controls.userMessage3.value !== DEFAULT_USER_MESSAGES[2]
-    );
   }
 
   getCourtRuling(): void {
@@ -278,9 +272,10 @@ export class NsaPage implements OnInit, OnDestroy {
       const messagesArr = typeof messages === 'string' ? [messages] : messages;
 
       this.nsaFormPart2.controls.systemMessage.setValue(systemMessage);
-      this.nsaFormPart2.controls.userMessage1.setValue(messagesArr[0]);
-      this.nsaFormPart2.controls.userMessage2.setValue(messagesArr[1]);
-      this.nsaFormPart2.controls.userMessage3.setValue(messagesArr[2]);
+
+      for (const message of messagesArr) {
+        this.addNewQuestion(message);
+      }
 
       this.fetchGptAnswers();
 
@@ -299,9 +294,7 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   private _scrollToIndependentQuestion(): void {
     const el = this.formPart3El()?.nativeElement;
-    console.log(el, this.formPart3El());
     if (!el) return;
-    console.log(el, el.scrollHeight, el.scrollTop + el.getBoundingClientRect().height);
 
     el.scrollTo({ behavior: 'smooth', top: el.scrollHeight });
   }
@@ -309,8 +302,8 @@ export class NsaPage implements OnInit, OnDestroy {
   //! questions
   readonly isSystemMessagePanelExpanded = signal<boolean>(false);
 
-  onAddQuestionClick() {
-    this.nsaFormPart2.controls.userMessages.push(new FormControl<string>(''));
+  addNewQuestion(defaultValue: string = '') {
+    this.nsaFormPart2.controls.userMessages.push(new FormControl<string>(defaultValue));
   }
   onDeleteQuestionClick(index: number) {
     this.nsaFormPart2.controls.userMessages.removeAt(index);
@@ -318,6 +311,13 @@ export class NsaPage implements OnInit, OnDestroy {
   onEditQuestionClick(index: number) {
     console.log(index);
   }
+  // TODO
+  // modal for editing/adding
+  // backend
+  // option for adding
+  // NsaService
+  // expanded styling when opening the select
+
   test(v: any) {
     console.log(v);
   }
@@ -421,6 +421,17 @@ export class NsaPage implements OnInit, OnDestroy {
     }
     this.nextPage();
   }
+  part2NextPageTooltip(): string {
+    if (!this.nsaFormPart2.controls.systemMessage.valid) {
+      return 'System message musi być sprecyzowany!'
+    }
+    if (
+      this.nsaFormPart2.controls.userMessages.length === 0 ||
+      (this.nsaFormPart2.controls.userMessages.length === 1 && !this.nsaFormPart2.controls.userMessages.at(0).valid)
+    )
+      return 'Dodaj przynajmniej jedno pytanie';
+    return '';
+  }
   //! adding questions
   onAddIndependentClick() {
     this._addIndependentQuestion();
@@ -499,9 +510,7 @@ export class NsaPage implements OnInit, OnDestroy {
     this.nsaFormPart1.controls.rulingText.reset();
     this.nsaFormPart2.reset({
       systemMessage: DEFAULT_SYSTEM_MESSAGE,
-      userMessage1: DEFAULT_USER_MESSAGES[0],
-      userMessage2: DEFAULT_USER_MESSAGES[1],
-      userMessage3: DEFAULT_USER_MESSAGES[2],
+      userMessages: undefined,
     });
     this.nsaFormPart3.reset();
 
