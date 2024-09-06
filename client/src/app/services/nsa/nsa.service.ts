@@ -10,6 +10,7 @@ import {
   RulingErrorCode,
   SignatureBrowserData,
   SignatureExtendedData,
+  UserMessageData,
   rulingErrorToText,
 } from './nsa.utils';
 
@@ -66,6 +67,36 @@ export class NsaService implements OnDestroy {
   }
   public setManualCourtRuling(rulingText: string): void {
     this._rulingResponse.set([rulingText]);
+  }
+
+  //! user messages
+  private readonly _areUserMessagesLoading = signal<boolean>(false);
+  public readonly areUserMessagesLoading = this._areUserMessagesLoading.asReadonly();
+
+  private readonly _userMessagesResponse = signal<UserMessageData[] | null>(null);
+  public readonly userMessagesResponse = this._userMessagesResponse.asReadonly();
+
+  private readonly _userMessagesError = signal<any>(null);
+  public readonly userMessagesError = this._userMessagesError.asReadonly();
+
+  public async fetchUserMessages() {
+    this._areUserMessagesLoading.set(true);
+
+    const sub = this.http
+      .get<UserMessageData[]>(apiUrl('/nsa/questions'))
+      .pipe(takeUntil(this.cancel$))
+      .subscribe({
+        next: res => {
+          this._userMessagesResponse.set(res);
+        },
+        error: err => {
+          sub.unsubscribe();
+          this._userMessagesError.set(err);
+        },
+        complete: () => {
+          this._areUserMessagesLoading.set(false);
+        },
+      });
   }
 
   //! gpt answers to user messages
@@ -301,7 +332,7 @@ export class NsaService implements OnDestroy {
   public readonly isSignatureBrowserPageAvailable = computed(() => {
     const total = this._signatureBrowserTotal();
     return (page: number) => total && total <= (page - 1) * this.signatureBrowserPageSize;
-  })
+  });
 
   public fetchSignatureBrowserData(page: number): void {
     if (page === 1) {

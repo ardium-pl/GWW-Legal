@@ -182,24 +182,34 @@ mat-card-content {
   }
 }
 .question-card {
-  &:hover {
+  &:hover,
+  &.has-open-select {
     .select-container {
       padding-right: 0;
     }
     .question-buttons-container {
-      display: flex;
+      appearance: initial;
+      max-width: 96px;
     }
   }
 }
+
+$question-card-transition: 0.25s ease-in-out;
+
 .select-container {
   flex-grow: 1;
   padding-right: 1rem;
+  transition: padding-right $question-card-transition;
 }
 .question-buttons-container {
   width: max-content;
   padding-bottom: 22px;
   align-items: center;
-  display: none;
+  display: flex;
+  max-width: 0;
+  overflow: hidden;
+  transition: max-width $question-card-transition;
+  appearance: none;
 
   .edit-button {
     &:hover,

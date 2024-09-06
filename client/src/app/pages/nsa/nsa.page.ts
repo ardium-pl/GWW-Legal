@@ -107,6 +107,8 @@ export class NsaPage implements OnInit, OnDestroy {
   ngOnInit() {
     this.showGptResultsImmediately.set(localStorage.getItem('showGptResultsImmediately') === 'true');
     this.isSystemMessagePanelExpanded.set(localStorage.getItem('isSystemMessagePanelExpanded') === 'true');
+
+    this.nsaService.fetchUserMessages();
   }
 
   readonly isFromBrowser = signal<boolean>(false);
@@ -302,6 +304,10 @@ export class NsaPage implements OnInit, OnDestroy {
   //! questions
   readonly isSystemMessagePanelExpanded = signal<boolean>(false);
 
+  readonly userMessageOptions = this.nsaService.userMessagesResponse;
+
+  readonly openUserMessageSelect = signal<number | null>(null);
+
   addNewQuestion(defaultValue: string = '') {
     this.nsaFormPart2.controls.userMessages.push(new FormControl<string>(defaultValue));
   }
@@ -423,7 +429,7 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   part2NextPageTooltip(): string {
     if (!this.nsaFormPart2.controls.systemMessage.valid) {
-      return 'System message musi być sprecyzowany!'
+      return 'System message musi być sprecyzowany!';
     }
     if (
       this.nsaFormPart2.controls.userMessages.length === 0 ||
