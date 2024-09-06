@@ -183,6 +183,7 @@ mat-card-content {
 }
 .question-card {
   &:hover,
+  &:focus-within,
   &.has-open-select {
     .select-container {
       padding-right: 0;
@@ -194,7 +195,7 @@ mat-card-content {
   }
 }
 
-$question-card-transition: 0.25s ease-in-out;
+$question-card-transition: 0.15s ease-in-out;
 
 .select-container {
   flex-grow: 1;
