@@ -201,6 +201,10 @@ $question-card-transition: 0.15s ease-in-out;
   flex-grow: 1;
   padding-right: 1rem;
   transition: padding-right $question-card-transition;
+
+  .select-spinner-suffix {
+    padding: 0 12px;
+  }
 }
 .question-buttons-container {
   width: max-content;

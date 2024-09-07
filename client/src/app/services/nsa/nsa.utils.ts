@@ -1,7 +1,12 @@
 export type NsaFormPart2 = {
   systemMessage: string | null;
-  userMessages: UserMessageData[];
+  userMessages: number[];
 };
+
+export type UserMessageDialogFormData = {
+  shortMessage: string;
+  message: string;
+}
 
 export type UserMessageData = {
   id: number;

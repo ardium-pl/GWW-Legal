@@ -30,7 +30,6 @@ export async function updateUserMessage(msgId, userMessage, shortMessage) {
       msgId,
     ]);
     userMessagesCache[msgId] = { id: msgId, shortMessage: shortMessage, message: userMessage };
-    return insertResult.insertId;
   } finally {
     connection.end();
   }

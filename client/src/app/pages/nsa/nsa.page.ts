@@ -25,10 +25,14 @@ import {
   GptConversationDialogData,
 } from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
+import {
+  UserQuestionDialogComponent,
+  UserQuestionDialogData,
+} from 'app/components/user-question-dialog/user-question-dialog.component';
 import { NsaService } from 'app/services';
 import { MixpanelService } from 'app/services/mixpanel.service';
 import { GptConversation } from 'app/services/nsa/gpt-conversation';
-import { NsaFormPart2, UserMessageData } from 'app/services/nsa/nsa.utils';
+import { NsaFormPart2, UserMessageDialogFormData } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { CustomValidators } from 'app/utils/validators';
@@ -88,7 +92,7 @@ export class NsaPage implements OnInit, OnDestroy {
   });
   readonly nsaFormPart2 = new FormGroup({
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE, [Validators.required]),
-    userMessages: new FormArray<FormControl<UserMessageData | null>>(
+    userMessages: new FormArray<FormControl<number | null>>(
       [],
       [CustomValidators.minChildren(1), CustomValidators.minChildrenFilled(1)]
     ),
@@ -136,8 +140,7 @@ export class NsaPage implements OnInit, OnDestroy {
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
 
-    const values = this.nsaFormPart2.value as NsaFormPart2;
-    this.nsaService.fetchGptAnswers(values);
+    this.nsaService.fetchGptAnswers(this.nsaFormPart2.value as NsaFormPart2);
     this.nextPage();
   }
 
@@ -262,12 +265,6 @@ export class NsaPage implements OnInit, OnDestroy {
   private _scrollToCurrentMark(): void {
     this.rulingTextEl()?.nativeElement.querySelector('mark.current')?.scrollIntoView();
   }
-  private _scrollToIndependentQuestion(): void {
-    const el = this.formPart3El()?.nativeElement;
-    if (!el) return;
-
-    el.scrollTo({ behavior: 'smooth', top: el.scrollHeight });
-  }
 
   //! questions
   readonly isSystemMessagePanelExpanded = signal<boolean>(false);
@@ -276,15 +273,70 @@ export class NsaPage implements OnInit, OnDestroy {
 
   readonly openUserMessageSelect = signal<number | null>(null);
 
+  isControlLoading(control: FormControl<number | null>): boolean {
+    return !!control.value && this.nsaService.loadingSingleUserMessage() === control.value;
+  }
+
   addNewQuestion(defaultValue: number | null = null) {
     const messageData = defaultValue ? (this.userMessageOptions()?.find(v => v.id === defaultValue) ?? null) : null;
-    this.nsaFormPart2.controls.userMessages.push(new FormControl<UserMessageData | null>(messageData));
+    this.nsaFormPart2.controls.userMessages.push(new FormControl<number | null>(messageData?.id ?? null));
   }
   onDeleteQuestionClick(index: number) {
     this.nsaFormPart2.controls.userMessages.removeAt(index);
   }
-  onEditQuestionClick(index: number) {
-    console.log(index);
+  onEditQuestionClick(id: number | null) {
+    if (!id) return;
+
+    const userMessage = this.nsaService.userMessagesResponse()!.find(v => v.id === id)!;
+
+    const dialogRef = this.dialog.open<UserQuestionDialogComponent, UserQuestionDialogData, UserMessageDialogFormData>(
+      UserQuestionDialogComponent,
+      {
+        data: {
+          editedMessageId: id,
+          shortMessage: userMessage.shortMessage,
+          message: userMessage.message,
+        },
+      }
+    );
+    dialogRef.afterClosed().subscribe(async formData => {
+      if (!formData) return;
+
+      await this.nsaService.updateUserMessage(formData, id);
+
+      this.nsaService.manuallyUpdateUserMessage({ ...formData, id });
+    });
+  }
+  onUserMessageSelectChange(value: number, control: FormControl<number | null>) {
+    if (value !== -1) return;
+
+    const dialogRef = this.dialog.open<UserQuestionDialogComponent, UserQuestionDialogData, UserMessageDialogFormData>(
+      UserQuestionDialogComponent,
+      {
+        data: {
+          editedMessageId: null,
+          shortMessage: null,
+          message: null,
+        },
+      }
+    );
+    dialogRef.afterClosed().subscribe(formData => {
+      if (!formData) return;
+      console.log(formData);
+
+      this.nsaService.createUserMessage(formData, ({ id }) => {
+        if (!id) return;
+        const messageData = { ...formData, id };
+
+        console.log(messageData);
+        this.nsaService.manuallyAddUserMessage(messageData);
+
+        setTimeout(() => {
+          console.log('esnfk jsdnfkjs');
+          control.setValue(id);
+        }, 0);
+      });
+    });
   }
   // TODO
   // modal for editing/adding

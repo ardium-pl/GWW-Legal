@@ -105,6 +105,7 @@ body {
   --mdc-snackbar-container-color: rgb(240, 83, 63);
   --mat-option-label-text-line-height: 20px;
   --mat-option-focus-state-layer-color: rgba(0, 0, 170, 6%);
+  --mat-dialog-actions-alignment: flex-end;
 }
 
 //global styling
@@ -199,6 +200,9 @@ mat-radio-group {
 
 .mat-mdc-tooltip-panel {
   pointer-events: none;
+}
+div.mat-mdc-select-panel {
+  max-height: 304px !important;
 }
 app-icon {
   font-size: 1.5em;

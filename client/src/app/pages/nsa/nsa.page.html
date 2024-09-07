@@ -136,13 +136,21 @@
                 [formControl]="control"
                 (opened)="openUserMessageSelect.set($index)"
                 (closed)="openUserMessageSelect.set(null)"
+                (valueChange)="onUserMessageSelectChange($event, control)"
+                [disabled]="isControlLoading(control)"
               >
                 @for (opt of userMessageOptions(); track $index) {
                 <mat-option [value]="opt.id">{{ opt.shortMessage }}</mat-option>
                 }
+                <mat-option [value]="-1"><i>Dodaj nowe pytanie...</i></mat-option>
               </mat-select>
               @if (!control.valid) {
               <mat-error>Wybierz jakieś pytanie.</mat-error>
+              }
+              @if (isControlLoading(control)) {
+                <div matSuffix class="select-spinner-suffix">
+                  <mat-spinner />
+                </div>
               }
             </mat-form-field>
           </div>
@@ -151,7 +159,7 @@
               class="edit-button"
               mat-icon-button
               matTooltip="Edytuj pytanie"
-              (click)="onEditQuestionClick($index)"
+              (click)="onEditQuestionClick(control.value)"
             >
               <mat-icon fontIcon="edit" />
             </button>

@@ -11,6 +11,7 @@ import {
   SignatureBrowserData,
   SignatureExtendedData,
   UserMessageData,
+  UserMessageDialogFormData,
   rulingErrorToText,
 } from './nsa.utils';
 
@@ -76,8 +77,20 @@ export class NsaService implements OnDestroy {
   private readonly _userMessagesResponse = signal<UserMessageData[] | null>(null);
   public readonly userMessagesResponse = this._userMessagesResponse.asReadonly();
 
-  private readonly _userMessagesError = signal<any>(null);
-  public readonly userMessagesError = this._userMessagesError.asReadonly();
+  private readonly _loadingSingleUserMessage = signal<number | null>(null);
+  public readonly loadingSingleUserMessage = this._loadingSingleUserMessage.asReadonly();
+
+  public readonly userMessagesById = computed(() => {
+    const v = this.userMessagesResponse();
+    if (!v) return {};
+    return v.reduce(
+      (acc, el) => {
+        acc[el.id] = el;
+        return acc;
+      },
+      {} as Record<number, UserMessageData>
+    );
+  });
 
   public async fetchUserMessages() {
     this._areUserMessagesLoading.set(true);
@@ -91,12 +104,79 @@ export class NsaService implements OnDestroy {
         },
         error: err => {
           sub.unsubscribe();
-          this._userMessagesError.set(err);
         },
         complete: () => {
           this._areUserMessagesLoading.set(false);
         },
       });
+  }
+
+  public manuallyAddUserMessage(data: UserMessageData) {
+    this._userMessagesResponse.update(v => {
+      if (!v) return [data];
+      return [...v, data];
+    });
+  }
+  public manuallyUpdateUserMessage(data: UserMessageData) {
+    this._userMessagesResponse.update(v => {
+      if (!v) return v;
+      const itemIndex = v.findIndex(el => el.id === data.id);
+      v.splice(itemIndex, 1, data);
+      return v;
+    });
+  }
+
+  private readonly _isCreateUserMessageLoading = signal<boolean>(false);
+  public readonly isCreateUserMessageLoading = this._isCreateUserMessageLoading.asReadonly();
+
+  public async createUserMessage(formData: UserMessageDialogFormData, next: (data: { id: number | null }) => void) {
+    this._loadingSingleUserMessage.set(-1);
+
+    const sub = this.http
+      .post<{ id: number }>(apiUrl('/nsa/create-question'), formData)
+      .pipe(takeUntil(this.cancel$))
+      .subscribe({
+        next: res => {
+          console.log('next', res);
+          next(res);
+        },
+        error: () => {
+          console.log('error');
+          sub.unsubscribe();
+          next({ id: null });
+          // do some snackbar stuff
+        },
+        complete: () => {
+          console.log('complete');
+          this._loadingSingleUserMessage.set(null);
+        },
+      });
+  }
+
+  private readonly _isUpdateUserMessageLoading = signal<boolean>(false);
+  public readonly isUpdateUserMessageLoading = this._isUpdateUserMessageLoading.asReadonly();
+
+  public async updateUserMessage(formData: UserMessageDialogFormData, id: number): Promise<boolean> {
+    this._loadingSingleUserMessage.set(id);
+
+    return new Promise<boolean>(resolve => {
+      const sub = this.http
+        .put(apiUrl('/nsa/update-question'), { ...formData, id })
+        .pipe(takeUntil(this.cancel$))
+        .subscribe({
+          next: () => {
+            resolve(true);
+          },
+          error: () => {
+            sub.unsubscribe();
+            resolve(false);
+            // do some snackbar stuff
+          },
+          complete: () => {
+            this._loadingSingleUserMessage.set(null);
+          },
+        });
+    });
   }
 
   //! gpt answers to user messages
@@ -136,6 +216,7 @@ export class NsaService implements OnDestroy {
     this.resetAndInitializeConversations(streams.length);
 
     streams.forEach((stream, i) => {
+      const messageData = this.userMessagesById()[formOutput.userMessages[i]];
       const sub = stream
         .pipe(
           takeUntil(this.cancel$),
@@ -165,12 +246,7 @@ export class NsaService implements OnDestroy {
             newArr[i] = response as string;
             return newArr;
           });
-          this.createConversation(
-            i,
-            formOutput.systemMessage!,
-            formOutput.userMessages[i].message!,
-            response as string
-          );
+          this.createConversation(i, formOutput.systemMessage!, messageData.message, response as string);
         });
     });
   }
