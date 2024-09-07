@@ -262,16 +262,18 @@
         </mat-card-content>
       </mat-card>
       } }
-      <div class="buttons-container">
-        <div>
-          <button mat-button type="button" (click)="prevPage()" [disabled]="!nsaService.areGptAnswersReady()">Wróć</button>
-        </div>
-        @if (nsaService.areGptAnswersReady()) {
-        <div>
-          <button mat-button type="button" color="primary" (click)="onClickResetButton()">Zacznij od nowa</button>
-        </div>
-        }
-      </div>
     </form>
+    <div class="buttons-container">
+      <div>
+        <button mat-button type="button" (click)="prevPage()" [disabled]="!nsaService.areGptAnswersReady()">
+          Wróć
+        </button>
+      </div>
+      @if (nsaService.areGptAnswersReady()) {
+      <div>
+        <button mat-button type="button" color="primary" (click)="onClickResetButton()">Zacznij od nowa</button>
+      </div>
+      }
+    </div>
   </div>
 </div>

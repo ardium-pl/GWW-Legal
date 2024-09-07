@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
 import { Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
@@ -21,6 +22,7 @@ import {
 export class NsaService implements OnDestroy {
   private readonly http = inject(HttpClient);
   private readonly titleService = inject(Title);
+  private readonly snackBar = inject(MatSnackBar);
 
   //! court ruling
   private readonly _rulingRequestState = signal<RequestState>(RequestState.Undefined);
@@ -149,7 +151,7 @@ export class NsaService implements OnDestroy {
         error: () => {
           sub.unsubscribe();
           next({ id: null });
-          // do some snackbar stuff
+          this.snackBar.open('Nie udało się utworzyć pytania');
         },
         complete: () => {
           this._loadingSingleUserMessage.set(null);
@@ -174,7 +176,7 @@ export class NsaService implements OnDestroy {
           error: () => {
             sub.unsubscribe();
             resolve(false);
-            // do some snackbar stuff
+            this.snackBar.open('Nie udało się edytować pytania');
           },
           complete: () => {
             this._loadingSingleUserMessage.set(null);
@@ -232,14 +234,14 @@ export class NsaService implements OnDestroy {
 
     const streams = formOutput.userMessages
       .filter((_, i) => changed.includes(i))
-      .map((userMessageId, i) =>{
+      .map((userMessageId, i) => {
         return this.http.post(apiUrl('/nsa/question'), {
           caseSignature,
           courtRuling,
           systemMessage: formOutput.systemMessage,
           userMessageId,
-        })}
-      );
+        });
+      });
 
     streams.forEach((stream, i) => {
       const messageData = this.userMessagesById()[formOutput.userMessages[i]];
@@ -336,60 +338,6 @@ export class NsaService implements OnDestroy {
     this.cancelConversation$.next();
   }
 
-  //! independent questions
-  private readonly _independentQuestionsProgress = signal<(boolean | 'ERROR')[]>([]);
-  public readonly independentQuestionsProgress = this._independentQuestionsProgress.asReadonly();
-
-  private readonly _independentQuestionsResponses = signal<(string | null)[]>([]);
-  public readonly independentQuestionsResponses = this._independentQuestionsResponses.asReadonly();
-
-  public readonly independentQuestionsLoaded = computed(() => this._independentQuestionsProgress().map(v => v != true));
-
-  fetchIndependentAnswer(caseSignature: string, systemMessage: string, userMessage: string, index: number): void {
-    this._independentQuestionsProgress.update(arr => {
-      const newArr = [...arr];
-      newArr[index] = true;
-      return newArr;
-    });
-
-    const sub = this.http
-      .post(apiUrl('/nsa/question'), {
-        caseSignature,
-        courtRuling: this.getCleanCourtRuling(),
-        systemMessage,
-        userMessage,
-      })
-      .pipe(
-        takeUntil(this.cancel$),
-        catchError((err, caught) => {
-          this._independentQuestionsProgress.update(v => {
-            const newProgress = [...v];
-            newProgress[index] = 'ERROR';
-            return newProgress;
-          });
-          this._independentQuestionsResponses.update(v => {
-            const newArr = v ? [...v] : [];
-            newArr[index] = typeof err.error === 'string' ? err.error : 'Error: ' + err.status + ' ' + err.statusText;
-            return newArr;
-          });
-          sub.unsubscribe();
-          return caught;
-        })
-      )
-      .subscribe(res => {
-        this._independentQuestionsProgress.update(arr => {
-          const newArr = [...arr];
-          newArr[index] = false;
-          return newArr;
-        });
-        this._independentQuestionsResponses.update(arr => {
-          const newArr = [...arr];
-          newArr[index] = res as string;
-          return newArr;
-        });
-      });
-  }
-
   //! signature browser
   private readonly _signatureBrowserDataLoading = signal<boolean>(false);
   public readonly signatureBrowserDataLoading = this._signatureBrowserDataLoading.asReadonly();
@@ -465,6 +413,12 @@ export class NsaService implements OnDestroy {
 
     this._gptAnswersProgress.set([]);
     this._gptAnswersResponse.set(null);
+
+    this._userMessageControlsChangedSinceLastRequest.set([]);
+    this._isCreateUserMessageLoading.set(false);
+    this._isUpdateUserMessageLoading.set(false);
+    this._loadingSingleUserMessage.set(null);
+    this.isUserMessageSelected.set({});
 
     this._cancelAllRequests();
   }

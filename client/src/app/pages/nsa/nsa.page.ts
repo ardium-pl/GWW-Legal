@@ -42,12 +42,6 @@ import { isDefined, isNull } from 'simple-bool';
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
 
-const DEFAULT_USER_MESSAGES = [
-  'Czy mógłbyś proszę powiedzieć na podstawie poniższego orzeczenia czy Naczelny Sąd Administracyjny (NSA) oddalił sprawę do dalszego zbadania czy sam rozstrzygnął jej wynik?\n\nPodaj pełną odpowiedź a 2 linijki pod nią podsumuj w jednym zdaniu czy NSA merytorycznie rozstrzygnął sprawę?\n\nOrzeczenie:',
-  'Na podstawie poniższego orzeczenia NSA napisz proszę harmonogram zdarzeń. Harmonogram musi zaczynać się od wszczęcia kontroli skarbowej. Harmonogram musi uwzględnić datę zawieszenia terminu przedawnienia zobowiązania podatkowego.\n\nOrzeczenie:',
-  'Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jakie zarzuty wniósł skarżący w sprawie rozpatrywanej przez NSA.\n\nOrzeczenie:',
-];
-
 @Component({
   selector: 'app-nsa',
   standalone: true,
@@ -322,7 +316,8 @@ export class NsaPage implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(async formData => {
       if (!formData) return;
 
-      await this.nsaService.updateUserMessage(formData, id);
+      const success = await this.nsaService.updateUserMessage(formData, id);
+      if (!success) return;
 
       this.nsaService.manuallyUpdateUserMessage({ ...formData, id });
     });
@@ -350,7 +345,12 @@ export class NsaPage implements OnInit, OnDestroy {
       }
 
       this.nsaService.createUserMessage(formData, ({ id }) => {
-        if (!id) return;
+        if (!id) {
+          setTimeout(() => {
+            control.setValue(null);
+          }, 0);
+          return;
+        }
         const messageData = { ...formData, id };
 
         this.nsaService.manuallyAddUserMessage(messageData);
@@ -518,8 +518,12 @@ export class NsaPage implements OnInit, OnDestroy {
     this.nsaFormPart1.controls.rulingText.reset();
     this.nsaFormPart2.reset({
       systemMessage: DEFAULT_SYSTEM_MESSAGE,
-      userMessages: undefined,
+      userMessages: [],
     });
+
+    while (this.nsaFormPart2.controls.userMessages.controls.length) {
+      this.nsaFormPart2.controls.userMessages.removeAt(0);
+    }
 
     this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
     this.currentPagerPage.set(0);
