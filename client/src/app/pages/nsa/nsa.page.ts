@@ -297,6 +297,10 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   onDeleteQuestionClick(index: number) {
     this.nsaFormPart2.controls.userMessages.removeAt(index);
+    this.nsaService.isUserMessageSelected.update(v => {
+      delete v[index];
+      return { ...v };
+    });
   }
   onEditQuestionClick(id: number | null) {
     if (!id) return;
