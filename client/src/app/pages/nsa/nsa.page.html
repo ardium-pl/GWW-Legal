@@ -194,7 +194,7 @@
     </div>
   </div>
   <div class="page-container">
-    <form [formGroup]="nsaFormPart3" (ngSubmit)="fetchAdditionalAnswer()" #formPart3>
+    <form>
       <mat-card>
         <mat-card-header> Postęp odpowiedzi od AI </mat-card-header>
         <mat-card-content class="divided-card">
@@ -246,97 +246,17 @@
           }
         </mat-card-content>
       </mat-card>
-      } @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError() ) {
-      <mat-card>
-        <mat-card-header> Zadaj AI dodatkowe pytanie </mat-card-header>
-        <mat-card-content>
-          Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jak NSA uargumentował:
-          <mat-radio-group aria-label="Wybierz opcję" formControlName="additionalQuestion">
-            <mat-radio-button [value]="additionalQuestions[0].value">
-              {{ additionalQuestions[0].label }}
-            </mat-radio-button>
-            <mat-radio-button [value]="additionalQuestions[1].value">
-              {{ additionalQuestions[1].label }}
-            </mat-radio-button>
-          </mat-radio-group>
-          <mat-card-actions>
-            <div [matTooltip]="getAdditionalAnswerButtonTooltip()">
-              <button
-                mat-flat-button
-                color="primary"
-                type="submit"
-                [disabled]="nsaService.isAdditionalAnswerLoading() || !this.nsaFormPart3.valid || !nsaFormPart3.dirty"
-              >
-                Zapytaj
-              </button>
-            </div>
-            @if (nsaService.isAdditionalAnswerLoading()) {
-            <div class="spinner-container">
-              <mat-spinner />
-            </div>
-            }
-          </mat-card-actions>
-          @if (nsaService.additionalAnswerResponse() && !nsaService.isAdditionalAnswerLoading()) {
-          <mat-card-footer>
-            <strong>Odpowiedź od AI:</strong>
-            <markdown> {{ nsaService.additionalAnswerResponse() }} </markdown>
-          </mat-card-footer>
-          }
-        </mat-card-content>
-      </mat-card>
-      } } @for (control of nsaFormPart3.controls.independentQuestions.controls; track $index) {
-      <mat-card>
-        <mat-card-header>Niezależne pytanie</mat-card-header>
-        <mat-card-content>
-          <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Tu wpisz pytanie do AI"
-              [formControl]="control"
-              [class.hidden]="hasClickedFetchindependent($index)"
-            ></textarea>
-            @if (hasClickedFetchindependent($index)) {
-            <div>{{ control.value }}</div>
-            }
-          </mat-form-field>
-          @if (!independentLoaded($index)) {
-          <div class="search-button-container">
-            <button
-              mat-flat-button
-              color="primary"
-              type="submit"
-              [disabled]="!control.value || independentLoading($index)"
-              (click)="fetchIndependentAnswer($index, control)"
-            >
-              Zapytaj
-            </button>
-            @if (independentLoading($index)) {
-            <mat-spinner />
-            }
-          </div>
-          } @else {
-          <markdown class="independent-markdown" [class.error]="independentError($index)">
-            {{ nsaService.independentQuestionsResponses()[$index] }}
-          </markdown>
-          }
-        </mat-card-content>
-      </mat-card>
-      } @if (isVisibleAddButton()) {
-      <button class="add-question-btn" (click)="onAddIndependentClick()">
-        <mat-icon fontIcon="add" />
-        <span>Dodaj niezależne pytanie</span>
-      </button>
-      }
+      } }
+      <div class="buttons-container">
+        <div>
+          <button mat-button type="button" (click)="prevPage()">Wróć</button>
+        </div>
+        @if (nsaService.areGptAnswersReady()) {
+        <div>
+          <button mat-button type="button" color="primary" (click)="onClickResetButton()">Zacznij od nowa</button>
+        </div>
+        }
+      </div>
     </form>
-    <div class="buttons-container">
-      <div>
-        <button mat-button type="button" (click)="prevPage()">Wróć</button>
-      </div>
-      @if (nsaService.areGptAnswersReady()) {
-      <div>
-        <button mat-button type="button" color="primary" (click)="onClickResetButton()">Zacznij od nowa</button>
-      </div>
-      }
-    </div>
   </div>
 </div>

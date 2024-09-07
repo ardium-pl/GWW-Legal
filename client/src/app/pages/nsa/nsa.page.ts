@@ -93,10 +93,6 @@ export class NsaPage implements OnInit, OnDestroy {
       [CustomValidators.minChildren(1), CustomValidators.minChildrenFilled(1)]
     ),
   });
-  readonly nsaFormPart3 = new FormGroup({
-    additionalQuestion: new FormControl<string | null>(null, [Validators.required]),
-    independentQuestions: new FormArray<FormControl<string | null>>([]),
-  });
 
   readonly caseSigntaureInput = viewChild<ElementRef<HTMLInputElement>>('caseSigntaureInput');
 
@@ -142,20 +138,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
     const values = this.nsaFormPart2.value as NsaFormPart2;
     this.nsaService.fetchGptAnswers(values);
-    this.nsaFormPart3.reset();
     this.nextPage();
-  }
-
-  fetchAdditionalAnswer(): void {
-    if (!this.nsaFormPart3.valid) return;
-    this.mixpanelService.track('Odpowiedzi chatu dodatkowe');
-
-    this.nsaFormPart3.markAsPristine();
-
-    this.nsaService.fetchAdditionalAnswer(
-      this.nsaFormPart2.controls.systemMessage.value!,
-      this.nsaFormPart3.value.additionalQuestion!
-    );
   }
 
   constructor() {
@@ -165,14 +148,6 @@ export class NsaPage implements OnInit, OnDestroy {
         this.nsaFormPart1.controls.caseSignature.disable();
       } else {
         this.nsaFormPart1.controls.caseSignature.enable();
-      }
-    });
-    effect(() => {
-      // additional question
-      if (this.nsaService.isAdditionalAnswerLoading()) {
-        this.nsaFormPart3.controls.additionalQuestion.disable();
-      } else {
-        this.nsaFormPart3.controls.additionalQuestion.enable();
       }
     });
     //store last value of showGptResultsImmediately in localStorage
@@ -280,13 +255,6 @@ export class NsaPage implements OnInit, OnDestroy {
       }
 
       this.fetchGptAnswers();
-
-      if (messagesArr.length <= 2) return;
-
-      for (let i = 3; i < messagesArr.length; i++) {
-        this._addIndependentQuestion(messagesArr[i]);
-        this.fetchIndependentAnswer(i - 3, messagesArr[i]);
-      }
       return;
     });
   }
@@ -380,11 +348,6 @@ export class NsaPage implements OnInit, OnDestroy {
     if (!this.nsaFormPart1.dirty) return 'Zmień sygnaturę sprawy, aby wyszukać ponownie';
     return '';
   }
-  getAdditionalAnswerButtonTooltip(): string {
-    if (!this.nsaFormPart3.valid) return 'Najpierw wybierz rodzaj pytania';
-    if (!this.nsaFormPart3.dirty) return 'Zmień rodzaj pytania, aby zapytać ponownie';
-    return '';
-  }
 
   //! pager
   readonly currentPagerPage = signal<number>(0);
@@ -438,49 +401,10 @@ export class NsaPage implements OnInit, OnDestroy {
       return 'Dodaj przynajmniej jedno pytanie';
     return '';
   }
-  //! adding questions
-  onAddIndependentClick() {
-    this._addIndependentQuestion();
-    setTimeout(() => {
-      this._scrollToIndependentQuestion();
-    }, 0);
-  }
-
-  private _addIndependentQuestion(initialValue: string = '') {
-    this.nsaFormPart3.controls.independentQuestions.push(new FormControl<string>(initialValue));
-  }
-
-  fetchIndependentAnswer(index: number, controlOrValue: FormControl | string) {
-    this.nsaService.fetchIndependentAnswer(
-      this.nsaFormPart1.controls.caseSignature.value!,
-      this.nsaFormPart2.controls.systemMessage.value!,
-      controlOrValue instanceof FormControl ? controlOrValue.value! : controlOrValue,
-      index
-    );
-  }
-
-  hasClickedFetchindependent(index: number) {
-    return this.nsaService.independentQuestionsProgress()[index] != undefined;
-  }
-  isVisibleAddButton() {
-    return (
-      this.nsaService.independentQuestionsProgress().length ==
-      this.nsaFormPart3.controls.independentQuestions.controls.length
-    );
-  }
-  independentLoaded(index: number) {
-    return this.nsaService.independentQuestionsLoaded()[index];
-  }
-  independentLoading(index: number) {
-    return this.nsaService.independentQuestionsLoaded()[index] == false;
-  }
-  independentError(index: number) {
-    return this.nsaService.independentQuestionsProgress()[index] == 'ERROR';
-  }
 
   //! resetting
   onClickResetButton() {
-    if (!this.nsaService.areGptAnswersReady() || this.nsaService.isAdditionalAnswerLoading()) {
+    if (!this.nsaService.areGptAnswersReady()) {
       this.showResetConfirmDialog();
       return;
     }
@@ -518,7 +442,6 @@ export class NsaPage implements OnInit, OnDestroy {
       systemMessage: DEFAULT_SYSTEM_MESSAGE,
       userMessages: undefined,
     });
-    this.nsaFormPart3.reset();
 
     this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
     this.currentPagerPage.set(0);

@@ -119,8 +119,6 @@ export class NsaService implements OnDestroy {
   }
 
   public async fetchGptAnswers(formOutput: NsaFormPart2) {
-    this.resetAdditionalAnswer();
-
     const courtRuling = this.getCleanCourtRuling();
     const caseSignature = this._caseSignature;
 
@@ -175,33 +173,6 @@ export class NsaService implements OnDestroy {
           );
         });
     });
-  }
-
-  //! additional answer
-  private readonly _isAdditionalAnswerLoading = signal(false);
-  public readonly isAdditionalAnswerLoading = this._isAdditionalAnswerLoading.asReadonly();
-
-  private readonly _additionalAnswerResponse = signal<string | null>(null);
-  public readonly additionalAnswerResponse = this._additionalAnswerResponse.asReadonly();
-
-  private resetAdditionalAnswer(): void {
-    this._isAdditionalAnswerLoading.set(false);
-    this._additionalAnswerResponse.set(null);
-  }
-
-  public fetchAdditionalAnswer(systemMessage: string, userMessage: string): void {
-    this._isAdditionalAnswerLoading.set(true);
-    this.http
-      .post(apiUrl('/nsa/question'), {
-        courtRuling: this.getCleanCourtRuling(),
-        systemMessage,
-        userMessage,
-      })
-      .pipe(takeUntil(this.cancel$))
-      .subscribe(res => {
-        this._additionalAnswerResponse.set(res as string);
-        this._isAdditionalAnswerLoading.set(false);
-      });
   }
 
   //! conversations
@@ -395,9 +366,6 @@ export class NsaService implements OnDestroy {
 
     this._gptAnswersProgress.set([]);
     this._gptAnswersResponse.set(null);
-
-    this._isAdditionalAnswerLoading.set(false);
-    this._additionalAnswerResponse.set(null);
 
     this._cancelAllRequests();
   }
