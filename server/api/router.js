@@ -1,12 +1,12 @@
 import express from 'express';
 import {
-  getCourtRulingID,
+  getCourtRulingId,
   getDetailedRulingInfo,
   getPaginatedSignatures,
   getRulingBySignature,
 } from '../sql/courtRulingQuerry.js';
 import { getGptResponse } from '../sql/gptAnswQuerry.js';
-import { getSystemMessageId, getUserMessageId, getUserMessages } from '../sql/messagesQuerry.js';
+import { getSystemMessageId, getUserMessages } from '../sql/messagesQuerry.js';
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
 import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
 import { getCourtRuling } from './scraper.js';
@@ -58,7 +58,7 @@ nsaRouter.get('/api/nsa/questions', async (_, res) => {
 
 nsaRouter.post('/api/nsa/question', async (req, res) => {
   try {
-    const { caseSignature, courtRuling, systemMessage, userMessage } = req.body;
+    const { caseSignature, courtRuling, systemMessage, userMessageId } = req.body;
     if (!courtRuling) {
       return res.status(400).send({ error: 'Court ruling is required.' });
     }
@@ -67,20 +67,22 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
     }
 
     if (/localhost/.test(req.get('origin'))) {
-      const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim(), courtRuling);
+      const mockResponse = tryReturningMockUserMessageResponse(userMessageId, courtRuling);
       if (mockResponse) {
         res.json(mockResponse);
         return;
       }
     }
 
-    const courtRulingID = await getCourtRulingID(caseSignature);
-    const systemMessageID = await getSystemMessageId(systemMessage);
-    const userMessageID = await getUserMessageId(userMessage);
+    const courtRulingId = await getCourtRulingId(caseSignature);
+    const systemMessageId = await getSystemMessageId(systemMessage);
 
-    const response =
-      (await getGptResponse(courtRulingID, systemMessageID, userMessageID)) ||
-      (await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature));
+    const dbResponse = await getGptResponse(courtRulingId, systemMessageId, userMessageId);
+    if (dbResponse) res.status(200).json(dbResponse);
+
+    const userMessage = getUserMessage(userMessageId);
+
+    const response = await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature, systemMessageId, userMessageId, courtRulingId);
 
     res.status(200).json(response);
   } catch (error) {

@@ -28,7 +28,7 @@ import { SearchFabComponent } from 'app/components/search-fab/search-fab.compone
 import { NsaService } from 'app/services';
 import { MixpanelService } from 'app/services/mixpanel.service';
 import { GptConversation } from 'app/services/nsa/gpt-conversation';
-import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
+import { NsaFormPart2, UserMessageData } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { CustomValidators } from 'app/utils/validators';
@@ -88,7 +88,7 @@ export class NsaPage implements OnInit, OnDestroy {
   });
   readonly nsaFormPart2 = new FormGroup({
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE, [Validators.required]),
-    userMessages: new FormArray<FormControl<string | null>>(
+    userMessages: new FormArray<FormControl<UserMessageData | null>>(
       [],
       [CustomValidators.minChildren(1), CustomValidators.minChildrenFilled(1)]
     ),
@@ -139,7 +139,7 @@ export class NsaPage implements OnInit, OnDestroy {
 
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
-    this.mixpanelService.track('Odpowiedzi chatu');
+
     const values = this.nsaFormPart2.value as NsaFormPart2;
     this.nsaService.fetchGptAnswers(values);
     this.nsaFormPart3.reset();
@@ -308,8 +308,9 @@ export class NsaPage implements OnInit, OnDestroy {
 
   readonly openUserMessageSelect = signal<number | null>(null);
 
-  addNewQuestion(defaultValue: string = '') {
-    this.nsaFormPart2.controls.userMessages.push(new FormControl<string>(defaultValue));
+  addNewQuestion(defaultValue: number | null = null) {
+    const messageData = defaultValue ? (this.userMessageOptions()?.find(v => v.id === defaultValue) ?? null) : null;
+    this.nsaFormPart2.controls.userMessages.push(new FormControl<UserMessageData | null>(messageData));
   }
   onDeleteQuestionClick(index: number) {
     this.nsaFormPart2.controls.userMessages.removeAt(index);
@@ -319,10 +320,9 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   // TODO
   // modal for editing/adding
-  // backend
+  // backend caching
   // option for adding
-  // NsaService
-  // expanded styling when opening the select
+  // manage inserting things into db
 
   test(v: any) {
     console.log(v);

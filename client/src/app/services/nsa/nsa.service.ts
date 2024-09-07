@@ -124,14 +124,12 @@ export class NsaService implements OnDestroy {
     const courtRuling = this.getCleanCourtRuling();
     const caseSignature = this._caseSignature;
 
-    const userMessages = [formOutput.userMessage1, formOutput.userMessage2, formOutput.userMessage3];
-
-    const streams = userMessages.map(userMessage =>
+    const streams = formOutput.userMessages.map(userMessageId =>
       this.http.post(apiUrl('/nsa/question'), {
         caseSignature,
         courtRuling,
         systemMessage: formOutput.systemMessage,
-        userMessage,
+        userMessageId,
       })
     );
 
@@ -169,7 +167,12 @@ export class NsaService implements OnDestroy {
             newArr[i] = response as string;
             return newArr;
           });
-          this.createConversation(i, formOutput.systemMessage!, userMessages[i]!, response as string);
+          this.createConversation(
+            i,
+            formOutput.systemMessage!,
+            formOutput.userMessages[i].message!,
+            response as string
+          );
         });
     });
   }
