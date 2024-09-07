@@ -63,7 +63,6 @@ nsaRouter.get('/api/nsa/questions', async (_, res) => {
 
 nsaRouter.post('/api/nsa/create-question', async (req, res) => {
   try {
-    console.log(req.body);
     const { shortMessage, message } = req.body;
 
     if (!shortMessage) {

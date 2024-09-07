@@ -136,21 +136,21 @@
                 [formControl]="control"
                 (opened)="openUserMessageSelect.set($index)"
                 (closed)="openUserMessageSelect.set(null)"
-                (valueChange)="onUserMessageSelectChange($event, control)"
+                (closed)="updateUserMessageSelectedState($index, control)"
+                (valueChange)="onUserMessageSelectChange($index, $event)"
                 [disabled]="isControlLoading(control)"
               >
-                @for (opt of userMessageOptions(); track $index) {
+                @for (opt of getOptionsAvailableForSelect($index, control.value); track $index) {
                 <mat-option [value]="opt.id">{{ opt.shortMessage }}</mat-option>
                 }
                 <mat-option [value]="-1"><i>Dodaj nowe pytanie...</i></mat-option>
               </mat-select>
               @if (!control.valid) {
               <mat-error>Wybierz jakieś pytanie.</mat-error>
-              }
-              @if (isControlLoading(control)) {
-                <div matSuffix class="select-spinner-suffix">
-                  <mat-spinner />
-                </div>
+              } @if (isControlLoading(control)) {
+              <div matSuffix class="select-spinner-suffix">
+                <mat-spinner />
+              </div>
               }
             </mat-form-field>
           </div>
@@ -179,10 +179,15 @@
         </mat-card-content>
       </mat-card>
       }
-      <button class="add-question-btn small" (click)="addNewQuestion()">
-        <mat-icon fontIcon="add" />
-        <span>Dodaj pytanie</span>
-      </button>
+      <div
+        class="add-question-btn-wrapper"
+        [matTooltip]="isNoOptionsAvailable() ? 'Nie ma wystarczającej ilości możliwych pytań, aby dodać kolejne.' : ''"
+      >
+        <button class="add-question-btn small" (click)="addNewQuestion()" [disabled]="isNoOptionsAvailable()">
+          <mat-icon fontIcon="add" />
+          <span>Dodaj pytanie</span>
+        </button>
+      </div>
     </form>
     <div class="buttons-container">
       <div>
@@ -227,8 +232,9 @@
               (change)="onShowImmediatelyChange($event.checked)"
               [disabled]="wasShowGptResultsImmediatelyChangedDuringPending()"
               [checked]="showGptResultsImmediately()"
-              >Wyświetl od razu</mat-checkbox
             >
+              Wyświetl od razu
+            </mat-checkbox>
           </div>
         </mat-card-content>
       </mat-card>
@@ -242,6 +248,7 @@
             mat-icon-button
             matTooltip="Zadaj dodatkowe pytanie"
             (click)="onClickOpenConversation($index)"
+            [disabled]="!nsaService.gptAnswersProgress()[$index]"
           >
             <mat-icon fontIcon="forum" />
           </button>
@@ -257,7 +264,7 @@
       } }
       <div class="buttons-container">
         <div>
-          <button mat-button type="button" (click)="prevPage()">Wróć</button>
+          <button mat-button type="button" (click)="prevPage()" [disabled]="!nsaService.areGptAnswersReady()">Wróć</button>
         </div>
         @if (nsaService.areGptAnswersReady()) {
         <div>

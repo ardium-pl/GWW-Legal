@@ -32,12 +32,12 @@ import {
 import { NsaService } from 'app/services';
 import { MixpanelService } from 'app/services/mixpanel.service';
 import { GptConversation } from 'app/services/nsa/gpt-conversation';
-import { NsaFormPart2, UserMessageDialogFormData } from 'app/services/nsa/nsa.utils';
+import { NsaFormPart2, UserMessageData, UserMessageDialogFormData } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { CustomValidators } from 'app/utils/validators';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
-import { isNull } from 'simple-bool';
+import { isDefined, isNull } from 'simple-bool';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -139,6 +139,14 @@ export class NsaPage implements OnInit, OnDestroy {
 
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
+
+    for (let i = 0; i < this.nsaFormPart2.controls.userMessages.length; i++) {
+      const control = this.nsaFormPart2.controls.userMessages.at(i);
+      if (control.value) continue;
+
+      this.nsaFormPart2.controls.userMessages.removeAt(i);
+      i--;
+    }
 
     this.nsaService.fetchGptAnswers(this.nsaFormPart2.value as NsaFormPart2);
     this.nextPage();
@@ -277,6 +285,18 @@ export class NsaPage implements OnInit, OnDestroy {
     return !!control.value && this.nsaService.loadingSingleUserMessage() === control.value;
   }
 
+  getOptionsAvailableForSelect(index: number, controlValue: number | null): UserMessageData[] {
+    return (
+      this.userMessageOptions()?.filter(
+        opt => !Object.values(this.nsaService.isUserMessageSelected()).includes(opt.id) || opt.id === controlValue
+      ) ?? []
+    );
+  }
+  isNoOptionsAvailable() {
+    const opts = this.userMessageOptions()?.length;
+    return isDefined(opts) && this.nsaFormPart2.controls.userMessages.length > opts;
+  }
+
   addNewQuestion(defaultValue: number | null = null) {
     const messageData = defaultValue ? (this.userMessageOptions()?.find(v => v.id === defaultValue) ?? null) : null;
     this.nsaFormPart2.controls.userMessages.push(new FormControl<number | null>(messageData?.id ?? null));
@@ -307,7 +327,8 @@ export class NsaPage implements OnInit, OnDestroy {
       this.nsaService.manuallyUpdateUserMessage({ ...formData, id });
     });
   }
-  onUserMessageSelectChange(value: number, control: FormControl<number | null>) {
+  updateUserMessageSelectedState(index: number, control: FormControl<number | null>) {
+    const value = this.nsaFormPart2.controls.userMessages.at(index).value;
     if (value !== -1) return;
 
     const dialogRef = this.dialog.open<UserQuestionDialogComponent, UserQuestionDialogData, UserMessageDialogFormData>(
@@ -321,32 +342,37 @@ export class NsaPage implements OnInit, OnDestroy {
       }
     );
     dialogRef.afterClosed().subscribe(formData => {
-      if (!formData) return;
-      console.log(formData);
+      if (!formData) {
+        setTimeout(() => {
+          control.setValue(null);
+        }, 0);
+        return;
+      }
 
       this.nsaService.createUserMessage(formData, ({ id }) => {
         if (!id) return;
         const messageData = { ...formData, id };
 
-        console.log(messageData);
         this.nsaService.manuallyAddUserMessage(messageData);
 
         setTimeout(() => {
-          console.log('esnfk jsdnfkjs');
           control.setValue(id);
         }, 0);
       });
     });
   }
-  // TODO
-  // modal for editing/adding
-  // backend caching
-  // option for adding
-  // manage inserting things into db
+  onUserMessageSelectChange(index: number, value: number) {
+    if (value === -1) return;
 
-  test(v: any) {
-    console.log(v);
+    this.nsaService.markUserMessageControlAsChanged(index);
+
+    this.nsaService.isUserMessageSelected.update(v => {
+      v[index] = value;
+      return v;
+    });
   }
+  // TODO
+  // snackbars
 
   //! search
   readonly rulingTextEl = viewChild<ElementRef<HTMLElement>>('rulingTextEl');

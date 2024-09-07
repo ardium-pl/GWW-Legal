@@ -77,8 +77,16 @@ export class NsaService implements OnDestroy {
   private readonly _userMessagesResponse = signal<UserMessageData[] | null>(null);
   public readonly userMessagesResponse = this._userMessagesResponse.asReadonly();
 
+  public readonly isUserMessageSelected = signal<Record<number, number>>({});
+
   private readonly _loadingSingleUserMessage = signal<number | null>(null);
   public readonly loadingSingleUserMessage = this._loadingSingleUserMessage.asReadonly();
+
+  private readonly _userMessageControlsChangedSinceLastRequest = signal<number[]>([]);
+
+  markUserMessageControlAsChanged(index: number) {
+    this._userMessageControlsChangedSinceLastRequest.update(v => [...v, index]);
+  }
 
   public readonly userMessagesById = computed(() => {
     const v = this.userMessagesResponse();
@@ -101,6 +109,7 @@ export class NsaService implements OnDestroy {
       .subscribe({
         next: res => {
           this._userMessagesResponse.set(res);
+          this.isUserMessageSelected.set({});
         },
         error: err => {
           sub.unsubscribe();
@@ -136,18 +145,13 @@ export class NsaService implements OnDestroy {
       .post<{ id: number }>(apiUrl('/nsa/create-question'), formData)
       .pipe(takeUntil(this.cancel$))
       .subscribe({
-        next: res => {
-          console.log('next', res);
-          next(res);
-        },
+        next: next,
         error: () => {
-          console.log('error');
           sub.unsubscribe();
           next({ id: null });
           // do some snackbar stuff
         },
         complete: () => {
-          console.log('complete');
           this._loadingSingleUserMessage.set(null);
         },
       });
@@ -202,18 +206,40 @@ export class NsaService implements OnDestroy {
     const courtRuling = this.getCleanCourtRuling();
     const caseSignature = this._caseSignature;
 
-    const streams = formOutput.userMessages.map(userMessageId =>
-      this.http.post(apiUrl('/nsa/question'), {
-        caseSignature,
-        courtRuling,
-        systemMessage: formOutput.systemMessage,
-        userMessageId,
-      })
-    );
+    const changed = this._userMessageControlsChangedSinceLastRequest();
 
-    this._gptAnswersProgress.set(new Array(streams.length).fill(false));
-    this._gptAnswersResponse.set(new Array(streams.length).fill(''));
-    this.resetAndInitializeConversations(streams.length);
+    const streamsMissing = formOutput.userMessages.length - this._gptAnswersProgress().length;
+    if (streamsMissing > 0) {
+      this._gptAnswersProgress.update(arr => [...arr, ...new Array(streamsMissing).fill(false)]);
+      this._gptAnswersResponse.update(arr => [...(arr ?? []), ...new Array(streamsMissing).fill('')]);
+      this._conversations.update(arr => [...(arr ?? []), ...new Array(streamsMissing)]);
+    }
+
+    this._gptAnswersProgress.update(arr => {
+      for (const index of changed) {
+        arr[index] = false;
+      }
+      return [...arr];
+    });
+    this._gptAnswersResponse.update(arr => {
+      for (const index of changed) {
+        arr![index] = '';
+      }
+      return [...arr!];
+    });
+
+    this._userMessageControlsChangedSinceLastRequest.set([]);
+
+    const streams = formOutput.userMessages
+      .filter((_, i) => changed.includes(i))
+      .map((userMessageId, i) =>{
+        return this.http.post(apiUrl('/nsa/question'), {
+          caseSignature,
+          courtRuling,
+          systemMessage: formOutput.systemMessage,
+          userMessageId,
+        })}
+      );
 
     streams.forEach((stream, i) => {
       const messageData = this.userMessagesById()[formOutput.userMessages[i]];
@@ -257,9 +283,6 @@ export class NsaService implements OnDestroy {
 
   private readonly cancelConversation$ = new Subject<void>();
 
-  resetAndInitializeConversations(amount: number) {
-    this._conversations.set(new Array(amount));
-  }
   createConversation(index: number, systemMessage: string, userMessage: string, response: string) {
     this._conversations.update(arr => {
       const newArr = [...arr];
