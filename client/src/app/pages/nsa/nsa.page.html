@@ -261,10 +261,15 @@
           }
         </mat-card-content>
       </mat-card>
-      } }
+      } } @if (nsaService.areGptAnswersReady()) {
+      <mat-card>
+        <mat-card-header>Chcesz zadać więcej pytań?</mat-card-header>
+        <mat-card-content>Wróć do poprzedniej strony i dodaj następne.</mat-card-content>
+      </mat-card>
+      }
     </form>
     <div class="buttons-container">
-      <div>
+      <div [matTooltip]="!nsaService.areGptAnswersReady() ? 'Zaczekaj, aż wszystkie odpowiedzi będą gotowe' : ''">
         <button mat-button type="button" (click)="prevPage()" [disabled]="!nsaService.areGptAnswersReady()">
           Wróć
         </button>
