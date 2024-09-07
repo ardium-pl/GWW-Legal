@@ -1,6 +1,9 @@
 import { createTCPConnection } from './sqlConnect.js';
 
-export async function insertRuling(caseSignature, caseContent, classification, summary) {
+export async function insertRuling(caseSignature, caseContent) {
+  const classification = await classifyCase(combinedText);
+  const summary = await getCaseSummary(combinedText);
+
   const connection = await createTCPConnection();
   const [insertResult] = await connection.query(
     `INSERT INTO rulings (signature, ruling, solved, summary) VALUES (?, ?, ?, ?)`,
@@ -17,7 +20,7 @@ export async function getPaginatedSignatures(page, pageSize) {
     ORDER BY id
     LIMIT ${pageSize} OFFSET ${offset}
   `;
-  const totalQuery = `SELECT COUNT(*) AS amount FROM rulings;`
+  const totalQuery = `SELECT COUNT(*) AS amount FROM rulings;`;
 
   let connection;
   try {
