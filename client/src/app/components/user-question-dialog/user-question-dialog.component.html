@@ -4,7 +4,7 @@
     <mat-form-field class="short-message-field">
       <mat-label>Skrócone pytanie</mat-label>
       <input matInput formControlName="shortMessage" />
-      <mat-hint>Tą wersję pytania zobaczysz przy wyborze. Powinno być maksymalnie zwięzłe.</mat-hint>
+      <mat-hint>Tę wersję pytania zobaczysz przy wyborze. Powinno być maksymalnie zwięzłe.</mat-hint>
       @if (!form.controls.message.valid) {
         <mat-error>Skrócone pytanie musi być sprecyzowane!</mat-error>
       }
@@ -12,7 +12,7 @@
     <mat-form-field>
       <mat-label>Główna część pytania</mat-label>
       <textarea matInput formControlName="message"></textarea>
-      <mat-hint>Tą wersję pytania dostanie AI. Zadbaj, aby było wystarczająco dokładne.</mat-hint>
+      <mat-hint>Tę wersję pytania dostanie AI. Zadbaj, aby było wystarczająco dokładne.</mat-hint>
       @if (!form.controls.message.valid) {
         <mat-error>Główna część pytania musi być sprecyzowana!</mat-error>
       }
