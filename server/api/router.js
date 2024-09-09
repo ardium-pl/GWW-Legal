@@ -114,22 +114,22 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
       return res.status(400).send({ error: 'Case signature is required.' });
     }
 
-    // if (/localhost/.test(req.get('origin'))) {
-    //   const mockResponse = tryReturningMockUserMessageResponse(userMessageId, caseSignature);
-    //   if (mockResponse) {
-    //     res.json(mockResponse);
-    //     return;
-    //   }
-    // }
+    if (/localhost/.test(req.get('origin'))) {
+      const mockResponse = tryReturningMockUserMessageResponse(userMessageId, caseSignature);
+      if (mockResponse) {
+        res.json(mockResponse);
+        return;
+      }
+    }
 
     const courtRulingId = await getCourtRulingId(caseSignature);
     const systemMessageId = await getSystemMessageId(systemMessage);
 
-    // const dbResponse = await getGptResponse(courtRulingId, systemMessageId, userMessageId);
-    // if (dbResponse) {
-    //   res.status(200).json(dbResponse);
-    //   return;
-    // }
+    const dbResponse = await getGptResponse(courtRulingId, systemMessageId, userMessageId);
+    if (dbResponse) {
+      res.status(200).json(dbResponse);
+      return;
+    }
 
     const userMessage = getUserMessage(userMessageId);
 
