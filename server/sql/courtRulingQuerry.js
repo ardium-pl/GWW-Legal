@@ -94,6 +94,7 @@ async function _getUserMessagesById(ids) {
 }
 
 export async function getCourtRulingId(signature) {
+  if (signature === '!') return 1;
   const connection = await createTCPConnection();
   try {
     const [rows] = await connection.execute('SELECT id FROM rulings WHERE signature = ?', [signature]);

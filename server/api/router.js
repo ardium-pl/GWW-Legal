@@ -5,6 +5,7 @@ import {
   getPaginatedSignatures,
   getRulingBySignature,
 } from '../sql/courtRulingQuerry.js';
+import { getGptResponse } from '../sql/gptAnswQuerry.js';
 import {
   getSystemMessageId,
   getUserMessage,
@@ -12,7 +13,7 @@ import {
   insertUserMessage,
   updateUserMessage,
 } from '../sql/messagesQuerry.js';
-import { tryReturningMockRuling } from './mock-data.js';
+import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
 import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
 import { getCourtRuling } from './scraper.js';
 
