@@ -37,7 +37,9 @@ import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
 import { CustomValidators } from 'app/utils/validators';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
+import { Subscription } from 'rxjs';
 import { isDefined, isNull } from 'simple-bool';
+import { NsaQueryParams } from './types';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
@@ -204,9 +206,9 @@ export class NsaPage implements OnInit, OnDestroy {
           this.isFromBrowser() &&
           (this.nsaService.rulingRequestState() == RequestState.Success ||
             this.nsaService.rulingRequestState() == RequestState.Error) &&
-          this.nsaService.gptAnswersProgress().length > 0
+          isDefined(this.nsaService.userMessagesResponse())
         ) {
-          this.currentPagerPage.set(2);
+          this.currentPagerPage.set(1);
         }
       },
       { allowSignalWrites: true }
@@ -225,14 +227,15 @@ export class NsaPage implements OnInit, OnDestroy {
       });
     });
 
-    this.route.queryParams.subscribe(async params => {
-      const isFromBrowser = params['isFromBrowser'];
+    const sub = this.route.queryParams.subscribe(async params => {
+      const queryParams = params as NsaQueryParams;
+      const isFromBrowser = queryParams['isFromBrowser'];
       if (isFromBrowser) {
         this.isFromBrowser.set(true);
         this.router.navigate([], { queryParams: { isFromBrowser: null }, queryParamsHandling: 'merge' });
         return;
       }
-      const signature = params['signature'];
+      const signature = queryParams['signature'];
       if (!signature) return;
 
       this.nsaFormPart1.setValue({ caseSignature: signature, rulingText: null });
@@ -246,22 +249,31 @@ export class NsaPage implements OnInit, OnDestroy {
         return;
       }
 
-      const { systemMessage, messages } = params;
+      const { systemMessage, userMessageIds } = queryParams;
 
-      this.router.navigate([], { queryParams: { systemMessage: null, messages: null }, queryParamsHandling: 'merge' });
-      if (typeof systemMessage !== 'string' || !messages) return null;
-
-      const messagesArr = typeof messages === 'string' ? [messages] : messages;
+      this.router.navigate([], {
+        queryParams: { systemMessage: null, userMessageIds: null },
+        queryParamsHandling: 'merge',
+      });
+      if (typeof systemMessage !== 'string' || !userMessageIds) return null;
 
       this.nsaFormPart2.controls.systemMessage.setValue(systemMessage);
 
-      for (const message of messagesArr) {
-        this.addNewQuestion(message);
-      }
+      const messageIdsArr =
+        typeof userMessageIds === 'string' ? [Number(userMessageIds)] : userMessageIds.map(v => Number(v));
 
-      this.fetchGptAnswers();
+      for (const messageId of messageIdsArr) {
+        this.addNewQuestion(messageId);
+      }
       return;
     });
+
+    this._subs.push(sub);
+  }
+  private readonly _subs: Subscription[] = [];
+
+  ngOnDestroy(): void {
+    this._subs.forEach(sub => sub.unsubscribe());
   }
 
   private _scrollToCurrentMark(): void {
@@ -292,8 +304,8 @@ export class NsaPage implements OnInit, OnDestroy {
   }
 
   addNewQuestion(defaultValue: number | null = null) {
-    const messageData = defaultValue ? (this.userMessageOptions()?.find(v => v.id === defaultValue) ?? null) : null;
-    this.nsaFormPart2.controls.userMessages.push(new FormControl<number | null>(messageData?.id ?? null));
+    this.nsaFormPart2.controls.userMessages.push(new FormControl<number | null>(defaultValue));
+    this.nsaService.markUserMessageControlAsChanged(this.nsaFormPart2.controls.userMessages.controls.length - 1);
   }
   onDeleteQuestionClick(index: number) {
     this.nsaFormPart2.controls.userMessages.removeAt(index);
@@ -375,8 +387,6 @@ export class NsaPage implements OnInit, OnDestroy {
       return v;
     });
   }
-  // TODO
-  // snackbars
 
   //! search
   readonly rulingTextEl = viewChild<ElementRef<HTMLElement>>('rulingTextEl');
@@ -394,8 +404,6 @@ export class NsaPage implements OnInit, OnDestroy {
       }
     }, 0);
   }
-
-  ngOnDestroy(): void {}
 
   //! show immediately checkbox
   readonly showGptResultsImmediately = signal<boolean>(false);

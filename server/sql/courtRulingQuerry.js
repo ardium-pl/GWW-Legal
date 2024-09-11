@@ -54,18 +54,14 @@ export async function getDetailedRulingInfo(signature) {
       return null;
     }
 
-    const filteredRows = rows
-      .filter(v => v.system_message_id === rows[0].system_message_id)
-      .map(v => ({ um: v.user_message_id, answer: v.answer }));
+    const systemMessageId = rows[0].system_message_id;
+    const systemMessage = await _getSystemMessageById(systemMessageId);
+    const filteredRows = rows.filter(v => v.system_message_id === systemMessageId);
 
-    const systemMessage = await _getSystemMessageById(rows[0].system_message_id);
-
-    const userMessageIds = filteredRows.map(v => v.um);
-    const userMessages = await _getUserMessagesById(userMessageIds);
-
-    const independentMessages = userMessages.splice(3, userMessages.length);
-
-    return { systemMessage, mainMessages: userMessages, independentMessages };
+    return {
+      systemMessage,
+      userMessageIds: filteredRows.map(v => v.user_message_id),
+    };
   } finally {
     await connection.end();
   }
@@ -80,19 +76,6 @@ async function _getSystemMessageById(id) {
     await connection.end();
   }
 }
-async function _getUserMessagesById(ids) {
-  const connection = await createTCPConnection();
-  const results = [];
-  for (const id of ids) {
-    const message = (
-      await connection.execute(`SELECT content FROM user_messages WHERE id = ? LIMIT 1;`, [id])
-    )?.[0]?.[0]?.content;
-    results.push(message);
-  }
-  await connection.end();
-  return results;
-}
-
 export async function getCourtRulingId(signature) {
   if (signature === '!') return 1;
   const connection = await createTCPConnection();

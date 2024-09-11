@@ -45,12 +45,7 @@ export interface SignatureBrowserData {
   summary: string;
 }
 
-type MessagesData = {
-  message: string;
-  answer: string;
-};
 export type SignatureExtendedData = {
   systemMessage: string;
-  mainMessages: string[];
-  independentMessages: string[];
+  userMessageIds: number[];
 };
