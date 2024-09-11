@@ -305,7 +305,10 @@ export class NsaPage implements OnInit, OnDestroy {
 
   addNewQuestion(defaultValue: number | null = null) {
     this.nsaFormPart2.controls.userMessages.push(new FormControl<number | null>(defaultValue));
-    this.nsaService.markUserMessageControlAsChanged(this.nsaFormPart2.controls.userMessages.controls.length - 1);
+    const newIndex = this.nsaFormPart2.controls.userMessages.controls.length - 1;
+    this.nsaService.markUserMessageControlAsChanged(newIndex);
+
+    this._markQuestionAsSelected(newIndex, defaultValue);
   }
   onDeleteQuestionClick(index: number) {
     this.nsaFormPart2.controls.userMessages.removeAt(index);
@@ -379,13 +382,17 @@ export class NsaPage implements OnInit, OnDestroy {
   }
   onUserMessageSelectChange(index: number, value: number) {
     if (value === -1) return;
-
+    this._markQuestionAsSelected(index, value);
+  }
+  private _markQuestionAsSelected(index: number, value: number | null) {
     this.nsaService.markUserMessageControlAsChanged(index);
 
-    this.nsaService.isUserMessageSelected.update(v => {
-      v[index] = value;
-      return v;
-    });
+    if (isDefined(value)) {
+      this.nsaService.isUserMessageSelected.update(v => {
+        v[index] = value;
+        return v;
+      });
+    }
   }
 
   //! search
