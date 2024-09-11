@@ -12,7 +12,7 @@
   (ardInfScrollReachThreshold)="onInfiniteScrollTrigger()"
 >
   @for (dataItem of nsaService.signatureBrowserData(); track $index) {
-    <div class="list-row" (click)="onLoadDataClick(dataItem.signature, $index)">
+    <div class="list-row" (click)="onLoadDataClick(dataItem.signature)">
       <div class="signature">
         {{ dataItem.signature }}
       </div>
@@ -29,8 +29,8 @@
         }
       </div>
       <div class="action">
-        <button mat-button [disabled]="nsaService.signatureExtendedDataLoading()">Załaduj</button>
-        @if (clickedSignatureButtonIndex() === $index && nsaService.signatureExtendedDataLoading()) {
+        <button mat-button [disabled]="nsaService.signatureExtendedDataLoading()" [class.clicked-loading]="nsaService.signatureExtendedDataLoading() === dataItem.signature">Załaduj</button>
+        @if (nsaService.signatureExtendedDataLoading() === dataItem.signature) {
           <mat-spinner />
         }
       </div>

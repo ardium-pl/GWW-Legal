@@ -80,7 +80,7 @@
   }
   &:hover,
   &:has(:focus-visible),
-  &:has(.mat-mdc-button-disabled) {
+  &:has(.clicked-loading) {
     .action {
       opacity: 1;
       appearance: initial;

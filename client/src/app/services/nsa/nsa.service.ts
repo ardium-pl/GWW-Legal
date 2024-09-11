@@ -389,12 +389,12 @@ export class NsaService implements OnDestroy {
       });
   }
 
-  private readonly _signatureExtendedDataLoading = signal<boolean>(false);
+  private readonly _signatureExtendedDataLoading = signal<string | null>(null);
   public readonly signatureExtendedDataLoading = this._signatureExtendedDataLoading.asReadonly();
 
   public async fetchSignatureExtendedData(signature: string): Promise<SignatureExtendedData> {
     return new Promise(resolve => {
-      this._signatureExtendedDataLoading.set(true);
+      this._signatureExtendedDataLoading.set(signature);
       const sub = this.http
         .get<SignatureExtendedData>(apiUrl('/nsa/ruling/' + encodeURIComponent(signature)))
         .pipe(
