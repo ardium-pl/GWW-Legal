@@ -18,13 +18,11 @@ export class NsaSignaturesComponent implements OnInit {
   readonly router = inject(Router);
 
   readonly infiniteScrollActive = signal<boolean>(true);
-
   private readonly _currentPage = signal<number>(1);
 
   readonly clickedSignatureButtonIndex = signal<number | null>(null);
 
-  async onLoadDataClick(signature: string, index: number) {
-    this.clickedSignatureButtonIndex.set(index);
+  async onLoadDataClick(signature: string) {
     const res = await this.nsaService.fetchSignatureExtendedData(signature);
 
     this.router.navigate(['nsa'], {
@@ -32,7 +30,7 @@ export class NsaSignaturesComponent implements OnInit {
         signature,
         isFromBrowser: true,
         systemMessage: res.systemMessage,
-        messages: res.mainMessages.concat(res.independentMessages),
+        userMessageIds: res.userMessageIds,
       },
     });
   }

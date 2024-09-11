@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy, computed, inject, signal } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Title } from '@angular/platform-browser';
-import { Subject, catchError, takeUntil } from 'rxjs';
+import { Observable, Subject, catchError, takeUntil } from 'rxjs';
 import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
 import { GptConversation, GptConversationItemType } from './gpt-conversation';
@@ -84,10 +84,14 @@ export class NsaService implements OnDestroy {
   private readonly _loadingSingleUserMessage = signal<number | null>(null);
   public readonly loadingSingleUserMessage = this._loadingSingleUserMessage.asReadonly();
 
-  private readonly _userMessageControlsChangedSinceLastRequest = signal<number[]>([]);
+  private readonly _userMessageControlsChangedSinceLastRequest = signal<Set<number>>(new Set());
 
   markUserMessageControlAsChanged(index: number) {
-    this._userMessageControlsChangedSinceLastRequest.update(v => [...v, index]);
+    this._userMessageControlsChangedSinceLastRequest.update(v => {
+      const newSet = new Set<number>(v.values());
+      newSet.add(index);
+      return newSet;
+    });
   }
 
   public readonly userMessagesById = computed(() => {
@@ -208,7 +212,8 @@ export class NsaService implements OnDestroy {
     const courtRuling = this.getCleanCourtRuling();
     const caseSignature = this._caseSignature;
 
-    const changed = this._userMessageControlsChangedSinceLastRequest();
+    const changed = new Set(this._userMessageControlsChangedSinceLastRequest().values());
+    this._userMessageControlsChangedSinceLastRequest.set(new Set());
 
     const streamsMissing = formOutput.userMessages.length - this._gptAnswersProgress().length;
     if (streamsMissing > 0) {
@@ -230,20 +235,22 @@ export class NsaService implements OnDestroy {
       return [...arr!];
     });
 
-    this._userMessageControlsChangedSinceLastRequest.set([]);
-
     const streams = formOutput.userMessages
-      .filter((_, i) => changed.includes(i))
-      .map((userMessageId, i) => {
-        return this.http.post(apiUrl('/nsa/question'), {
-          caseSignature,
-          courtRuling,
-          systemMessage: formOutput.systemMessage,
-          userMessageId,
-        });
+      .map((v, i) => [v, i])
+      .filter(([, i]) => changed.has(i))
+      .map(([userMessageId, i]) => {
+        return [
+          this.http.post<string>(apiUrl('/nsa/question'), {
+            caseSignature,
+            courtRuling,
+            systemMessage: formOutput.systemMessage,
+            userMessageId,
+          }),
+          i,
+        ] as [Observable<string>, number];
       });
 
-    streams.forEach((stream, i) => {
+    streams.forEach(([stream, i]) => {
       const messageData = this.userMessagesById()[formOutput.userMessages[i]];
       const sub = stream
         .pipe(
@@ -271,10 +278,10 @@ export class NsaService implements OnDestroy {
           });
           this._gptAnswersResponse.update(v => {
             const newArr = v ? [...v] : [];
-            newArr[i] = response as string;
+            newArr[i] = response;
             return newArr;
           });
-          this.createConversation(i, formOutput.systemMessage!, messageData.message, response as string);
+          this.createConversation(i, formOutput.systemMessage!, messageData.message, response);
         });
     });
   }
@@ -382,12 +389,12 @@ export class NsaService implements OnDestroy {
       });
   }
 
-  private readonly _signatureExtendedDataLoading = signal<boolean>(false);
+  private readonly _signatureExtendedDataLoading = signal<string | null>(null);
   public readonly signatureExtendedDataLoading = this._signatureExtendedDataLoading.asReadonly();
 
   public async fetchSignatureExtendedData(signature: string): Promise<SignatureExtendedData> {
     return new Promise(resolve => {
-      this._signatureExtendedDataLoading.set(true);
+      this._signatureExtendedDataLoading.set(signature);
       const sub = this.http
         .get<SignatureExtendedData>(apiUrl('/nsa/ruling/' + encodeURIComponent(signature)))
         .pipe(
@@ -414,7 +421,7 @@ export class NsaService implements OnDestroy {
     this._gptAnswersProgress.set([]);
     this._gptAnswersResponse.set(null);
 
-    this._userMessageControlsChangedSinceLastRequest.set([]);
+    this._userMessageControlsChangedSinceLastRequest.set(new Set());
     this._isCreateUserMessageLoading.set(false);
     this._isUpdateUserMessageLoading.set(false);
     this._loadingSingleUserMessage.set(null);
