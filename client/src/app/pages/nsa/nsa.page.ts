@@ -4,11 +4,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
 import { MAT_TOOLTIP_DEFAULT_OPTIONS, MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
@@ -22,23 +25,22 @@ import {
   GptConversationDialogData,
 } from 'app/components/gpt-conversation-dialog/gpt-conversation-dialog.component';
 import { SearchFabComponent } from 'app/components/search-fab/search-fab.component';
+import {
+  UserQuestionDialogComponent,
+  UserQuestionDialogData,
+} from 'app/components/user-question-dialog/user-question-dialog.component';
 import { NsaService } from 'app/services';
 import { MixpanelService } from 'app/services/mixpanel.service';
 import { GptConversation } from 'app/services/nsa/gpt-conversation';
-import { NsaFormPart2 } from 'app/services/nsa/nsa.utils';
+import { NsaFormPart2, UserMessageData, UserMessageDialogFormData } from 'app/services/nsa/nsa.utils';
 import { SearchService } from 'app/services/search/search.service';
 import { RequestState } from 'app/services/types';
+import { CustomValidators } from 'app/utils/validators';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
-import { isNull } from 'simple-bool';
+import { isDefined, isNull } from 'simple-bool';
 
 const DEFAULT_SYSTEM_MESSAGE =
   'Your name is Legal Bro. You are a GPT tailored to read and interpret long legal texts in Polish. It provides clear, precise, and relevant answers based strictly on the text provided, using technical legal jargon appropriate for users familiar with legal terminology. When encountering ambiguous or unclear sections, Legal Bro will clearly indicate the ambiguity. Legal Bro maintains a neutral and purely informative tone, focusing solely on the factual content of the legal documents presented. It does not reference external laws or frameworks but sticks strictly to interpreting the provided text';
-
-const DEFAULT_USER_MESSAGES = [
-  'Czy mógłbyś proszę powiedzieć na podstawie poniższego orzeczenia czy Naczelny Sąd Administracyjny (NSA) oddalił sprawę do dalszego zbadania czy sam rozstrzygnął jej wynik?\n\nPodaj pełną odpowiedź a 2 linijki pod nią podsumuj w jednym zdaniu czy NSA merytorycznie rozstrzygnął sprawę?\n\nOrzeczenie:',
-  'Na podstawie poniższego orzeczenia NSA napisz proszę harmonogram zdarzeń. Harmonogram musi zaczynać się od wszczęcia kontroli skarbowej. Harmonogram musi uwzględnić datę zawieszenia terminu przedawnienia zobowiązania podatkowego.\n\nOrzeczenie:',
-  'Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jakie zarzuty wniósł skarżący w sprawie rozpatrywanej przez NSA.\n\nOrzeczenie:',
-];
 
 @Component({
   selector: 'app-nsa',
@@ -52,9 +54,12 @@ const DEFAULT_USER_MESSAGES = [
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatExpansionModule,
+    MatDividerModule,
     MatProgressSpinnerModule,
     RequiredStarComponent,
     FormsModule,
+    MatSelectModule,
     ReactiveFormsModule,
     MatRadioModule,
     IconComponent,
@@ -71,7 +76,7 @@ export class NsaPage implements OnInit, OnDestroy {
   readonly searchService = inject(SearchService);
   readonly dialog = inject(MatDialog);
   readonly mixpanelService = inject(MixpanelService);
-  
+
   readonly route = inject(ActivatedRoute);
   readonly router = inject(Router);
 
@@ -81,13 +86,10 @@ export class NsaPage implements OnInit, OnDestroy {
   });
   readonly nsaFormPart2 = new FormGroup({
     systemMessage: new FormControl<string>(DEFAULT_SYSTEM_MESSAGE, [Validators.required]),
-    userMessage1: new FormControl<string>(DEFAULT_USER_MESSAGES[0], [Validators.required]),
-    userMessage2: new FormControl<string>(DEFAULT_USER_MESSAGES[1], [Validators.required]),
-    userMessage3: new FormControl<string>(DEFAULT_USER_MESSAGES[2], [Validators.required]),
-  });
-  readonly nsaFormPart3 = new FormGroup({
-    additionalQuestion: new FormControl<string | null>(null, [Validators.required]),
-    independentQuestions: new FormArray<FormControl<string | null>>([]),
+    userMessages: new FormArray<FormControl<number | null>>(
+      [],
+      [CustomValidators.minChildren(1), CustomValidators.minChildrenFilled(1)]
+    ),
   });
 
   readonly caseSigntaureInput = viewChild<ElementRef<HTMLInputElement>>('caseSigntaureInput');
@@ -98,6 +100,9 @@ export class NsaPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.showGptResultsImmediately.set(localStorage.getItem('showGptResultsImmediately') === 'true');
+    this.isSystemMessagePanelExpanded.set(localStorage.getItem('isSystemMessagePanelExpanded') === 'true');
+
+    this.nsaService.fetchUserMessages();
   }
 
   readonly isFromBrowser = signal<boolean>(false);
@@ -118,13 +123,6 @@ export class NsaPage implements OnInit, OnDestroy {
   get isResetButtonActiveSystem(): boolean {
     return this.nsaFormPart2.controls.systemMessage.value !== DEFAULT_SYSTEM_MESSAGE;
   }
-  get isResetButtonActiveUser(): boolean {
-    return (
-      this.nsaFormPart2.controls.userMessage1.value !== DEFAULT_USER_MESSAGES[0] ||
-      this.nsaFormPart2.controls.userMessage2.value !== DEFAULT_USER_MESSAGES[1] ||
-      this.nsaFormPart2.controls.userMessage3.value !== DEFAULT_USER_MESSAGES[2]
-    );
-  }
 
   getCourtRuling(): void {
     if (!this.nsaFormPart1.controls.caseSignature.valid) {
@@ -135,23 +133,17 @@ export class NsaPage implements OnInit, OnDestroy {
 
   fetchGptAnswers(): void {
     if (this.disabledNextPage()) return;
-    this.mixpanelService.track('Odpowiedzi chatu');
-    const values = this.nsaFormPart2.value as NsaFormPart2;
-    this.nsaService.fetchGptAnswers(values);
-    this.nsaFormPart3.reset();
+
+    for (let i = 0; i < this.nsaFormPart2.controls.userMessages.length; i++) {
+      const control = this.nsaFormPart2.controls.userMessages.at(i);
+      if (control.value) continue;
+
+      this.nsaFormPart2.controls.userMessages.removeAt(i);
+      i--;
+    }
+
+    this.nsaService.fetchGptAnswers(this.nsaFormPart2.value as NsaFormPart2);
     this.nextPage();
-  }
-
-  fetchAdditionalAnswer(): void {
-    if (!this.nsaFormPart3.valid) return;
-    this.mixpanelService.track('Odpowiedzi chatu dodatkowe');
-
-    this.nsaFormPart3.markAsPristine();
-
-    this.nsaService.fetchAdditionalAnswer(
-      this.nsaFormPart2.controls.systemMessage.value!,
-      this.nsaFormPart3.value.additionalQuestion!
-    );
   }
 
   constructor() {
@@ -163,17 +155,12 @@ export class NsaPage implements OnInit, OnDestroy {
         this.nsaFormPart1.controls.caseSignature.enable();
       }
     });
-    effect(() => {
-      // additional question
-      if (this.nsaService.isAdditionalAnswerLoading()) {
-        this.nsaFormPart3.controls.additionalQuestion.disable();
-      } else {
-        this.nsaFormPart3.controls.additionalQuestion.enable();
-      }
-    });
     //store last value of showGptResultsImmediately in localStorage
     effect(() => {
       localStorage.setItem('showGptResultsImmediately', this.showGptResultsImmediately().toString());
+    });
+    effect(() => {
+      localStorage.setItem('isSystemMessagePanelExpanded', this.isSystemMessagePanelExpanded().toString());
     });
     //reset wasShowGptResultsImmediatelyChangedDuringPending when results are loaded
     effect(
@@ -267,18 +254,12 @@ export class NsaPage implements OnInit, OnDestroy {
       const messagesArr = typeof messages === 'string' ? [messages] : messages;
 
       this.nsaFormPart2.controls.systemMessage.setValue(systemMessage);
-      this.nsaFormPart2.controls.userMessage1.setValue(messagesArr[0]);
-      this.nsaFormPart2.controls.userMessage2.setValue(messagesArr[1]);
-      this.nsaFormPart2.controls.userMessage3.setValue(messagesArr[2]);
+
+      for (const message of messagesArr) {
+        this.addNewQuestion(message);
+      }
 
       this.fetchGptAnswers();
-
-      if (messagesArr.length <= 2) return;
-
-      for (let i = 3; i < messagesArr.length; i++) {
-        this._addIndependentQuestion(messagesArr[i]);
-        this.fetchIndependentAnswer(i - 3, messagesArr[i]);
-      }
       return;
     });
   }
@@ -286,14 +267,116 @@ export class NsaPage implements OnInit, OnDestroy {
   private _scrollToCurrentMark(): void {
     this.rulingTextEl()?.nativeElement.querySelector('mark.current')?.scrollIntoView();
   }
-  private _scrollToIndependentQuestion(): void {
-    const el = this.formPart3El()?.nativeElement;
-    console.log(el, this.formPart3El());
-    if (!el) return;
-    console.log(el, el.scrollHeight, el.scrollTop + el.getBoundingClientRect().height);
 
-    el.scrollTo({ behavior: 'smooth', top: el.scrollHeight });
+  //! questions
+  readonly isSystemMessagePanelExpanded = signal<boolean>(false);
+
+  readonly userMessageOptions = this.nsaService.userMessagesResponse;
+
+  readonly openUserMessageSelect = signal<number | null>(null);
+
+  isControlLoading(control: FormControl<number | null>): boolean {
+    return !!control.value && this.nsaService.loadingSingleUserMessage() === control.value;
   }
+
+  getOptionsAvailableForSelect(index: number, controlValue: number | null): UserMessageData[] {
+    return (
+      this.userMessageOptions()?.filter(
+        opt => !Object.values(this.nsaService.isUserMessageSelected()).includes(opt.id) || opt.id === controlValue
+      ) ?? []
+    );
+  }
+  isNoOptionsAvailable() {
+    const opts = this.userMessageOptions()?.length;
+    return isDefined(opts) && this.nsaFormPart2.controls.userMessages.length > opts;
+  }
+
+  addNewQuestion(defaultValue: number | null = null) {
+    const messageData = defaultValue ? (this.userMessageOptions()?.find(v => v.id === defaultValue) ?? null) : null;
+    this.nsaFormPart2.controls.userMessages.push(new FormControl<number | null>(messageData?.id ?? null));
+  }
+  onDeleteQuestionClick(index: number) {
+    this.nsaFormPart2.controls.userMessages.removeAt(index);
+    this.nsaService.isUserMessageSelected.update(v => {
+      delete v[index];
+      return { ...v };
+    });
+  }
+  onEditQuestionClick(id: number | null) {
+    if (!id) return;
+
+    const userMessage = this.nsaService.userMessagesResponse()!.find(v => v.id === id)!;
+
+    const dialogRef = this.dialog.open<UserQuestionDialogComponent, UserQuestionDialogData, UserMessageDialogFormData>(
+      UserQuestionDialogComponent,
+      {
+        data: {
+          editedMessageId: id,
+          shortMessage: userMessage.shortMessage,
+          message: userMessage.message,
+        },
+      }
+    );
+    dialogRef.afterClosed().subscribe(async formData => {
+      if (!formData) return;
+
+      const success = await this.nsaService.updateUserMessage(formData, id);
+      if (!success) return;
+
+      this.nsaService.manuallyUpdateUserMessage({ ...formData, id });
+    });
+  }
+  updateUserMessageSelectedState(index: number, control: FormControl<number | null>) {
+    const value = this.nsaFormPart2.controls.userMessages.at(index).value;
+    if (value !== -1) return;
+
+    const dialogRef = this.dialog.open<UserQuestionDialogComponent, UserQuestionDialogData, UserMessageDialogFormData>(
+      UserQuestionDialogComponent,
+      {
+        data: {
+          editedMessageId: null,
+          shortMessage: null,
+          message: null,
+        },
+      }
+    );
+    dialogRef.afterClosed().subscribe(formData => {
+      if (!formData) {
+        setTimeout(() => {
+          control.setValue(null);
+        }, 0);
+        return;
+      }
+
+      this.nsaService.createUserMessage(formData, ({ id }) => {
+        if (!id) {
+          setTimeout(() => {
+            control.setValue(null);
+          }, 0);
+          return;
+        }
+        const messageData = { ...formData, id };
+
+        this.nsaService.manuallyAddUserMessage(messageData);
+
+        setTimeout(() => {
+          control.setValue(id);
+        }, 0);
+      });
+    });
+  }
+  onUserMessageSelectChange(index: number, value: number) {
+    if (value === -1) return;
+
+    this.nsaService.markUserMessageControlAsChanged(index);
+
+    this.nsaService.isUserMessageSelected.update(v => {
+      v[index] = value;
+      return v;
+    });
+  }
+  // TODO
+  // snackbars
 
   //! search
   readonly rulingTextEl = viewChild<ElementRef<HTMLElement>>('rulingTextEl');
@@ -347,11 +430,6 @@ export class NsaPage implements OnInit, OnDestroy {
     if (!this.nsaFormPart1.dirty) return 'Zmień sygnaturę sprawy, aby wyszukać ponownie';
     return '';
   }
-  getAdditionalAnswerButtonTooltip(): string {
-    if (!this.nsaFormPart3.valid) return 'Najpierw wybierz rodzaj pytania';
-    if (!this.nsaFormPart3.dirty) return 'Zmień rodzaj pytania, aby zapytać ponownie';
-    return '';
-  }
 
   //! pager
   readonly currentPagerPage = signal<number>(0);
@@ -394,49 +472,21 @@ export class NsaPage implements OnInit, OnDestroy {
     }
     this.nextPage();
   }
-  //! adding questions
-  onAddButtonClick() {
-    this._addIndependentQuestion();
-    setTimeout(() => {
-      this._scrollToIndependentQuestion();
-    }, 0);
-  }
-
-  private _addIndependentQuestion(initialValue: string = '') {
-    this.nsaFormPart3.controls.independentQuestions.push(new FormControl<string>(initialValue));
-  }
-
-  fetchIndependentAnswer(index: number, controlOrValue: FormControl | string) {
-    this.nsaService.fetchIndependentAnswer(
-      this.nsaFormPart1.controls.caseSignature.value!,
-      this.nsaFormPart2.controls.systemMessage.value!,
-      controlOrValue instanceof FormControl ? controlOrValue.value! : controlOrValue,
-      index
-    );
-  }
-
-  hasClickedFetchindependent(index: number) {
-    return this.nsaService.independentQuestionsProgress()[index] != undefined;
-  }
-  isVisibleAddButton() {
-    return (
-      this.nsaService.independentQuestionsProgress().length ==
-      this.nsaFormPart3.controls.independentQuestions.controls.length
-    );
-  }
-  independentLoaded(index: number) {
-    return this.nsaService.independentQuestionsLoaded()[index];
-  }
-  independentLoading(index: number) {
-    return this.nsaService.independentQuestionsLoaded()[index] == false;
-  }
-  independentError(index: number) {
-    return this.nsaService.independentQuestionsProgress()[index] == 'ERROR';
+  part2NextPageTooltip(): string {
+    if (!this.nsaFormPart2.controls.systemMessage.valid) {
+      return 'System message musi być sprecyzowany!';
+    }
+    if (
+      this.nsaFormPart2.controls.userMessages.length === 0 ||
+      (this.nsaFormPart2.controls.userMessages.length === 1 && !this.nsaFormPart2.controls.userMessages.at(0).valid)
+    )
+      return 'Dodaj przynajmniej jedno pytanie';
+    return '';
   }
 
   //! resetting
   onClickResetButton() {
-    if (!this.nsaService.areGptAnswersReady() || this.nsaService.isAdditionalAnswerLoading()) {
+    if (!this.nsaService.areGptAnswersReady()) {
       this.showResetConfirmDialog();
       return;
     }
@@ -467,16 +517,17 @@ export class NsaPage implements OnInit, OnDestroy {
   private _resetForm() {
     this.nsaService.resetData();
 
-    this.router.navigate([], { queryParams: { signature: null }, queryParamsHandling: 'replace' });
+    this.router.navigate([], { queryParams: { signature: null } });
 
     this.nsaFormPart1.controls.rulingText.reset();
     this.nsaFormPart2.reset({
       systemMessage: DEFAULT_SYSTEM_MESSAGE,
-      userMessage1: DEFAULT_USER_MESSAGES[0],
-      userMessage2: DEFAULT_USER_MESSAGES[1],
-      userMessage3: DEFAULT_USER_MESSAGES[2],
+      userMessages: [],
     });
-    this.nsaFormPart3.reset();
+
+    while (this.nsaFormPart2.controls.userMessages.controls.length) {
+      this.nsaFormPart2.controls.userMessages.removeAt(0);
+    }
 
     this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
     this.currentPagerPage.set(0);

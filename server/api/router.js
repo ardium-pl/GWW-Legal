@@ -1,13 +1,18 @@
 import express from 'express';
 import {
-  getCourtRulingID,
+  getCourtRulingId,
   getDetailedRulingInfo,
   getPaginatedSignatures,
   getRulingBySignature,
 } from '../sql/courtRulingQuerry.js';
-import { getGptResponse } from '../sql/gptAnswQuerry.js';
-import { getSystemMessageId, getUserMessageId } from '../sql/messagesQuerry.js';
-import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
+import {
+  getSystemMessageId,
+  getUserMessage,
+  getUserMessages,
+  insertUserMessage,
+  updateUserMessage,
+} from '../sql/messagesQuerry.js';
+import { tryReturningMockRuling } from './mock-data.js';
 import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
 import { getCourtRuling } from './scraper.js';
 
@@ -46,9 +51,62 @@ nsaRouter.post('/api/nsa/query', async (req, res) => {
   }
 });
 
+nsaRouter.get('/api/nsa/questions', async (_, res) => {
+  try {
+    const questions = await getUserMessages();
+    res.json(questions);
+  } catch (error) {
+    console.error('Error in /api/nsa/questions endpoint:', error);
+    res.status(500).send({ error: 'Internal Server Error', details: error.message });
+  }
+});
+
+nsaRouter.post('/api/nsa/create-question', async (req, res) => {
+  try {
+    const { shortMessage, message } = req.body;
+
+    if (!shortMessage) {
+      return res.status(400).send({ error: 'shortMessage must be defined' });
+    }
+    if (!message) {
+      return res.status(400).send({ error: 'message must be defined' });
+    }
+
+    const insertId = await insertUserMessage(message, shortMessage);
+
+    res.status(200).json({ id: insertId });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
+});
+
+nsaRouter.put('/api/nsa/update-question', async (req, res) => {
+  try {
+    const { shortMessage, message, id } = req.body;
+
+    if (!id) {
+      return res.status(400).send({ error: 'message id must be defined' });
+    }
+    if (!shortMessage) {
+      return res.status(400).send({ error: 'shortMessage must be defined' });
+    }
+    if (!message) {
+      return res.status(400).send({ error: 'message must be defined' });
+    }
+
+    await updateUserMessage(id, message, shortMessage);
+
+    res.status(200).send();
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
+});
+
 nsaRouter.post('/api/nsa/question', async (req, res) => {
   try {
-    const { caseSignature, courtRuling, systemMessage, userMessage } = req.body;
+    const { caseSignature, courtRuling, systemMessage, userMessageId } = req.body;
     if (!courtRuling) {
       return res.status(400).send({ error: 'Court ruling is required.' });
     }
@@ -57,20 +115,32 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
     }
 
     if (/localhost/.test(req.get('origin'))) {
-      const mockResponse = tryReturningMockUserMessageResponse(userMessage.trim(), courtRuling);
+      const mockResponse = tryReturningMockUserMessageResponse(userMessageId, caseSignature);
       if (mockResponse) {
         res.json(mockResponse);
         return;
       }
     }
 
-    const courtRulingID = await getCourtRulingID(caseSignature);
-    const systemMessageID = await getSystemMessageId(systemMessage);
-    const userMessageID = await getUserMessageId(userMessage);
+    const courtRulingId = await getCourtRulingId(caseSignature);
+    const systemMessageId = await getSystemMessageId(systemMessage);
 
-    const response =
-      (await getGptResponse(courtRulingID, systemMessageID, userMessageID)) ||
-      (await askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature));
+    const dbResponse = await getGptResponse(courtRulingId, systemMessageId, userMessageId);
+    if (dbResponse) {
+      res.status(200).json(dbResponse);
+      return;
+    }
+
+    const userMessage = getUserMessage(userMessageId);
+
+    const response = await askGptAboutNSA(
+      systemMessage,
+      userMessage,
+      courtRuling,
+      systemMessageId,
+      userMessageId,
+      courtRulingId
+    );
 
     res.status(200).json(response);
   } catch (error) {

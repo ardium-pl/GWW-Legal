@@ -1,7 +1,5 @@
 import OpenAI from 'openai';
-import { getCourtRulingID, insertRuling } from '../sql/courtRulingQuerry.js';
 import { setGptResponse } from '../sql/gptAnswQuerry.js';
-import { getSystemMessageId, getUserMessageId, insertSystemMessage, insertUserMessage } from '../sql/messagesQuerry.js';
 
 const openai = new OpenAI();
 
@@ -30,16 +28,17 @@ export function transformMessages(messages) {
   });
 }
 
-export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature) {
+export async function askGptAboutNSA(
+  systemMessage,
+  userMessage,
+  courtRuling,
+  systemMessageId,
+  userMessageId,
+  courtRulingId
+) {
   const response = await getGptResponse(systemMessage, `${userMessage} ${courtRuling}`);
 
-  const [courtRulingID, userMessageID, systemMessageID] = await fetchIDs(
-    caseSignature,
-    userMessage,
-    systemMessage,
-    courtRuling
-  );
-  await setGptResponse(courtRulingID, systemMessageID, userMessageID, response);
+  await setGptResponse(courtRulingId, systemMessageId, userMessageId, response);
 
   return response;
 }
@@ -74,18 +73,18 @@ export async function followUpDiscussionAboutNSA(formattedChatHistory, courtRuli
 }
 
 async function fetchIDs(caseSignature, userMessage, systemMessage, courtRuling) {
-  const [rulingID, userMessageID, systemMessageID] = await Promise.all([
-    getCourtRulingID(caseSignature) ||
+  const [rulingId, userMessageId, systemMessageId] = await Promise.all([
+    getCourtRulingId(caseSignature) ||
       insertRuling(caseSignature, courtRuling, classifyCase(courtRuling), getCaseSummary(courtRuling)),
     getUserMessageId(userMessage) || insertUserMessage(userMessage),
     getSystemMessageId(systemMessage) || insertSystemMessage(systemMessage),
   ]);
 
-  if (!rulingID || !userMessageID || !systemMessageID) {
-    throw new Error("DB can't fetch an ID");
+  if (!rulingId || !userMessageId || !systemMessageId) {
+    throw new Error("DB can't fetch an Id");
   }
 
-  return [rulingID, userMessageID, systemMessageID];
+  return [rulingId, userMessageId, systemMessageId];
 }
 
 export async function classifyCase(courtRuling) {

@@ -93,12 +93,13 @@ mat-form-field {
     width: 100%;
   }
 }
-textarea {
-  min-height: 12em;
-  max-height: 22rem;
+mat-divider {
+  width: 100%;
+  margin-top: 0.75rem;
+  margin-bottom: 1.5rem;
 }
-.ruling-text {
-  padding-top: 12px;
+.accordion-content {
+  padding: 1.5rem 0.5rem 0 0.5rem;
 }
 .reset-button-container {
   position: relative;
@@ -120,6 +121,9 @@ textarea {
 mat-card-actions {
   display: flex;
   gap: 24px;
+}
+mat-accordion {
+  margin-bottom: 0.75rem;
 }
 .browser-button {
   margin-left: auto;
@@ -165,6 +169,66 @@ mat-card-content {
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  &.compact {
+    padding-top: 0.25rem;
+  }
+  &.question-card-content {
+    padding: 1.25rem 0 0 1rem;
+    display: flex;
+    justify-content: stretch;
+    flex-direction: row;
+    gap: 0.25rem;
+  }
+}
+.question-card {
+  &:hover,
+  &:focus-within,
+  &.has-open-select {
+    .select-container {
+      padding-right: 0;
+    }
+    .question-buttons-container {
+      appearance: initial;
+      max-width: 96px;
+    }
+  }
+}
+
+$question-card-transition: 0.15s ease-in-out;
+
+.select-container {
+  flex-grow: 1;
+  padding-right: 1rem;
+  transition: padding-right $question-card-transition;
+  user-select: none;
+
+  .select-spinner-suffix {
+    padding: 0 12px;
+  }
+}
+.question-buttons-container {
+  width: max-content;
+  padding-bottom: 22px;
+  align-items: center;
+  display: flex;
+  max-width: 0;
+  overflow: hidden;
+  transition: max-width $question-card-transition;
+  appearance: none;
+
+  .edit-button {
+    &:hover,
+    &:focus-visible {
+      color: var(--indigo700);
+    }
+  }
+  .delete-button {
+    &:hover,
+    &:focus-visible {
+      color: var(--red-dark);
+    }
+  }
 }
 mat-form-field {
   width: 288px;
@@ -180,24 +244,6 @@ textarea {
 }
 .ruling-text {
   padding-top: 12px;
-}
-.reset-button-container {
-  position: relative;
-}
-.reset-button {
-  position: absolute;
-  right: 0;
-  bottom: $gap - 4px;
-  pointer-events: none;
-  opacity: 0;
-  appearance: none;
-  // transition: opacity 0.025s ease;
-
-  &.active {
-    pointer-events: all;
-    opacity: 1;
-    appearance: auto;
-  }
 }
 mat-card-actions {
   display: flex;
@@ -272,11 +318,14 @@ mat-checkbox {
   display: flex;
   gap: 24px;
 }
+.add-question-btn-wrapper {
+  width: 100%;
+}
 .add-question-btn {
   width: 100%;
   min-height: 80px;
   border-radius: 6px;
-  border: 2px dashed var(--border);
+  border: 2px dashed rgb(128, 128, 128);
   display: flex;
   gap: 1ch;
   justify-content: center;
@@ -286,7 +335,8 @@ mat-checkbox {
   background-color: transparent;
   transition: background-color 0.15s ease;
   outline: none;
-  
+  user-select: none;
+
   span {
     opacity: 0.8;
   }
@@ -294,13 +344,21 @@ mat-checkbox {
     font-size: 24px !important;
   }
   &:hover {
-    background-color: rgba(0,0,0, 0.04);
+    background-color: rgba(0, 0, 0, 0.04);
   }
   &:focus-visible {
-    background-color: rgba(0,0,0, 0.12);
+    background-color: rgba(0, 0, 0, 0.12);
   }
   &:active {
-    background-color: rgba(0,0,0, 0.08);
+    background-color: rgba(0, 0, 0, 0.08);
+  }
+  &.small {
+    min-height: 60px;
+  }
+  &[disabled] {
+    background-color: rgba(0, 0, 0, 0.02);
+    border-color: rgba(128, 128, 128, 0.3);
+    pointer-events: none;
   }
 }
 .independent-markdown.error {
