@@ -335,6 +335,7 @@ export class NsaPage implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(async formData => {
       if (!formData) return;
 
+      console.log(formData);
       const success = await this.nsaService.updateUserMessage(formData, id);
       if (!success) return;
 
