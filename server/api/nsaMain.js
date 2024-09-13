@@ -38,6 +38,8 @@ export async function askGptAboutNSA(
 ) {
   const response = await getGptResponse(systemMessage, `${userMessage} ${courtRuling}`);
 
+  console.log(`${userMessage} ${courtRuling}`);
+
   await setGptResponse(courtRulingId, systemMessageId, userMessageId, response);
 
   return response;

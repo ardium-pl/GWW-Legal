@@ -132,7 +132,7 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
       return;
     }
 
-    const userMessage = getUserMessage(userMessageId);
+    const userMessage = await getUserMessage(userMessageId);
 
     const response = await askGptAboutNSA(
       systemMessage,
