@@ -1,10 +1,11 @@
+import bodyParser from "body-parser";
+import chalk from "chalk";
+import cors from "cors";
 import 'dotenv/config';
 import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import {nsaRouter} from "./api/router.js";
-import {clientRouter} from "./client.js";
-import chalk from "chalk";
+import { nsaRouter } from "./api/router.js";
+import { clientRouter } from "./client.js";
+import { createTCPConnection } from './sql/sqlConnect.js';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -41,10 +42,18 @@ app.use((err, req, res, next) => {
 
 console.log("[Server] Starting up...");
 
-app.listen(port, () => {
+app.listen(port, async () => {
     console.log(
         `[Server] Server is running on port ${chalk.green.underline(port)}.`,
-    );
+  );
+  
+  try {
+    const conn = await createTCPConnection();
+    console.log('Connected to database!');
+    conn.end();
+  } catch (error) {
+    throw error;
+  }
 });
 
 // Obsługa nieobsłużonych odrzuceń Promise
