@@ -54,7 +54,6 @@ export class NsaSignaturesComponent implements OnInit {
 
   @HostListener('document:scroll')
   onDocumentScroll() {
-    console.log('document:scroll', this.infiniteScrollActive());
     if (!this.infiniteScrollActive()) return;
 
     if (document.documentElement.scrollTop + window.innerHeight + 200 > document.documentElement.scrollHeight) {
