@@ -4,13 +4,7 @@
   <div class="solved">Status</div>
   <div></div>
 </div>
-<div
-  class="signature-browser"
-  ardInfScroll
-  ardInfScrollTarget="html"
-  [(ardInfScrollActive)]="infiniteScrollActive"
-  (ardInfScrollReachThreshold)="onInfiniteScrollTrigger()"
->
+<div class="signature-browser">
   @for (dataItem of nsaService.signatureBrowserData(); track $index) {
     <div class="list-row" (click)="onLoadDataClick(dataItem.signature)">
       <div class="signature">
@@ -29,7 +23,13 @@
         }
       </div>
       <div class="action">
-        <button mat-button [disabled]="nsaService.signatureExtendedDataLoading()" [class.clicked-loading]="nsaService.signatureExtendedDataLoading() === dataItem.signature">Załaduj</button>
+        <button
+          mat-button
+          [disabled]="nsaService.signatureExtendedDataLoading()"
+          [class.clicked-loading]="nsaService.signatureExtendedDataLoading() === dataItem.signature"
+        >
+          Załaduj
+        </button>
         @if (nsaService.signatureExtendedDataLoading() === dataItem.signature) {
           <mat-spinner />
         }

@@ -1,9 +1,9 @@
 import { UpperCasePipe } from '@angular/common';
 import { Component, ViewEncapsulation, computed, input } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatIconModule } from '@angular/material/icon';
-import { TprFileState, TprFile } from 'app/services/tpr/tpr-file';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ArdiumFilesizePipeModule } from '@ardium-ui/devkit';
+import { TprFile, TprFileState } from 'app/services/tpr/tpr-file';
 
 @Component({
   selector: 'app-tpr-file',

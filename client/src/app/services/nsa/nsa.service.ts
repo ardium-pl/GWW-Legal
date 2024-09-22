@@ -355,7 +355,7 @@ export class NsaService implements OnDestroy {
   private readonly _signatureBrowserTotal = signal<number | undefined>(undefined);
   public readonly signatureBrowserTotal = this._signatureBrowserTotal.asReadonly();
 
-  readonly signatureBrowserPageSize = 20;
+  readonly signatureBrowserPageSize = 30;
 
   public readonly isSignatureBrowserPageAvailable = computed(() => {
     const total = this._signatureBrowserTotal();
