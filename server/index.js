@@ -49,7 +49,7 @@ app.listen(port, async () => {
   
   try {
     const conn = await createTCPConnection();
-    console.log('Connected to database!');
+    console.log('[Server] Connected to database!');
     conn.end();
   } catch (error) {
     throw error;

@@ -187,11 +187,6 @@ nsaRouter.get('/api/nsa/ruling/:signature', async (req, res) => {
     const { signature } = req.params;
 
     const rulingInfo = await getDetailedRulingInfo(signature);
-
-    if (!rulingInfo) {
-      return res.status(404).send({ error: 'Ruling not found' });
-    }
-
     res.json(rulingInfo);
   } catch (error) {
     console.error(error);

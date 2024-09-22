@@ -32,6 +32,8 @@ export class NsaSignaturesComponent implements OnInit {
   }
 
   async onLoadDataClick(signature: string) {
+    if (this.nsaService.signatureExtendedDataLoading()) return;
+
     const res = await this.nsaService.fetchSignatureExtendedData(signature);
 
     this.router.navigate(['nsa'], {
@@ -39,7 +41,7 @@ export class NsaSignaturesComponent implements OnInit {
         signature,
         isFromBrowser: true,
         systemMessage: res.systemMessage,
-        userMessageIds: res.userMessageIds,
+        userMessageIds: res.userMessageIds?.length ? res.userMessageIds : null,
       },
     });
   }
