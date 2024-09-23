@@ -5,11 +5,15 @@ export async function insertRuling(caseSignature, caseContent) {
   const summary = await getCaseSummary(combinedText);
 
   const connection = await createTCPConnection();
-  const [insertResult] = await connection.query(
-    `INSERT INTO rulings (signature, ruling, solved, summary) VALUES (?, ?, ?, ?)`,
-    [caseSignature, caseContent, classification, summary]
-  );
-  return insertResult.insertId;
+  try {
+    const [insertResult] = await connection.query(
+      `INSERT INTO rulings (signature, ruling, solved, summary) VALUES (?, ?, ?, ?)`,
+      [caseSignature, caseContent, classification, summary]
+    );
+    return insertResult.insertId;
+  } finally {
+    await connection.end();
+  }
 }
 
 export async function getPaginatedSignatures(page, pageSize) {
@@ -33,7 +37,7 @@ export async function getPaginatedSignatures(page, pageSize) {
     throw error;
   } finally {
     if (connection) {
-      await connection.end();
+      await connection?.end();
     }
   }
 }
@@ -51,7 +55,7 @@ export async function getDetailedRulingInfo(signature) {
     const [rows] = await connection.execute(query, [signature]);
 
     if (rows.length === 0) {
-      return null;
+      return { systemMessage: null, userMessageIds: null };
     }
 
     const systemMessageId = rows[0].system_message_id;

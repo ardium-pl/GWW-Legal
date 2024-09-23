@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, effect, HostListener, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
-import { ArdiumInfiniteScrollModule } from '@ardium-ui/devkit';
 import { NsaService } from 'app/services';
 
 @Component({
   selector: 'app-nsa-signatures',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, ArdiumInfiniteScrollModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatButtonModule, MatProgressSpinnerModule],
   templateUrl: './nsa-signatures.component.html',
   styleUrl: './nsa-signatures.component.scss',
 })
@@ -22,7 +21,19 @@ export class NsaSignaturesComponent implements OnInit {
 
   readonly clickedSignatureButtonIndex = signal<number | null>(null);
 
+  constructor() {
+    effect(
+      () => {
+        this.nsaService.signatureBrowserData();
+        this.infiniteScrollActive.set(true);
+      },
+      { allowSignalWrites: true }
+    );
+  }
+
   async onLoadDataClick(signature: string) {
+    if (this.nsaService.signatureExtendedDataLoading()) return;
+
     const res = await this.nsaService.fetchSignatureExtendedData(signature);
 
     this.router.navigate(['nsa'], {
@@ -30,17 +41,27 @@ export class NsaSignaturesComponent implements OnInit {
         signature,
         isFromBrowser: true,
         systemMessage: res.systemMessage,
-        userMessageIds: res.userMessageIds,
+        userMessageIds: res.userMessageIds?.length ? res.userMessageIds : null,
       },
     });
   }
 
-  onInfiniteScrollTrigger(): void {
+  private _onInfiniteScrollTrigger(): void {
     if (this.nsaService.isSignatureBrowserPageAvailable()(this._currentPage())) return;
 
     this._currentPage.update(v => v + 1);
 
     this.nsaService.fetchSignatureBrowserData(this._currentPage());
+  }
+
+  @HostListener('document:scroll')
+  onDocumentScroll() {
+    if (!this.infiniteScrollActive()) return;
+
+    if (document.documentElement.scrollTop + window.innerHeight + 200 > document.documentElement.scrollHeight) {
+      this.infiniteScrollActive.set(false);
+      this._onInfiniteScrollTrigger();
+    }
   }
 
   ngOnInit(): void {
