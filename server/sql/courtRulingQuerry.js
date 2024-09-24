@@ -1,8 +1,9 @@
 import { createTCPConnection } from './sqlConnect.js';
+import { classifyCase, getCaseSummary } from '../api/nsaMain.js'
 
 export async function insertRuling(caseSignature, caseContent) {
-  const classification = await classifyCase(combinedText);
-  const summary = await getCaseSummary(combinedText);
+  const classification = await classifyCase(caseContent);
+  const summary = await getCaseSummary(caseContent);
 
   const connection = await createTCPConnection();
   try {

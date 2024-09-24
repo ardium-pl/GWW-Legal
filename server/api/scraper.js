@@ -55,10 +55,10 @@ export async function getCourtRuling(signature) {
 
     const extractedText = await page.evaluate(() => {
       const elements = document.querySelectorAll("td.info-list-label-uzasadnienie span.info-list-value-uzasadnienie");
-      return Array.from(elements).map(element => element.innerText.trim());
+      return Array.from(elements).map(element => element.innerHTML.trim());
     });
 
-    const combinedText = extractedText.join('\n');
+    const combinedText = extractedText.join('+');
 
     if (combinedText.length > 0) {
       insertRuling(signature, combinedText);
