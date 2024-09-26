@@ -110,3 +110,20 @@ function validateSummaryResult(response) {
   const match = response.match(/(.*?)(?<!art)\./); // Regex to find first period, ignoring ".art"
   return response.length > summaryMaxCharLen && match ? match[0] : response.slice(0, summaryMaxCharLen);
 }
+
+export async function getDateOfSuspension(courtRuling) {
+  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę zawieszenia biegu terminu przedawnienia sprawy. Odpowiedz mi w formacie DD-MM-YYYY. Orzeczenie: `;
+  const response = await getGptResponse(systemMessage, courtRuling);
+  return validateDate(response);
+}
+
+export async function getDateOfLimitationsOnTaxLiability(courtRuling) {
+  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę terminu przedawnienia zobowiązania podatkowego. Odpowiedz mi w formacie DD-MM-YYYY. Orzeczenie: `;
+  const response = await getGptResponse(systemMessage, courtRuling);
+  return validateDate(response);
+}
+
+function validateDate(response) {
+  const match = response.match(/\b\d{2}-\d{2}-\d{4}\b/); //Regex to find the date
+  return match[0] ? match[0] : null;
+}
