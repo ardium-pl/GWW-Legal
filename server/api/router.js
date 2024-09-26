@@ -13,7 +13,7 @@ import {
   insertUserMessage,
   updateUserMessage,
 } from '../sql/messagesQuery.js';
-import { getConversationHistory, storeConversation } from '../sql/converationQuery.js'
+import { getConversationHistory, storeConversation } from '../sql/converationQuery.js';
 import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
 import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
 import { getCourtRuling } from './scraper.js';
@@ -156,13 +156,11 @@ nsaRouter.post('/api/nsa/conversation', async (req, res) => {
   const formattedMessageHistory = transformMessages(messageHistory);
 
   try {
-    const gptQueryId = await getGptQueryId(initGptAnswer, initUserMessage, courtRuling); //Error here!
-    console.log(`gptQueryId: ` + gptQueryId);
+    const gptQueryId = await getGptQueryId(initGptAnswer, initUserMessage, courtRuling);
 
-    const chatResponse = await followUpDiscussionAboutNSA(formattedMessageHistory, courtRuling); 
+    const chatResponse = await followUpDiscussionAboutNSA(formattedMessageHistory, courtRuling);
 
-    await storeConversation(messageHistory.pop().content, 'user', gptQueryId);
-    await storeConversation(chatResponse, 'assistant', gptQueryId);
+    await storeConversation(messageHistory.pop().content, chatResponse, gptQueryId);
 
     res.status(200).send({ chatResponse: chatResponse });
   } catch (error) {
@@ -201,17 +199,15 @@ nsaRouter.get('/api/nsa/ruling/:signature', async (req, res) => {
   }
 });
 
-
-nsaRouter.post('api/nsa/load-conversation', async (req, res) =>{
-  try{
-    const {gptAnswer, userMessage,caseSignature} = req.body;
+nsaRouter.post('api/nsa/load-conversation', async (req, res) => {
+  try {
+    const { gptAnswer, userMessage, caseSignature } = req.body;
 
     const gptQueryId = await getGptQueryId(gptAnswer, userMessage, caseSignature);
     const messageHistory = await getConversationHistory(gptQueryId);
-    res.json(messageHistory);  
-  }catch (error) {
+    res.json(messageHistory);
+  } catch (error) {
     console.error(error);
     res.status(500).send({ error: 'Internal Server Error' });
   }
-
-})
+});

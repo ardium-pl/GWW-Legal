@@ -21,13 +21,13 @@ export async function getConversationHistory(gptQueryId){
     }
 }
 
-export async function storeConversation(message, messageType,gptQueryId) {
+export async function storeConversation(message, chatResponse,gptQueryId) {
     const connection = await createTCPConnection();
     try {
-        const query = `INSERT INTO conversations (message, message_type, gpt_query_id) 
+        const query = `INSERT INTO conversations (message, chat_response, gpt_query_id) 
                        VALUES (?, ?, ?);`;
     
-        const [insertResult] =  await connection.query(query, [message, messageType, gptQueryId]);
+        const [insertResult] =  await connection.query(query, [message, chatResponse, gptQueryId]);
         return insertResult.insertId;
     } finally {
         connection.end();

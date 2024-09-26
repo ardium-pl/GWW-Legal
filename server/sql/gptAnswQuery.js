@@ -40,7 +40,7 @@ export async function setGptResponse(courtRulingId, systemMessageId, userMessage
 export async function getGptQueryId(gptAnswer, userMessage, caseContent) {
   
   const userMessageId = await getUserMessageId(userMessage);
-  const courtRulingId = await getCourtRulingByContent(caseContent); // Error here!
+  const courtRulingId = await getCourtRulingByContent(caseContent);
 
   if (!userMessageId || !courtRulingId) {
     console.log('some null');
