@@ -100,3 +100,13 @@ export async function getRulingBySignature(signature) {
     await connection.end();
   }
 }
+
+export async function getCourtRulingByContent(caseContent) {
+  const connection = await createTCPConnection();
+  try {
+    const [rows] = await connection.execute('SELECT id FROM rulings WHERE ruling = ?', [caseContent]);
+    return rows.length > 0 ? rows[0].id : null;
+  } finally {
+    await connection.end();
+  }
+}

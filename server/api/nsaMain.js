@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { setGptResponse } from '../sql/gptAnswQuerry.js';
+import { setGptResponse } from '../sql/gptAnswQuery.js';
 
 const openai = new OpenAI();
 

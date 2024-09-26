@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { insertRuling } from "../sql/courtRulingQuerry.js";
+import { insertRuling } from "../sql/courtRulingQuery.js";
 puppeteer.use(StealthPlugin());
 
 const userAgents = [

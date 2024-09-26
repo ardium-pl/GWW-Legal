@@ -57,6 +57,25 @@ export async function getUserMessage(id) {
   return message;
 }
 
+export async function getUserMessageId(userMessage) {
+  const cachedEntry = Object.values(userMessagesCache).find((entry) => entry.message === userMessage);
+  if (cachedEntry) {
+    return cachedEntry.id;
+  }
+
+  const connection = await createTCPConnection();
+  try {
+    const [results] = await connection.query(
+      `SELECT id FROM user_messages WHERE content = ?`,
+      [userMessage]
+    );
+    
+    return results.length > 0 ? results[0].id : null;
+  } finally {
+    connection.end();
+  }
+}
+
 export async function getUserMessages() {
   if (hasAnyMessages) return Object.values(userMessagesCache);
 

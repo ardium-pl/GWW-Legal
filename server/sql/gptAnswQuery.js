@@ -1,4 +1,6 @@
 import { createTCPConnection } from './sqlConnect.js';
+import { getUserMessageId } from './messagesQuery.js';
+import { getCourtRulingByContent } from './courtRulingQuery.js';
 
 export async function getGptResponse(courtRulingId, systemMessageId, userMessageId) {
   const connection = await createTCPConnection();
@@ -34,3 +36,33 @@ export async function setGptResponse(courtRulingId, systemMessageId, userMessage
   }
   return true;
 }
+
+export async function getGptQueryId(gptAnswer, userMessage, caseContent) {
+  
+  const userMessageId = await getUserMessageId(userMessage);
+  const courtRulingId = await getCourtRulingByContent(caseContent); // Error here!
+
+  if (!userMessageId || !courtRulingId) {
+    console.log('some null');
+    console.log('userMessageId: ' + userMessageId);
+    console.log('courtRulingId: ' + courtRulingId);
+
+    return null;
+  }
+
+  const connection = await createTCPConnection();
+  try {
+    const query = `SELECT id
+          FROM gpt_queries
+          WHERE answer = ?
+          AND user_message_id = ?
+          AND ruling_id = ?
+          `;
+
+    const [results] = await connection.query(query, [gptAnswer, userMessageId, courtRulingId]);
+    return results.length > 0 ? results[0].id : null;
+  } finally {
+    connection.end();
+  }
+}
+
