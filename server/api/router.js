@@ -164,7 +164,7 @@ nsaRouter.post('/api/nsa/conversation', async (req, res) => {
     await storeConversation(messageHistory.pop().content, 'user', gptQueryId);
     await storeConversation(chatResponse, 'assistant', gptQueryId);
 
-    res.status(200).send({ chatResponse: chatResponse }); // TODO: gptQueryId => chatResponse
+    res.status(200).send({ chatResponse: chatResponse });
   } catch (error) {
     if (error?.cause?.code === 'ENOTFOUND') {
       res.status(500).send({ error: 'Internal Server Error', code: 'ENOTFOUND' });
@@ -203,7 +203,6 @@ nsaRouter.get('/api/nsa/ruling/:signature', async (req, res) => {
 
 
 nsaRouter.post('api/nsa/load-conversation', async (req, res) =>{
-  
   try{
     const {gptAnswer, userMessage,caseSignature} = req.body;
 
