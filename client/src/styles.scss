@@ -43,9 +43,14 @@ body {
   --foreground: white;
 
   --red: rgb(239, 53, 29);
+  --red-dark: rgb(199, 40, 18);
   --error: rgb(240, 83, 63);
   --warning: rgb(235, 85, 15);
   --green: rgb(68, 162, 72);
+  --green2: rgb(124, 230, 129, 0.2);
+  --warn: rgb(224, 140, 38);
+  --warn2: rgba(240, 169, 77, 0.2);
+  --warn3: rgb(173, 101, 13);
 
   --main: #3f51b5;
   --on-main: white;
@@ -98,6 +103,9 @@ body {
   --info-900: 8, 49, 102;
 
   --mdc-snackbar-container-color: rgb(240, 83, 63);
+  --mat-option-label-text-line-height: 20px;
+  --mat-option-focus-state-layer-color: rgba(0, 0, 170, 6%);
+  --mat-dialog-actions-alignment: flex-end;
 }
 
 //global styling
@@ -190,17 +198,24 @@ mat-radio-group {
   flex-direction: column;
 }
 
-.material-symbols-outlined {
-  font-variation-settings:
-    'FILL' 1,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24
+.mat-mdc-tooltip-panel {
+  pointer-events: none;
+}
+div.mat-mdc-select-panel {
+  max-height: 304px !important;
 }
 app-icon {
   font-size: 1.5em;
   max-height: 1em;
   max-width: 1em;
+}
+
+mat-accordion {
+  width: 100%;
+}
+mat-panel-title {
+  font-size: 1.125rem;
+  padding-left: 0.5rem;
 }
 
 //! markdown styling

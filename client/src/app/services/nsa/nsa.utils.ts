@@ -1,8 +1,17 @@
 export type NsaFormPart2 = {
   systemMessage: string | null;
-  userMessage1: string | null;
-  userMessage2: string | null;
-  userMessage3: string | null;
+  userMessages: number[];
+};
+
+export type UserMessageDialogFormData = {
+  shortMessage: string;
+  message: string;
+}
+
+export type UserMessageData = {
+  id: number;
+  shortMessage: string;
+  message: string;
 };
 
 export const RulingErrorCode = {
@@ -21,8 +30,22 @@ const RULING_ERROR_CODE_MAP = {
     'Spróbuj wyszukać orzeczenie własnoręcznie i wpisać poniżej:',
   ],
 };
-const DEFAULT_RULING_ERROR_TEXT = ['Wystąpił nieznany błąd.', 'Spróbuj wyszukać orzeczenie własnoręcznie i wpisać poniżej:'];
+const DEFAULT_RULING_ERROR_TEXT = [
+  'Wystąpił nieznany błąd.',
+  'Spróbuj wyszukać orzeczenie własnoręcznie i wpisać poniżej:',
+];
 
 export function rulingErrorToText(error: RulingErrorCode): string[] {
   return RULING_ERROR_CODE_MAP[error] || DEFAULT_RULING_ERROR_TEXT;
 }
+
+export interface SignatureBrowserData {
+  signature: string;
+  solved: boolean | null;
+  summary: string;
+}
+
+export type SignatureExtendedData = {
+  systemMessage: string;
+  userMessageIds: number[];
+};

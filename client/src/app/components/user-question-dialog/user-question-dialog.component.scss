@@ -1,0 +1,23 @@
+mat-dialog-content {
+  max-width: 712px;
+  width: calc(90vw - 48px);
+  box-sizing: content-box;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: flex-start;
+}
+mat-form-field {
+  width: 100%;
+}
+.short-message-field {
+  max-width: 644px;
+}
+textarea {
+  min-height: 12em;
+  max-height: 22rem;
+  resize: vertical;
+}
+mat-dialog-actions {
+  gap: 1rem
+}

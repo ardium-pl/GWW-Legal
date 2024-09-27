@@ -11,22 +11,13 @@
     (clickPrev)="searchService.prev()"
   />
 </div>
-<div
-  class="pager-container"
-  [style]="'--_pager-page:' + currentPagerPage()"
->
+<div class="pager-container" [style]="'--_pager-page:' + currentPagerPage()">
   <div class="page-container">
-    <form
-      [formGroup]="nsaFormPart1"
-      (ngSubmit)="getCourtRuling()"
-    >
+    <form [formGroup]="nsaFormPart1" (ngSubmit)="getCourtRuling()">
       <mat-card>
         <div class="indigo-stripe"></div>
         <div class="image-container">
-          <img
-            src="assets\images\GWW-logo.png"
-            class="logo"
-          />
+          <img src="assets\images\GWW-logo.png" class="logo" />
         </div>
         <div class="gray-stripe"></div>
         <span class="image-text">Aplikacja do orzeczeń sądowych</span>
@@ -38,12 +29,7 @@
         </mat-card-header>
         <mat-card-content>
           <mat-form-field>
-            <input
-              matInput
-              placeholder="np. III FSK 4005/21"
-              formControlName="caseSignature"
-              #caseSigntaureInput
-            />
+            <input matInput placeholder="np. III FSK 4005/21" formControlName="caseSignature" #caseSigntaureInput />
             <mat-error>To pole jest wymagane</mat-error>
           </mat-form-field>
           @if (nsaService.rulingRequestState() === 'error') {
@@ -54,23 +40,14 @@
             }
             <div class="ruling-text">
               <mat-form-field class="full-size">
-                <textarea
-                  matInput
-                  placeholder="Treść orzeczenia"
-                  formControlName="rulingText"
-                ></textarea>
+                <textarea matInput placeholder="Treść orzeczenia" formControlName="rulingText"></textarea>
               </mat-form-field>
             </div>
           </div>
           } @if (nsaService.rulingRequestState() !== 'error') {
           <mat-card-actions>
             <div [matTooltip]="getCourtRulingButtonTooltip()">
-              <button
-                mat-flat-button
-                color="primary"
-                type="submit"
-                [disabled]="isFindCaseButtonDisabled"
-              >
+              <button mat-flat-button color="primary" type="submit" [disabled]="isFindCaseButtonDisabled">
                 Wyszukaj
               </button>
             </div>
@@ -78,15 +55,16 @@
             <div class="spinner-container">
               <mat-spinner />
             </div>
+            } @if (!isFromBrowser()) {
+            <button mat-button color="primary" class="browser-button" routerLink="./signatures">
+              Przeglądaj orzeczenia
+            </button>
             }
           </mat-card-actions>
           } @if (nsaService.rulingRequestState() === 'success') {
           <mat-card-footer>
             <strong>Znaleziono orzeczenie:</strong>
-            <div
-              #rulingTextEl
-              [innerHTML]="searchService.highlightedText()"
-            ></div>
+            <div #rulingTextEl [innerHTML]="searchService.highlightedText()"></div>
           </mat-card-footer>
           }
         </mat-card-content>
@@ -109,86 +87,113 @@
   </div>
   <div class="page-container">
     <form [formGroup]="nsaFormPart2">
-      <mat-card>
-        <mat-card-header>
-          System message
-          <app-required-star />
-        </mat-card-header>
-        <mat-card-content>
-          <div class="reset-button-container">
-            <button
-              mat-button
-              type="button"
-              class="reset-button"
-              [class.active]="isResetButtonActiveSystem"
-              [tabIndex]="isResetButtonActiveSystem"
-              color="primary"
-            >
-              Przywróć domyślną
-            </button>
+      <mat-accordion>
+        <mat-expansion-panel [(expanded)]="isSystemMessagePanelExpanded">
+          <mat-expansion-panel-header>
+            <mat-panel-title>System message <app-required-star /></mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="accordion-content">
+            <div class="reset-button-container">
+              <button
+                mat-button
+                type="button"
+                class="reset-button"
+                [class.active]="isResetButtonActiveSystem"
+                [tabIndex]="isResetButtonActiveSystem"
+                color="primary"
+              >
+                Przywróć domyślną
+              </button>
+            </div>
+            <mat-form-field class="full-size">
+              <textarea
+                matInput
+                placeholder="Podstawowa wiadomość przekazywana do serwisu AI"
+                formControlName="systemMessage"
+              ></textarea>
+              @if (!nsaFormPart2.controls.systemMessage.valid) {
+              <mat-error>System message musi być sprecyzowany!</mat-error>
+              }
+            </mat-form-field>
           </div>
-          <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Podstawowa wiadomość przekazywana do serwisu AI"
-              formControlName="systemMessage"
-            ></textarea>
-          </mat-form-field>
-        </mat-card-content>
-      </mat-card>
+        </mat-expansion-panel>
+      </mat-accordion>
+      <mat-divider />
       <mat-card>
         <mat-card-header>
           Pytania użytkownika
           <app-required-star />
         </mat-card-header>
-        <mat-card-content>
-          <div class="reset-button-container">
-            <button
-              mat-button
-              type="button"
-              class="reset-button"
-              [class.active]="isResetButtonActiveUser"
-              [tabIndex]="isResetButtonActiveUser"
-              color="primary"
-            >
-              Przywróć domyślne
-            </button>
+        <mat-card-content class="compact"> Wybierz co najmniej jedno pytanie. </mat-card-content>
+      </mat-card>
+      @for (control of nsaFormPart2.controls.userMessages.controls; track $index) {
+      <mat-card class="question-card" [class.has-open-select]="openUserMessageSelect() === $index">
+        <mat-card-content class="question-card-content">
+          <div class="select-container">
+            <mat-form-field class="full-size">
+              <mat-label>Pytanie {{ $index + 1 }}</mat-label>
+              <mat-select
+                [formControl]="control"
+                (opened)="openUserMessageSelect.set($index)"
+                (closed)="openUserMessageSelect.set(null)"
+                (closed)="updateUserMessageSelectedState($index, control)"
+                (valueChange)="onUserMessageSelectChange($index, $event)"
+                [disabled]="isControlLoading(control)"
+              >
+                @for (opt of getOptionsAvailableForSelect($index, control.value); track $index) {
+                <mat-option [value]="opt.id">{{ opt.shortMessage }}</mat-option>
+                }
+                <mat-option [value]="-1"><i>Dodaj nowe pytanie...</i></mat-option>
+              </mat-select>
+              @if (!control.valid) {
+              <mat-error>Wybierz jakieś pytanie.</mat-error>
+              } @if (isControlLoading(control)) {
+              <div matSuffix class="select-spinner-suffix">
+                <mat-spinner />
+              </div>
+              }
+            </mat-form-field>
           </div>
-          <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Pytanie 1"
-              formControlName="userMessage1"
-            ></textarea>
-          </mat-form-field>
-          <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Pytanie 2"
-              formControlName="userMessage2"
-            ></textarea>
-          </mat-form-field>
-          <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Pytanie 3"
-              formControlName="userMessage3"
-            ></textarea>
-          </mat-form-field>
+          <div class="question-buttons-container">
+            <button
+              class="edit-button"
+              mat-icon-button
+              matTooltip="Edytuj pytanie"
+              (click)="onEditQuestionClick(control.value)"
+            >
+              <mat-icon fontIcon="edit" />
+            </button>
+            <div
+              [matTooltip]="nsaFormPart2.controls.userMessages.controls.length === 1 ? 'Przynajmniej jedno pytanie musi być zdefiniowane' : 'Usuń pytanie'"
+            >
+              <button
+                class="delete-button"
+                mat-icon-button
+                [disabled]="nsaFormPart2.controls.userMessages.controls.length === 1"
+                (click)="onDeleteQuestionClick($index)"
+              >
+                <mat-icon fontIcon="delete" />
+              </button>
+            </div>
+          </div>
         </mat-card-content>
       </mat-card>
+      }
+      <div
+        class="add-question-btn-wrapper"
+        [matTooltip]="isNoOptionsAvailable() ? 'Nie ma wystarczającej ilości możliwych pytań, aby dodać kolejne.' : ''"
+      >
+        <button class="add-question-btn small" (click)="addNewQuestion()" [disabled]="isNoOptionsAvailable()">
+          <mat-icon fontIcon="add" />
+          <span>Dodaj pytanie</span>
+        </button>
+      </div>
     </form>
     <div class="buttons-container">
       <div>
-        <button
-          mat-button
-          type="button"
-          (click)="prevPage()"
-        >
-          Wróć
-        </button>
+        <button mat-button type="button" (click)="prevPage()">Wróć</button>
       </div>
-      <div>
+      <div [matTooltip]="part2NextPageTooltip()">
         <button
           mat-raised-button
           type="button"
@@ -202,20 +207,14 @@
     </div>
   </div>
   <div class="page-container">
-    <form
-      [formGroup]="nsaFormPart3"
-      (ngSubmit)="fetchAdditionalAnswer()"
-    >
+    <form>
       <mat-card>
         <mat-card-header> Postęp odpowiedzi od AI </mat-card-header>
         <mat-card-content class="divided-card">
           <div class="progress-container">
             @for (progress of nsaService.gptAnswersProgress(); track $index) {
             <div class="progress-indicator">
-              <div
-                class="loading-icon"
-                [class]="'is-loaded-'+progress"
-              >
+              <div class="loading-icon" [class]="'is-loaded-'+progress">
                 @if (progress === true) {
                 <app-icon icon="check_circle" />
                 } @else if (progress === 'ERROR') {
@@ -233,13 +232,14 @@
               (change)="onShowImmediatelyChange($event.checked)"
               [disabled]="wasShowGptResultsImmediatelyChangedDuringPending()"
               [checked]="showGptResultsImmediately()"
-              >Wyświetl od razu</mat-checkbox
             >
+              Wyświetl od razu
+            </mat-checkbox>
           </div>
         </mat-card-content>
       </mat-card>
       @if ((nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError()) || (showGptResultsImmediately() &&
-      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track response) {
+      nsaService.isAtLeastOneGptAnswerReady())) { @for (response of nsaService.gptAnswersResponse(); track $index) {
       <mat-card>
         <mat-card-header>
           Odpowiedź na pytanie {{ $index + 1 }}
@@ -248,6 +248,7 @@
             mat-icon-button
             matTooltip="Zadaj dodatkowe pytanie"
             (click)="onClickOpenConversation($index)"
+            [disabled]="!nsaService.gptAnswersProgress()[$index]"
           >
             <mat-icon fontIcon="forum" />
           </button>
@@ -260,112 +261,22 @@
           }
         </mat-card-content>
       </mat-card>
-      } @if( nsaService.areGptAnswersReady() && !nsaService.areGptAnswersError() ) {
+      } } @if (nsaService.areGptAnswersReady()) {
       <mat-card>
-        <mat-card-header> Zadaj AI dodatkowe pytanie </mat-card-header>
-        <mat-card-content>
-          Na podstawie poniższego orzeczenia Naczelnego Sądu Administracyjnego napisz proszę jak NSA uargumentował:
-          <mat-radio-group
-            aria-label="Wybierz opcję"
-            formControlName="additionalQuestion"
-          >
-            <mat-radio-button [value]="additionalQuestions[0].value">
-              {{ additionalQuestions[0].label }}
-            </mat-radio-button>
-            <mat-radio-button [value]="additionalQuestions[1].value">
-              {{ additionalQuestions[1].label }}
-            </mat-radio-button>
-          </mat-radio-group>
-          <mat-card-actions>
-            <div [matTooltip]="getAdditionalAnswerButtonTooltip()">
-              <button
-                mat-flat-button
-                color="primary"
-                type="submit"
-                [disabled]="nsaService.isAdditionalAnswerLoading() || !this.nsaFormPart3.valid || !nsaFormPart3.dirty"
-              >
-                Zapytaj
-              </button>
-            </div>
-            @if (nsaService.isAdditionalAnswerLoading()) {
-            <div class="spinner-container">
-              <mat-spinner />
-            </div>
-            }
-          </mat-card-actions>
-          @if (nsaService.additionalAnswerResponse() && !nsaService.isAdditionalAnswerLoading()) {
-          <mat-card-footer>
-            <strong>Odpowiedź od AI:</strong>
-            <markdown> {{ nsaService.additionalAnswerResponse() }} </markdown>
-          </mat-card-footer>
-          }
-        </mat-card-content>
+        <mat-card-header>Chcesz zadać więcej pytań?</mat-card-header>
+        <mat-card-content>Wróć do poprzedniej strony i dodaj następne.</mat-card-content>
       </mat-card>
-      } } @for (control of nsaFormPart3.controls.independentQuestions.controls; track $index) {
-      <mat-card>
-        <mat-card-header>Niezależne pytanie</mat-card-header>
-        <mat-card-content>
-          <mat-form-field class="full-size">
-            <textarea
-              matInput
-              placeholder="Tu wpisz pytanie do AI"
-              [formControl]="control"
-              [class.hidden]="hasClickedFetchindependent($index)"
-            ></textarea>
-            @if (hasClickedFetchindependent($index)) {
-            <div>{{ control.value }}</div>
-            }
-          </mat-form-field>
-          @if (!independentLoaded($index)) {
-          <div class="search-button-container">
-            <button
-              mat-flat-button
-              color="primary"
-              type="submit"
-              [disabled]="!control.value || independentLoading($index)"
-              (click)="onindependentQuestionButtonClick($index, control)"
-            >
-              Zapytaj
-            </button>
-            @if (independentLoading($index)) {
-            <mat-spinner />
-            }
-          </div>
-          } @if (independentLoaded($index)) {
-          <markdown> {{ nsaService.independentQuestionsResponses()[$index] }} </markdown>
-          }
-        </mat-card-content>
-      </mat-card>
-      } @if (isVisibleAddButton()) {
-      <button
-        class="add-question-btn"
-        (click)="onAddButtonClick()"
-      >
-        <mat-icon fontIcon="add" />
-        <span>Dodaj niezależne pytanie</span>
-      </button>
       }
     </form>
     <div class="buttons-container">
-      <div>
-        <button
-          mat-button
-          type="button"
-          (click)="prevPage()"
-        >
+      <div [matTooltip]="!nsaService.areGptAnswersReady() ? 'Zaczekaj, aż wszystkie odpowiedzi będą gotowe' : ''">
+        <button mat-button type="button" (click)="prevPage()" [disabled]="!nsaService.areGptAnswersReady()">
           Wróć
         </button>
       </div>
       @if (nsaService.areGptAnswersReady()) {
       <div>
-        <button
-          mat-button
-          type="button"
-          color="primary"
-          (click)="onClickResetButton()"
-        >
-          Zacznij od nowa
-        </button>
+        <button mat-button type="button" color="primary" (click)="onClickResetButton()">Zacznij od nowa</button>
       </div>
       }
     </div>

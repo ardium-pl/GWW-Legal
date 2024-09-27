@@ -30,16 +30,17 @@ export function transformMessages(messages) {
   });
 }
 
-export async function askGptAboutNSA(systemMessage, userMessage, courtRuling, caseSignature) {
+export async function askGptAboutNSA(
+  systemMessage,
+  userMessage,
+  courtRuling,
+  systemMessageId,
+  userMessageId,
+  courtRulingId
+) {
   const response = await getGptResponse(systemMessage, `${userMessage} ${courtRuling}`);
 
-  const [courtRulingID, userMessageID, systemMessageID] = await fetchIDs(
-    caseSignature,
-    userMessage,
-    systemMessage,
-    courtRuling
-  );
-  await setGptResponse(courtRulingID, systemMessageID, userMessageID, response);
+  await setGptResponse(courtRulingId, systemMessageId, userMessageId, response);
 
   return response;
 }

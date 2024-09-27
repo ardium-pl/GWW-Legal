@@ -1,0 +1,27 @@
+<h2 mat-dialog-title>{{ dialogData.editedMessageId !== null ? 'Edytuj' : 'Dodaj' }} pytanie</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-dialog-content>
+    <mat-form-field class="short-message-field">
+      <mat-label>Skrócone pytanie</mat-label>
+      <input matInput formControlName="shortMessage" />
+      <mat-hint>Tę wersję pytania zobaczysz przy wyborze. Powinno być maksymalnie zwięzłe.</mat-hint>
+      @if (!form.controls.message.valid) {
+        <mat-error>Skrócone pytanie musi być sprecyzowane!</mat-error>
+      }
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Główna część pytania</mat-label>
+      <textarea matInput formControlName="message"></textarea>
+      <mat-hint>Tę wersję pytania dostanie AI. Zadbaj, aby było wystarczająco dokładne.</mat-hint>
+      @if (!form.controls.message.valid) {
+        <mat-error>Główna część pytania musi być sprecyzowana!</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button type="button" (click)="dialogRef.close(null)">Anuluj</button>
+    <button mat-raised-button type="submit" color="primary" [disabled]="form.invalid">
+      {{ dialogData.editedMessageId !== null ? 'Zatwierdź' : 'Dodaj' }}
+    </button>
+  </mat-dialog-actions>
+</form>
