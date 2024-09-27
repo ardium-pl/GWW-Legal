@@ -5,6 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:preprod": "ng build --configuration preprod",
     "watch": "ng serve --watch --configuration development",
     "test": "ng test",
     "ngg-page": "ng g c --type=page --standalone"
