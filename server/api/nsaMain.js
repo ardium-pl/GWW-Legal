@@ -1,7 +1,5 @@
 import OpenAI from 'openai';
 import { setGptResponse } from '../sql/gptAnswQuerry.js';
-import { getSystemMessageId, getUserMessageId, insertSystemMessage, insertUserMessage } from '../sql/messagesQuerry.js';
-import { getCourtRulingID, insertRuling } from '../sql/courtRulingQuerry.js';
 
 const openai = new OpenAI();
 
@@ -72,21 +70,6 @@ export async function followUpDiscussionAboutNSA(formattedChatHistory, courtRuli
     temperature: 0.5,
   });
   return rawResponse?.choices?.[0]?.message?.content ?? null;
-}
-
-async function fetchIDs(caseSignature, userMessage, systemMessage, courtRuling) {
-  const [rulingID, userMessageID, systemMessageID] = await Promise.all([
-    getCourtRulingID(caseSignature) ||
-      insertRuling(caseSignature, courtRuling, classifyCase(courtRuling), getCaseSummary(courtRuling)),
-    getUserMessageId(userMessage) || insertUserMessage(userMessage),
-    getSystemMessageId(systemMessage) || insertSystemMessage(systemMessage),
-  ]);
-
-  if (!rulingID || !userMessageID || !systemMessageID) {
-    throw new Error("DB can't fetch an ID");
-  }
-
-  return [rulingID, userMessageID, systemMessageID];
 }
 
 export async function classifyCase(courtRuling) {
