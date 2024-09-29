@@ -1,4 +1,6 @@
 import { createTCPConnection } from './sqlConnect.js';
+import { classifyCase, getCaseSummary } from '../api/nsaMain.js'
+
 
 export async function insertRuling(
     caseSignature,
@@ -9,6 +11,7 @@ export async function insertRuling(
     dateOfLimitationsOnTaxLiability
   ) {
     const connection = await createTCPConnection();
+  
     const [insertResult] = await connection.query(
       `INSERT INTO rulings (signature, ruling, solved, summary, date_of_suspension, date_of_limitation) VALUES (?, ?, ?, ?, ?, ?)`,
       [caseSignature, caseContent, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability]
