@@ -374,6 +374,8 @@ export class NsaPage implements OnInit, OnDestroy {
 
         this.nsaService.manuallyAddUserMessage(messageData);
 
+        this.nsaService.markUserMessageControlAsChanged(index);
+
         setTimeout(() => {
           control.setValue(id);
         }, 0);
@@ -460,7 +462,7 @@ export class NsaPage implements OnInit, OnDestroy {
           this.nsaService.rulingRequestState() !== RequestState.Success && !this.nsaFormPart1.controls.rulingText.value
         );
       case 1:
-        return !this.nsaFormPart2.valid;
+        return !this.nsaFormPart2.valid || this.nsaService.loadingSingleUserMessage();
       case 2:
         return true;
     }
@@ -496,6 +498,9 @@ export class NsaPage implements OnInit, OnDestroy {
       (this.nsaFormPart2.controls.userMessages.length === 1 && !this.nsaFormPart2.controls.userMessages.at(0).valid)
     )
       return 'Dodaj przynajmniej jedno pytanie';
+    if (this.nsaService.loadingSingleUserMessage()) {
+      return 'Trwa zapisywanie pytania...';
+    }
     return '';
   }
 
