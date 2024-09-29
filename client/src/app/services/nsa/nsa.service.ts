@@ -204,7 +204,12 @@ export class NsaService implements OnDestroy {
 
   public getCleanCourtRuling(): string | undefined {
     return this.rulingResponse()
-      ?.map(v => v.replace(/<\/p>/g, '\n\n').replace(/<p[^>]*?>/g, '').trim())
+      ?.map(v =>
+        v
+          .replace(/<\/p>/g, '\n\n')
+          .replace(/<p[^>]*?>/g, '')
+          .trim()
+      )
       .join('\n\n');
   }
 
