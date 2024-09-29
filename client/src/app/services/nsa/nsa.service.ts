@@ -44,7 +44,7 @@ export class NsaService implements OnDestroy {
       this.titleService.setTitle(`${oldTitle} - Wyszukiwanie...`);
       this._caseSignature = caseSignature;
       const sub = this.http
-        .post(apiUrl('/nsa/query'), { caseSignature })
+        .post<string[]>(apiUrl('/nsa/query'), { caseSignature })
         .pipe(
           takeUntil(this.cancel$),
           catchError((err, caught) => {
@@ -61,7 +61,7 @@ export class NsaService implements OnDestroy {
           })
         )
         .subscribe(res => {
-          this._rulingResponse.set(res as string[]);
+          this._rulingResponse.set(res);
           this._rulingRequestState.set(RequestState.Success);
           this.titleService.setTitle(oldTitle);
           resolve(true);
@@ -205,7 +205,7 @@ export class NsaService implements OnDestroy {
   public getCleanCourtRuling(): string | undefined {
     return this.rulingResponse()
       ?.map(v => v.replace(/<\/p>/g, '\n\n').replace(/<p[^>]*?>/g, '').trim())
-      .join('\n');
+      .join('\n\n');
   }
 
   public async fetchGptAnswers(formOutput: NsaFormPart2) {
