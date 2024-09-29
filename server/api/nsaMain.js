@@ -72,34 +72,19 @@ export async function followUpDiscussionAboutNSA(formattedChatHistory, courtRuli
   return rawResponse?.choices?.[0]?.message?.content ?? null;
 }
 
-async function fetchIDs(caseSignature, userMessage, systemMessage, courtRuling) {
-  const [rulingId, userMessageId, systemMessageId] = await Promise.all([
-    getCourtRulingId(caseSignature) ||
-      insertRuling(caseSignature, courtRuling, classifyCase(courtRuling), getCaseSummary(courtRuling)),
-    getUserMessageId(userMessage) || insertUserMessage(userMessage),
-    getSystemMessageId(systemMessage) || insertSystemMessage(systemMessage),
-  ]);
-
-  if (!rulingId || !userMessageId || !systemMessageId) {
-    throw new Error("DB can't fetch an Id");
-  }
-
-  return [rulingId, userMessageId, systemMessageId];
-}
-
 export async function classifyCase(courtRuling) {
-  const systemMessage = `Napisz jedną literą: R (jeśli NSA rozstrzygnął sprawę merytorycznie), P (jeśli przekazał ją do WSA) lub N (jeśli nie da się tego określić). Orzeczenie: `;
+  const systemMessage = `Napisz jedną literą: R (jeśli NSA rozstrzygnął sprawę merytorycznie), P (jeśli przekazał ją do WSA) lub N(jeśli nie da się tego określić). Orzeczenie: `;
   const response = await getGptResponse(systemMessage, courtRuling);
   return validateClassificationResult(response);
 }
 
 function validateClassificationResult(response) {
   const trimmedResponse = response?.trim();
-  return { R: 1, P: 0, N: -1 }[trimmedResponse] ?? -1;
+  return { R: 1, P: 0, N: null }[trimmedResponse] ?? null;
 }
 
 export async function getCaseSummary(courtRuling) {
-  const systemMessage = `Na podstawie poniższego orzeczenia sformułuj krótkie podsumowanie treści orzeczenia NSA. Czy postępowanie zostało według sądu wszczęte instrumentalnie? Twoja odpowiedź musi mieć mniej niż 165 znaków. Orzeczenie: `;
+  const systemMessage = `Na podstawie poniższego orzeczenia opisz krótko jaka była decyzja NSA odnośnie zastosowania art. 70 §. Czy postępowanie zostało według sądu wszczęte instrumentalnie? Twoja odpowiedź musi mieć mniej niż 165 znaków. Orzeczenie: `;
   const response = await getGptResponse(systemMessage, courtRuling);
   return validateSummaryResult(response);
 }
@@ -108,4 +93,21 @@ function validateSummaryResult(response) {
   const summaryMaxCharLen = 165;
   const match = response.match(/(.*?)(?<!art)\./); // Regex to find first period, ignoring ".art"
   return response.length > summaryMaxCharLen && match ? match[0] : response.slice(0, summaryMaxCharLen);
+}
+
+export async function getDateOfSuspension(courtRuling) {
+  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę zawieszenia biegu terminu przedawnienia sprawy. Odpowiedz mi w formacie DD-MM-YYYY. Orzeczenie: `;
+  const response = await getGptResponse(systemMessage, courtRuling);
+  return validateDate(response);
+}
+
+export async function getDateOfLimitationsOnTaxLiability(courtRuling) {
+  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę terminu przedawnienia zobowiązania podatkowego. Odpowiedz mi w formacie DD-MM-YYYY. Orzeczenie: `;
+  const response = await getGptResponse(systemMessage, courtRuling);
+  return validateDate(response);
+}
+
+function validateDate(response) {
+  const match = response.match(/\b\d{2}-\d{2}-\d{4}\b/); //Regex to find the date
+  return match[0] ? match[0] : null;
 }

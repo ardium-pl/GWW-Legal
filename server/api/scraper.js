@@ -1,6 +1,7 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { insertRuling } from "../sql/courtRulingQuerry.js";
+import { classifyCase, getCaseSummary, getDateOfSuspension, getDateOfLimitationsOnTaxLiability } from './nsaMain.js'
 puppeteer.use(StealthPlugin());
 
 const userAgents = [
@@ -61,7 +62,11 @@ export async function getCourtRuling(signature) {
     const combinedText = extractedText.join('+');
 
     if (combinedText.length > 0) {
-      insertRuling(signature, combinedText);
+      const classification = await classifyCase(combinedText);
+      const summary = await getCaseSummary(combinedText)
+      const dateOfSuspension = await getDateOfSuspension(combinedText);
+      const dateOfLimitationsOnTaxLiability = await getDateOfLimitationsOnTaxLiability(combinedText);
+      insertRuling(signature, combinedText, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability);
 
       return extractedText;
     } else {
