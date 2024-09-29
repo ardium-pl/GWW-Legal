@@ -64,7 +64,7 @@
           } @if (nsaService.rulingRequestState() === 'success') {
           <mat-card-footer>
             <strong>Znaleziono orzeczenie:</strong>
-            <div #rulingTextEl [innerHTML]="searchService.highlightedText()"></div>
+            <div #rulingTextEl [innerHTML]="searchService.highlightedText().replaceAll('\n', '<br />')"></div>
           </mat-card-footer>
           }
         </mat-card-content>
