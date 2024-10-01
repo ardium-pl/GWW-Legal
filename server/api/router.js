@@ -43,7 +43,7 @@ nsaRouter.post('/api/nsa/query', async (req, res) => {
       res.status(404).send({ error: error.message, code: error.code });
     } else {
       console.error(error);
-      res.status(500).send({ error: error.message || 'Internal Server Error', code: error.code });
+      res.status(500).send({ error: error.message || 'Internal Server Error', code: error.code, obj: error });
     }
   }
 });
