@@ -22,6 +22,8 @@ app.use((req, res, next) => {
 app.use(nsaRouter);
 app.use(clientRouter);
 
+app.get('/favicon.ico', (req, res) => res.status(204).end());
+
 // Obsługa błędów 404
 app.use((req, res, next) => {
     res.status(404).send({

@@ -1,4 +1,5 @@
 import express from 'express';
+import { getConversationHistory, storeConversation } from '../sql/conversationQuery.js';
 import {
   getCourtRulingId,
   getDetailedRulingInfo,
@@ -13,7 +14,6 @@ import {
   insertUserMessage,
   updateUserMessage,
 } from '../sql/messagesQuerry.js';
-import { tryReturningMockRuling, tryReturningMockUserMessageResponse } from './mock-data.js';
 import { askGptAboutNSA, followUpDiscussionAboutNSA, transformMessages } from './nsaMain.js';
 import { getCourtRuling } from './scraper.js';
 
@@ -21,17 +21,13 @@ export const nsaRouter = express.Router();
 
 nsaRouter.post('/api/nsa/query', async (req, res) => {
   try {
-    const { caseSignature } = req.body;
+    let { caseSignature } = req.body;
     if (!caseSignature) {
       return res.status(400).send({ error: 'Case signature is required.' });
     }
 
-    if (/localhost/.test(req.get('origin'))) {
-      const mockRuling = tryReturningMockRuling(caseSignature);
-      if (mockRuling) {
-        res.json(mockRuling);
-        return;
-      }
+    if (/localhost/.test(req.get('origin')) && caseSignature === '!') {
+      caseSignature = 'III FSK 4005/21';
     }
     const dbCourtRuling = await getRulingBySignature(caseSignature);
     if (dbCourtRuling) {
@@ -47,7 +43,7 @@ nsaRouter.post('/api/nsa/query', async (req, res) => {
       res.status(404).send({ error: error.message, code: error.code });
     } else {
       console.error(error);
-      res.status(500).send({ error: error.message || 'Internal Server Error' });
+      res.status(500).send({ error: error.message || 'Internal Server Error', code: error.code });
     }
   }
 });
@@ -115,14 +111,6 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
       return res.status(400).send({ error: 'Case signature is required.' });
     }
 
-    if (/localhost/.test(req.get('origin'))) {
-      const mockResponse = tryReturningMockUserMessageResponse(userMessageId, caseSignature);
-      if (mockResponse) {
-        res.json(mockResponse);
-        return;
-      }
-    }
-
     const courtRulingId = await getCourtRulingId(caseSignature);
     const systemMessageId = await getSystemMessageId(systemMessage);
 
@@ -151,11 +139,13 @@ nsaRouter.post('/api/nsa/question', async (req, res) => {
 });
 
 nsaRouter.post('/api/nsa/conversation', async (req, res) => {
-  const { messageHistory, courtRuling } = req.body;
+  const { messageHistory, courtRuling, gptQueryId } = req.body;
   const formattedMessageHistory = transformMessages(messageHistory);
 
   try {
     const chatResponse = await followUpDiscussionAboutNSA(formattedMessageHistory, courtRuling);
+
+    await storeConversation(messageHistory[messageHistory.length - 1].content, chatResponse, gptQueryId);
 
     res.status(200).send({ chatResponse: chatResponse });
   } catch (error) {
@@ -163,6 +153,17 @@ nsaRouter.post('/api/nsa/conversation', async (req, res) => {
       res.status(500).send({ error: 'Internal Server Error', code: 'ENOTFOUND' });
       return;
     }
+    console.error(error);
+    res.status(500).send({ error: 'Internal Server Error' });
+  }
+});
+
+nsaRouter.get('/api/nsa/conversation', async (req, res) => {
+  try {
+    const { gptQueryId } = req.query;
+
+    res.json(await getConversationHistory(gptQueryId));
+  } catch (error) {
     console.error(error);
     res.status(500).send({ error: 'Internal Server Error' });
   }

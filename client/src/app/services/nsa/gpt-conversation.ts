@@ -3,6 +3,8 @@ import { signal } from '@angular/core';
 export class GptConversation {
   items!: (GptConversationItem | GptConversationResponse)[];
 
+  wasTouched: boolean = false;
+
   constructor(
     public readonly systemMessage: string,
     userMessage1: string,
@@ -16,18 +18,22 @@ export class GptConversation {
   }
 
   addUserMessage(userMessage: string): void {
+    this.wasTouched = true;
     this.items = [...this.items, new GptConversationItem(GptConversationItemType.UserMessage, userMessage)];
   }
-  addEmptyResponse(): void {
-    this.items = [...this.items, new GptConversationResponse()];
-  }
-  setLatestResponseContent(content: string, isError: boolean): void {
-    this.items.pop();
-
+  addResponse(content: string, isError: boolean): void {
     const res = new GptConversationResponse();
     res.setContent(content, isError);
 
     this.items = [...this.items, res];
+  }
+  addEmptyResponse(): void {
+    this.wasTouched = true;
+    this.items = [...this.items, new GptConversationResponse()];
+  }
+  setLatestResponseContent(content: string, isError: boolean): void {
+    this.items.pop();
+    this.addResponse(content, isError);
   }
   cancelLatestResponse(): void {
     this.items.pop();

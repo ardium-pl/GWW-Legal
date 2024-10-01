@@ -429,13 +429,19 @@ export class NsaPage implements OnInit, OnDestroy {
 
   //! additional conversation
   readonly currentConversation = signal<GptConversation | undefined>(undefined);
-  onClickOpenConversation(index: number) {
+  onClickOpenConversation(index: number, gptQueryId: number) {
     this.currentConversation.set(this.nsaService.conversations().at(index));
+
+    if (!this.currentConversation()?.wasTouched) {
+      this.nsaService.fetchConversationHistory(index, gptQueryId);
+    }
+
     this.dialog.open(GptConversationDialogComponent, {
       autoFocus: '#conversation-dialog-input',
       data: {
         conversationIndex: index,
         nsaServiceInstance: this.nsaService,
+        gptQueryId,
       } as GptConversationDialogData,
     });
   }

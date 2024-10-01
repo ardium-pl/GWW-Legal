@@ -1,9 +1,19 @@
 .conversation-container {
   height: 65vh;
+  width: 100vw;
+  max-width: 100%;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr max-content;
   gap: 12px;
+  position: relative;
+
+  > mat-spinner {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 }
 .conversation-messages {
   max-height: 100%;

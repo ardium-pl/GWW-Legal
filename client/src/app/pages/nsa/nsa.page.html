@@ -247,7 +247,7 @@
             class="conversation-button"
             mat-icon-button
             matTooltip="Zadaj dodatkowe pytanie"
-            (click)="onClickOpenConversation($index)"
+            (click)="onClickOpenConversation($index, response.id)"
             [disabled]="!nsaService.gptAnswersProgress()[$index]"
           >
             <mat-icon fontIcon="forum" />
@@ -255,7 +255,7 @@
         </mat-card-header>
         <mat-card-content>
           @if (nsaService.gptAnswersProgress()[$index]) {
-          <markdown> {{ response }} </markdown>
+          <markdown> {{ response.answer }} </markdown>
           } @else {
           <mat-spinner />
           }

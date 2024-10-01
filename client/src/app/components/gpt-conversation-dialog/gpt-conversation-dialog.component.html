@@ -5,5 +5,10 @@
   </button>
 </h2>
 <mat-dialog-content>
-  <app-gpt-conversation [items]="conversation.items" (sendMessage)="onMessageSend($event)" (cancel)="onLoadingCancel()" />
+  <app-gpt-conversation
+    [items]="conversation.items"
+    [loading]="dialogData.nsaServiceInstance.conversationLoadingStates()[dialogData.conversationIndex]"
+    (sendMessage)="onMessageSend($event)"
+    (cancel)="onLoadingCancel()"
+  />
 </mat-dialog-content>
