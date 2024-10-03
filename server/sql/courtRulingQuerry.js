@@ -1,21 +1,22 @@
 import { createTCPConnection } from './sqlConnect.js';
 
 export async function insertRuling(
-  caseSignature,
-  caseContent,
-  classification,
-  summary,
-  dateOfSuspension,
-  dateOfLimitationsOnTaxLiability
-) {
-  const connection = await createTCPConnection();
-
-  const [insertResult] = await connection.query(
-    `INSERT INTO rulings (signature, ruling, solved, summary, date_of_suspension, date_of_limitation) VALUES (?, ?, ?, ?, ?, ?)`,
-    [caseSignature, caseContent, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability]
-  );
-  return insertResult.insertId;
-}
+    caseSignature,
+    caseContent,
+    classification,
+    summary,
+    dateOfSuspension,
+    dateOfLimitationsOnTaxLiability,
+    nsaAmendment
+  ) {
+    const connection = await createTCPConnection();
+  
+    const [insertResult] = await connection.query(
+      `INSERT INTO rulings (signature, ruling, solved, summary, procedure_start_date, limitation_date, is_related_to_nsa_2021) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [caseSignature, caseContent, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability, nsaAmendment]
+    );
+    return insertResult.insertId;
+  }
 
 export async function getPaginatedSignatures(page, pageSize) {
   const offset = (page - 1) * pageSize;
