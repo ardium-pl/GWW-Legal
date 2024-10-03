@@ -34,20 +34,25 @@ export class NsaSignaturesComponent implements OnInit {
   }
 
   async onLoadDataClick(signature: string) {
-    if (this.nsaService.signatureExtendedDataLoading()) return;
+    if (this.isLoadingExtendedData()) return;
 
     this.isLoadingExtendedData.set(signature);
-    const res = await this.nsaService.fetchSignatureExtendedData(signature);
-    this.isLoadingExtendedData.set(null);
+    try {
+      const res = await this.nsaService.fetchSignatureExtendedData(signature);
 
-    this.router.navigate(['nsa'], {
-      queryParams: {
-        signature,
-        isFromBrowser: true,
-        systemMessage: res.systemMessage,
-        userMessageIds: res.userMessageIds?.length ? res.userMessageIds : null,
-      },
-    });
+      this.router.navigate(['nsa'], {
+        queryParams: {
+          signature,
+          isFromBrowser: true,
+          systemMessage: res.systemMessage,
+          userMessageIds: res.userMessageIds?.length ? res.userMessageIds : null,
+        },
+      });
+    } catch (error) {
+      throw error;
+    } finally {
+      this.isLoadingExtendedData.set(null);
+    }
   }
 
   private _onInfiniteScrollTrigger(): void {
