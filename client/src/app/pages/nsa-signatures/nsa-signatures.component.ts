@@ -1,14 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { Component, effect, HostListener, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router } from '@angular/router';
+import { ChipComponent } from 'app/components/chip';
 import { NsaService } from 'app/services';
 
 @Component({
   selector: 'app-nsa-signatures',
   standalone: true,
-  imports: [CommonModule, MatButtonModule, MatProgressSpinnerModule],
+  imports: [MatButtonModule, MatProgressSpinnerModule, ChipComponent],
   templateUrl: './nsa-signatures.component.html',
   styleUrl: './nsa-signatures.component.scss',
 })

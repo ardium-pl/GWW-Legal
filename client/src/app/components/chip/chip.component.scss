@@ -1,0 +1,29 @@
+
+  .chip {
+    height: 1.625rem;
+    width: max-content;
+    padding: 0 0.625rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-color: currentColor;
+    border-radius: 9999px;
+
+    &.chip-color-none {
+      background-color: rgba(0, 0, 0, 0.06);
+    }
+    &.chip-color-green {
+      color: var(--green);
+      background-color: var(--green2);
+    }
+    &.chip-color-orange {
+      color: var(--warn);
+      background-color: var(--warn2);
+    }
+    &.chip-color-red {
+      color: var(--red);
+      background-color: var(--red2);
+    }
+  }
