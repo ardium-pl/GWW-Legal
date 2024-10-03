@@ -131,6 +131,7 @@ export class NsaPage implements OnInit, OnDestroy {
       return;
     }
     this.router.navigate([], { queryParams: { signature: this.nsaFormPart1.controls.caseSignature.value } });
+    this._resetAfterRuling();
   }
 
   fetchGptAnswers(): void {
@@ -546,6 +547,21 @@ export class NsaPage implements OnInit, OnDestroy {
     this.router.navigate([], { queryParams: { signature: null } });
 
     this.nsaFormPart1.controls.rulingText.reset();
+
+    this._resetAfterRuling();
+
+    // execute after all other code has finished executing
+    setTimeout(() => {
+      this.nsaFormPart1.controls.caseSignature.setErrors(null);
+      this.nsaFormPart1.controls.caseSignature.markAsDirty();
+
+      const inputEl = this.caseSigntaureInput()!.nativeElement;
+      inputEl.focus();
+      inputEl.setSelectionRange(0, inputEl.value.length);
+    }, 0);
+  }
+  private _resetAfterRuling() {
+    this.nsaService.resetAfterRuling();
     this.nsaFormPart2.reset({
       systemMessage: DEFAULT_SYSTEM_MESSAGE,
       userMessages: [],
@@ -557,15 +573,5 @@ export class NsaPage implements OnInit, OnDestroy {
 
     this.wasShowGptResultsImmediatelyChangedDuringPending.set(false);
     this.currentPagerPage.set(0);
-
-    // execute after all other code has finished executing
-    setTimeout(() => {
-      this.nsaFormPart1.controls.caseSignature.setErrors(null);
-      this.nsaFormPart1.controls.caseSignature.markAsDirty();
-
-      const inputEl = this.caseSigntaureInput()!.nativeElement;
-      inputEl.focus();
-      inputEl.setSelectionRange(0, inputEl.value.length);
-    }, 0);
   }
 }
