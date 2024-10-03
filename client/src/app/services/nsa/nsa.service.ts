@@ -474,11 +474,11 @@ export class NsaService implements OnDestroy {
     this._rulingResponse.set(null);
     this._rulingError.set(null);
 
-    this._resetAfterRuling();
+    this.resetAfterRuling();
 
     this._cancelAllRequests();
   }
-  private _resetAfterRuling() {
+  public resetAfterRuling() {
     this._gptAnswersProgress.set([]);
     this._gptAnswersResponse.set(null);
 
