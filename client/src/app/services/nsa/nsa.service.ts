@@ -42,7 +42,7 @@ export class NsaService implements OnDestroy {
     return new Promise(resolve => {
       this._rulingRequestState.set(RequestState.Pending);
       const oldTitle = this.titleService.getTitle();
-      
+
       this.titleService.setTitle(`${oldTitle} - Wyszukiwanie...`);
 
       this._caseSignature = caseSignature;
@@ -448,7 +448,9 @@ export class NsaService implements OnDestroy {
 
   public async fetchSignatureExtendedData(signature: string): Promise<SignatureExtendedData> {
     return new Promise(resolve => {
+
       this._signatureExtendedDataLoading.set(signature);
+
       const sub = this.http
         .get<SignatureExtendedData>(apiUrl('/nsa/ruling/' + encodeURIComponent(signature)))
         .pipe(
@@ -472,6 +474,11 @@ export class NsaService implements OnDestroy {
     this._rulingResponse.set(null);
     this._rulingError.set(null);
 
+    this._resetAfterRuling();
+
+    this._cancelAllRequests();
+  }
+  private _resetAfterRuling() {
     this._gptAnswersProgress.set([]);
     this._gptAnswersResponse.set(null);
 
@@ -481,7 +488,8 @@ export class NsaService implements OnDestroy {
     this._loadingSingleUserMessage.set(null);
     this.isUserMessageSelected.set({});
 
-    this._cancelAllRequests();
+    this._conversations.set([]);
+    this._conversationLoadingStates.set([]);
   }
 
   private readonly cancel$ = new Subject<void>();
