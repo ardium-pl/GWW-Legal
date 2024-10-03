@@ -7,6 +7,7 @@ import { apiUrl } from '../apiUrl';
 import { RequestState } from '../types';
 import { GptConversation, GptConversationItemType } from './gpt-conversation';
 import {
+  GptAnwserData,
   NsaFormPart2,
   RulingErrorCode,
   SignatureBrowserData,
@@ -199,7 +200,7 @@ export class NsaService implements OnDestroy {
     () => this._gptAnswersProgress().some(v => v !== false) || this._gptAnswersProgress().length === 0
   );
 
-  private readonly _gptAnswersResponse = signal<string[] | null>(null);
+  private readonly _gptAnswersResponse = signal<GptAnwserData[] | null>(null);
   public readonly gptAnswersResponse = this._gptAnswersResponse.asReadonly();
 
   public getCleanCourtRuling(): string | undefined {
@@ -235,7 +236,7 @@ export class NsaService implements OnDestroy {
     });
     this._gptAnswersResponse.update(arr => {
       for (const index of changed) {
-        arr![index] = '';
+        arr![index] = { id: -1, answer: '' };
       }
       return [...arr!];
     });
@@ -245,14 +246,14 @@ export class NsaService implements OnDestroy {
       .filter(([, i]) => changed.has(i))
       .map(([userMessageId, i]) => {
         return [
-          this.http.post<string>(apiUrl('/nsa/question'), {
+          this.http.post<GptAnwserData>(apiUrl('/nsa/question'), {
             caseSignature,
             courtRuling,
             systemMessage: formOutput.systemMessage,
             userMessageId,
           }),
           i,
-        ] as [Observable<string>, number];
+        ] as [Observable<GptAnwserData>, number];
       });
 
     streams.forEach(([stream, i]) => {
@@ -286,7 +287,7 @@ export class NsaService implements OnDestroy {
             newArr[i] = response;
             return newArr;
           });
-          this.createConversation(i, formOutput.systemMessage!, messageData.message, response);
+          this.createConversation(i, formOutput.systemMessage!, messageData.message, response.answer);
         });
     });
   }
@@ -294,6 +295,9 @@ export class NsaService implements OnDestroy {
   //! conversations
   private readonly _conversations = signal<GptConversation[]>([]);
   public readonly conversations = this._conversations.asReadonly();
+
+  private readonly _conversationLoadingStates = signal<boolean[]>([]);
+  public readonly conversationLoadingStates = this._conversationLoadingStates.asReadonly();
 
   private readonly cancelConversation$ = new Subject<void>();
 
@@ -303,8 +307,50 @@ export class NsaService implements OnDestroy {
       newArr[index] = new GptConversation(systemMessage, userMessage, response);
       return newArr;
     });
+    this._conversationLoadingStates.update(arr => {
+      return [...arr, false];
+    });
   }
-  fetchConversationAnswer(index: number, userMessage: string): void {
+  fetchConversationHistory(index: number, gptQueryId: number): void {
+    const convo = this.conversations()[index];
+
+    this._conversationLoadingStates.update(arr => {
+      arr[index] = true;
+      return [...arr];
+    });
+
+    const sub = this.http
+      .get<{ message: string; answer: string }[]>(apiUrl('/nsa/conversation'), {
+        params: {
+          gptQueryId,
+        },
+      })
+      .pipe(takeUntil(this.cancel$))
+      .subscribe({
+        next: response => {
+          for (const pair of response) {
+            convo.addUserMessage(pair.message);
+            convo.addEmptyResponse();
+            convo.setLatestResponseContent(pair.answer, false);
+          }
+        },
+        error: err => {
+          sub.unsubscribe();
+          convo.addEmptyResponse();
+          convo.setLatestResponseContent(
+            `Nie udało się załadować historii konwersacji. Kod błędu: ${err?.error?.code}`,
+            true
+          );
+        },
+        complete: () => {
+          this._conversationLoadingStates.update(arr => {
+            arr[index] = false;
+            return [...arr];
+          });
+        },
+      });
+  }
+  fetchConversationAnswer(index: number, gptQueryId: number, userMessage: string): void {
     const convo = this.conversations()[index];
 
     convo.addUserMessage(userMessage);
@@ -328,6 +374,7 @@ export class NsaService implements OnDestroy {
       .post<{ chatResponse: string }>(apiUrl('/nsa/conversation'), {
         courtRuling: this.getCleanCourtRuling(),
         messageHistory,
+        gptQueryId: gptQueryId,
       })
       .pipe(
         takeUntil(this.cancel$),

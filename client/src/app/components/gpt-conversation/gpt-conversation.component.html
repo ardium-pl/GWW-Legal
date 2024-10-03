@@ -1,16 +1,20 @@
 <div class="conversation-container">
-  <div class="conversation-messages" #messages>
-    @for (item of itemsWithoutSystemMessage(); track item.content) {
-      <app-message-bubble
-        [content]="item.content()"
-        [isError]="isGptConversationResponse(item) && item.isError()"
-        [isLoading]="isGptConversationResponse(item) && item.isLoading()"
-        [isCanceled]="isGptConversationResponse(item) && item.isCanceled()"
-        [left]="isGptConversationResponse(item)"
-        (cancel)="cancelEvent.emit()"
-      />
-    }
-  </div>
+  @if (loading()) {
+    <mat-spinner />
+  } @else {
+    <div class="conversation-messages" #messages>
+      @for (item of itemsWithoutSystemMessage(); track item.content) {
+        <app-message-bubble
+          [content]="item.content()"
+          [isError]="isGptConversationResponse(item) && item.isError()"
+          [isLoading]="isGptConversationResponse(item) && item.isLoading()"
+          [isCanceled]="isGptConversationResponse(item) && item.isCanceled()"
+          [left]="isGptConversationResponse(item)"
+          (cancel)="cancelEvent.emit()"
+        />
+      }
+    </div>
+  }
   <div class="conversation-input">
     <mat-form-field>
       <textarea
@@ -20,9 +24,10 @@
         placeholder="Zadaj pytanie..."
         [(ngModel)]="message"
         (keydown)="handleEnterKeyPress($event)"
+        [disabled]="loading()"
       ></textarea>
     </mat-form-field>
-    <button mat-fab color="primary" [disabled]="!message()" (click)="executeSendMessage()">
+    <button mat-fab color="primary" [disabled]="!message() || loading()" (click)="executeSendMessage()">
       <img src="assets/images/send.svg" alt="Wyślij" />
     </button>
   </div>

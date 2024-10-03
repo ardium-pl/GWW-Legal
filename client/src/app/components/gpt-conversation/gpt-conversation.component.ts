@@ -44,6 +44,8 @@ import { MessageBubbleComponent } from './message-bubble/message-bubble.componen
 export class GptConversationComponent {
   readonly items = input.required<(GptConversationItem | GptConversationResponse)[]>();
 
+  readonly loading = input.required<boolean>();
+
   readonly itemsWithoutSystemMessage = computed(() =>
     this.items().filter(v => v.type !== GptConversationItemType.SystemMessage)
   );

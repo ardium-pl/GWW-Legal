@@ -8,6 +8,11 @@ export type UserMessageDialogFormData = {
   message: string;
 }
 
+export type GptAnwserData = {
+  id: number;
+  answer: string;
+}
+
 export type UserMessageData = {
   id: number;
   shortMessage: string;

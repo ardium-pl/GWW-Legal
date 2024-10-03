@@ -38,9 +38,9 @@ export async function askGptAboutNSA(
 ) {
   const response = await getGptResponse(systemMessage, `${userMessage} ${courtRuling}`);
 
-  await setGptResponse(courtRulingId, systemMessageId, userMessageId, response);
+  const insertId = await setGptResponse(courtRulingId, systemMessageId, userMessageId, response);
 
-  return response;
+  return { answer: response, id: insertId };
 }
 
 async function getGptResponse(systemMessage, userMessage) {
@@ -109,5 +109,5 @@ export async function getDateOfLimitationsOnTaxLiability(courtRuling) {
 
 function validateDate(response) {
   const match = response.match(/\b\d{2}-\d{2}-\d{4}\b/); //Regex to find the date
-  return match[0] ? match[0] : null;
+  return match ? match[0] : null;
 }

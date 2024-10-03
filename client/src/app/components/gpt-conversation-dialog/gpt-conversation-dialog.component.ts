@@ -8,6 +8,7 @@ import { GptConversationComponent } from '../gpt-conversation/gpt-conversation.c
 export interface GptConversationDialogData {
   readonly conversationIndex: number;
   readonly nsaServiceInstance: NsaService;
+  readonly gptQueryId: number;
 }
 
 @Component({
@@ -16,7 +17,7 @@ export interface GptConversationDialogData {
   imports: [MatButtonModule, MatDialogTitle, MatDialogContent, MatIconModule, GptConversationComponent],
   templateUrl: './gpt-conversation-dialog.component.html',
   styleUrl: './gpt-conversation-dialog.component.scss',
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class GptConversationDialogComponent {
   readonly dialogRef = inject(MatDialogRef<GptConversationDialogComponent>);
@@ -29,7 +30,11 @@ export class GptConversationDialogComponent {
   }
 
   onMessageSend(message: string) {
-    this.dialogData.nsaServiceInstance.fetchConversationAnswer(this.dialogData.conversationIndex, message);
+    this.dialogData.nsaServiceInstance.fetchConversationAnswer(
+      this.dialogData.conversationIndex,
+      this.dialogData.gptQueryId,
+      message
+    );
   }
   onLoadingCancel() {
     this.dialogData.nsaServiceInstance.cancelConversationRequest(this.dialogData.conversationIndex);
