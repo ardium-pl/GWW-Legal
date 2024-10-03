@@ -10,7 +10,8 @@ import { createTCPConnection } from './sql/sqlConnect.js';
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '1mb' }));
+app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
 app.use(cors());
 
 // Middleware do logowania zapytań
