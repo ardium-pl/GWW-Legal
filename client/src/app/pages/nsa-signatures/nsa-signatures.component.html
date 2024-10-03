@@ -41,12 +41,12 @@
       <div class="action">
         <button
           mat-button
-          [disabled]="nsaService.signatureExtendedDataLoading()"
-          [class.clicked-loading]="nsaService.signatureExtendedDataLoading() === dataItem.signature"
+          [disabled]="isLoadingExtendedData()"
+          [class.clicked-loading]="isLoadingExtendedData() === dataItem.signature"
         >
           Załaduj
         </button>
-        @if (nsaService.signatureExtendedDataLoading() === dataItem.signature) {
+        @if (isLoadingExtendedData() === dataItem.signature) {
           <mat-spinner />
         }
       </div>

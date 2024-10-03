@@ -21,6 +21,8 @@ export class NsaSignaturesComponent implements OnInit {
 
   readonly clickedSignatureButtonIndex = signal<number | null>(null);
 
+  readonly isLoadingExtendedData = signal<string | null>(null);
+
   constructor() {
     effect(
       () => {
@@ -34,7 +36,9 @@ export class NsaSignaturesComponent implements OnInit {
   async onLoadDataClick(signature: string) {
     if (this.nsaService.signatureExtendedDataLoading()) return;
 
+    this.isLoadingExtendedData.set(signature);
     const res = await this.nsaService.fetchSignatureExtendedData(signature);
+    this.isLoadingExtendedData.set(null);
 
     this.router.navigate(['nsa'], {
       queryParams: {
