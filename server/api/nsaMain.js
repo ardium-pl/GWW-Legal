@@ -96,13 +96,13 @@ function validateSummaryResult(response) {
 }
 
 export async function getDateOfSuspension(courtRuling) {
-  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę zawieszenia biegu terminu przedawnienia sprawy. Odpowiedz mi w formacie DD-MM-YYYY. Orzeczenie: `;
+  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę zawieszenia biegu terminu przedawnienia sprawy. Odpowiedz mi w formacie YYYY-MM-DD. Orzeczenie: `;
   const response = await getGptResponse(systemMessage, courtRuling);
   return validateDate(response);
 }
 
 export async function getDateOfLimitationsOnTaxLiability(courtRuling) {
-  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę terminu przedawnienia zobowiązania podatkowego. Odpowiedz mi w formacie DD-MM-YYYY. Orzeczenie: `;
+  const systemMessage = `Na podstawie poniższego orzeczenia ustal datę terminu przedawnienia zobowiązania podatkowego. Odpowiedz mi w formacie YYYY-MM-DD. Orzeczenie: `;
   const response = await getGptResponse(systemMessage, courtRuling);
   return validateDate(response);
 }

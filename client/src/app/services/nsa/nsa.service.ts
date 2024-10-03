@@ -42,7 +42,9 @@ export class NsaService implements OnDestroy {
     return new Promise(resolve => {
       this._rulingRequestState.set(RequestState.Pending);
       const oldTitle = this.titleService.getTitle();
+      
       this.titleService.setTitle(`${oldTitle} - Wyszukiwanie...`);
+
       this._caseSignature = caseSignature;
       const sub = this.http
         .post<string[]>(apiUrl('/nsa/query'), { caseSignature })

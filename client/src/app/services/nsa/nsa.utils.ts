@@ -48,6 +48,9 @@ export interface SignatureBrowserData {
   signature: string;
   solved: boolean | null;
   summary: string;
+  procedureStartDate: string | null;
+  limitationDate: string | null;
+  isRelated: boolean | null;
 }
 
 export type SignatureExtendedData = {

@@ -2,6 +2,9 @@
   <div class="signature">Sygnatura</div>
   <div class="summary">Podsumowanie treści orzeczenia</div>
   <div class="solved">Status</div>
+  <div class="start-date"><abbr title="Data wszczęcia postępowania">Data wszcz. post.</abbr></div>
+  <div class="limitation-date"><abbr title="Data przedawnienia terminu podatku">Data przed. term. pod.</abbr></div>
+  <div class="is-related"><abbr title="Czy jest nawiązanie do orzeczenia NSA z 2021 roku?">NSA 2021</abbr></div>
   <div></div>
 </div>
 <div class="signature-browser">
@@ -13,7 +16,7 @@
       <div class="summary">
         {{ dataItem.summary }}
       </div>
-      <div class="solved" [ngClass]="'solved-' + dataItem.solved">
+      <app-chip class="solved" [color]="dataItem.solved === null ? 'none' : dataItem.solved ? 'green' : 'orange'">
         @if (dataItem.solved === true) {
           Rozstrzygnięto
         } @else if (dataItem.solved === false) {
@@ -21,7 +24,18 @@
         } @else {
           Nieznany
         }
+      </app-chip>
+      <div class="date-container">
+        {{ dataItem.procedureStartDate || '—' }}
       </div>
+      <div class="date-container">
+        {{ dataItem.limitationDate || '—' }}
+      </div>
+      @if (dataItem.isRelated === null) {
+        <div>—</div>
+      } @else {
+        <app-chip [color]="dataItem.isRelated ? 'green' : 'red'">{{ dataItem.isRelated ? 'Tak' : 'Nie' }}</app-chip>
+      }
       <div class="action">
         <button
           mat-button

@@ -43,6 +43,7 @@ body {
   --foreground: white;
 
   --red: rgb(239, 53, 29);
+  --red2: rgba(236, 63, 40, 0.15);
   --red-dark: rgb(199, 40, 18);
   --error: rgb(240, 83, 63);
   --warning: rgb(235, 85, 15);
@@ -187,6 +188,9 @@ a[routerLink],
   &.disabled {
     opacity: 50%;
   }
+}
+abbr {
+  text-underline-offset: 2px;
 }
 
 mat-spinner {
