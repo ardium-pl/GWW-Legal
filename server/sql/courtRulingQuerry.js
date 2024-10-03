@@ -43,7 +43,7 @@ export async function getPaginatedSignatures(page, pageSize) {
       data: rows.map(v => ({
         ...v,
         solved: v.solved === -1 ? null : v.solved === 1,
-        isRelated: v.isRelated === 1,
+        isRelated: v.isRelated === null ? null : v.isRelated === 1,
       })),
       total: total[0].amount,
     };
