@@ -8,13 +8,14 @@ export async function insertRuling(
     classification,
     summary,
     dateOfSuspension,
-    dateOfLimitationsOnTaxLiability
+    dateOfLimitationsOnTaxLiability,
+    nsaAmendment
   ) {
     const connection = await createTCPConnection();
   
     const [insertResult] = await connection.query(
-      `INSERT INTO rulings (signature, ruling, solved, summary, date_of_suspension, date_of_limitation) VALUES (?, ?, ?, ?, ?, ?)`,
-      [caseSignature, caseContent, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability]
+      `INSERT INTO rulings (signature, ruling, solved, summary, date_of_suspension, date_of_limitation, is_related_to_NSA_2021) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [caseSignature, caseContent, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability, nsaAmendment]
     );
     return insertResult.insertId;
   }

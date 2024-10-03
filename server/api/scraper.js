@@ -66,7 +66,9 @@ export async function getCourtRuling(signature) {
       const summary = await getCaseSummary(combinedText)
       const dateOfSuspension = await getDateOfSuspension(combinedText);
       const dateOfLimitationsOnTaxLiability = await getDateOfLimitationsOnTaxLiability(combinedText);
-      insertRuling(signature, combinedText, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability);
+      const containsNsaAmendment = (text) => /I FPS 1\/21/.test(text) ? 1 : 0;
+      console.log(containsNsaAmendment);
+      insertRuling(signature, combinedText, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability, containsNsaAmendment(combinedText));
 
       return extractedText;
     } else {
@@ -88,3 +90,6 @@ function delay(time) {
     setTimeout(resolve, time)
   });
 }
+
+
+getCourtRuling('II FSK 1283/21');
