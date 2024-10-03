@@ -90,6 +90,3 @@ function delay(time) {
     setTimeout(resolve, time)
   });
 }
-
-
-getCourtRuling('II FSK 1283/21');
