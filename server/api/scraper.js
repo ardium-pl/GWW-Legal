@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { insertRuling } from "../sql/courtRulingQuerry.js";
-import { classifyCase, getCaseSummary, getDateOfSuspension, getDateOfLimitationsOnTaxLiability } from './nsaMain.js'
+import { classifyCase, getCaseSummary, getProcedureStartDate, getDateOfLimitationsOnTaxLiability } from './nsaMain.js'
 puppeteer.use(StealthPlugin());
 
 const userAgents = [
@@ -64,11 +64,11 @@ export async function getCourtRuling(signature) {
     if (combinedText.length > 0) {
       const classification = await classifyCase(combinedText);
       const summary = await getCaseSummary(combinedText)
-      const dateOfSuspension = await getDateOfSuspension(combinedText);
+      const procedureStartDate = await getProcedureStartDate(combinedText);
       const dateOfLimitationsOnTaxLiability = await getDateOfLimitationsOnTaxLiability(combinedText);
       const containsNsaAmendment = (text) => /I FPS 1\/21/.test(text) ? 1 : 0;
       console.log(containsNsaAmendment);
-      insertRuling(signature, combinedText, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability, containsNsaAmendment(combinedText));
+      insertRuling(signature, combinedText, classification, summary, procedureStartDate, dateOfLimitationsOnTaxLiability, containsNsaAmendment(combinedText));
 
       return extractedText;
     } else {
