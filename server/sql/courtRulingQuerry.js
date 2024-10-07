@@ -5,7 +5,7 @@ export async function insertRuling(
     caseContent,
     classification,
     summary,
-    dateOfSuspension,
+    procedureStartDate,
     dateOfLimitationsOnTaxLiability,
     nsaAmendment
   ) {
@@ -13,7 +13,7 @@ export async function insertRuling(
   
     const [insertResult] = await connection.query(
       `INSERT INTO rulings (signature, ruling, solved, summary, procedure_start_date, limitation_date, is_related_to_nsa_2021) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [caseSignature, caseContent, classification, summary, dateOfSuspension, dateOfLimitationsOnTaxLiability, nsaAmendment]
+      [caseSignature, caseContent, classification, summary, procedureStartDate, dateOfLimitationsOnTaxLiability, nsaAmendment]
     );
     return insertResult.insertId;
   }

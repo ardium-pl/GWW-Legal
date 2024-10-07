@@ -95,7 +95,7 @@ function validateSummaryResult(response) {
   return response.length > summaryMaxCharLen && match ? match[0] : response.slice(0, summaryMaxCharLen);
 }
 
-export async function getDateOfSuspension(courtRuling) {
+export async function getProcedureStartDate(courtRuling) {
   const systemMessage = `Na podstawie poniższego orzeczenia ustal datę zawieszenia biegu terminu przedawnienia sprawy. Odpowiedz mi w formacie YYYY-MM-DD. Orzeczenie: `;
   const response = await getGptResponse(systemMessage, courtRuling);
   return validateDate(response);
@@ -108,6 +108,6 @@ export async function getDateOfLimitationsOnTaxLiability(courtRuling) {
 }
 
 function validateDate(response) {
-  const match = response.match(/\b\d{2}-\d{2}-\d{4}\b/); //Regex to find the date
+  const match = response.match(/\b\d{4}-\d{2}-\d{2}\b/); //Regex to find the date
   return match ? match[0] : null;
 }
